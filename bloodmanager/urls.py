@@ -8,4 +8,10 @@ urlpatterns = [
     path('admin-login/',views.admin_login,name='admin-login'),
     path('patient-login/',views.patient_login,name='patient-login'),
     path('register/',views.register,name='register'),
+    
+    path('donor-dashboard/', views.donor_dashboard, name='donor-dashboard'),
+    path('admin-dashboard/', views.admin_dashboard, name='admin-dashboard'),
+    path('patient-dashboard/', views.patient_dashboard, name='patient-dashboard'),
+    path('logout/', views.logout_view, name='logout'),
+
 ]

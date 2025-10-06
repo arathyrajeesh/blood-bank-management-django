@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patient Dashboard | Blood Bank</title>
+<style>
+body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: #fff5f5;
+    margin: 0;
+    padding: 0;
+}
+header {
+    background: rgb(172, 5, 5);
+    color: white;
+    padding: 1rem;
+    text-align: center;
+}
+.container {
+    max-width: 800px;
+    background: white;
+    margin: 30px auto;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+h2 { color: rgb(172, 5, 5); }
+.info {
+    margin-top: 20px;
+    line-height: 1.8;
+}
+button {
+    padding: 0.6rem 1rem;
+    background: rgb(172, 5, 5);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+button:hover { background: #a00000; }
+.logout {
+    text-align: right;
+    margin-top: 20px;
+}
+</style>
+</head>
+<body>
+<header>
+    <h1>Patient Dashboard</h1>
+</header>
+
+<div class="container">
+    <h2>Welcome, {{ patient.user.username }}!</h2>
+    <div class="info">
+        <p><strong>Blood Group:</strong> {{ patient.blood_group }}</p>
+        <p><strong>Phone:</strong> {{ patient.phone }}</p>
+        <p><strong>Gender:</strong> {{ patient.gender }}</p>
+        <p><strong>Address:</strong> {{ patient.address }}</p>
+        <p><strong>Required Units:</strong> {{ patient.required_units }}</p>
+    </div>
+    <div class="logout">
+        <form method="POST" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

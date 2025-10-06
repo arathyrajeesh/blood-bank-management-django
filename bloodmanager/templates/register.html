@@ -1,13 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register | Blood Bank</title>
+<style>
+body {
+    background: #fff5f5;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+.container {
+    background: white;
+    padding: 2rem 2.5rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    width: 400px;
+}
+h2 {
+    text-align: center;
+    color: rgb(172, 5, 5);
+}
+input, select, textarea {
+    width: 100%;
+    margin: 10px 0;
+    padding: 0.7rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+button {
+    width: 100%;
+    padding: 0.7rem;
+    border: none;
+    background: rgb(172, 5, 5);
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+button:hover {
+    background: #a00000;
+}
+</style>
 </head>
 <body>
-    <div>
-        <h1>Register</h1>
+<div class="container">
+    <h2>Register</h2>
+
+    {% if form.errors %}
+    <div style="background:#ffe5e5; color:#b00000; padding:10px; border-radius:5px;">
+        Please correct the highlighted errors below.
     </div>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Register</button>
+    </form>
+</div>
 </body>
 </html>

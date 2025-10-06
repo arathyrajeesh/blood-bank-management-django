@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard | Blood Bank</title>
+<style>
+body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    margin: 0;
+    background: #fff5f5;
+}
+header {
+    background: rgb(172, 5, 5);
+    color: white;
+    text-align: center;
+    padding: 1rem;
+}
+.container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    padding: 2rem;
+}
+h2 { color: rgb(172, 5, 5); text-align: center; }
+
+.stats {
+    display: flex;
+    justify-content: space-around;
+    margin: 1.5rem 0;
+}
+.stat-box {
+    background: #ffe6e6;
+    border-radius: 8px;
+    padding: 1rem 2rem;
+    text-align: center;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+.stat-box h3 { color: rgb(172, 5, 5); margin-bottom: 0.5rem; }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+th, td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+th {
+    background: rgb(172, 5, 5);
+    color: white;
+}
+tr:hover { background: #ffeaea; }
+
+button {
+    background: rgb(172, 5, 5);
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 5px;
+    cursor: pointer;
+}
+button:hover { background: #a00000; }
+
+.logout {
+    text-align: right;
+    margin-top: 20px;
+}
+</style>
+</head>
+<body>
+<header>
+    <h1>Admin Dashboard</h1>
+</header>
+
+<div class="container">
+    <h2>Welcome, {{ request.user.username }}</h2>
+
+    <div class="stats">
+        <div class="stat-box">
+            <h3>Total Donors</h3>
+            <p>{{ total_donors }}</p>
+        </div>
+        <div class="stat-box">
+            <h3>Available Donors</h3>
+            <p>{{ available_donors }}</p>
+        </div>
+        <div class="stat-box">
+            <h3>Total Patients</h3>
+            <p>{{ total_patients }}</p>
+        </div>
+    </div>
+
+    <h2>Donor List</h2>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Blood Group</th>
+            <th>Phone</th>
+            <th>Available</th>
+        </tr>
+        {% for donor in donors %}
+        <tr>
+            <td>{{ donor.user.username }}</td>
+            <td>{{ donor.blood_group }}</td>
+            <td>{{ donor.phone }}</td>
+            <td>{{ donor.available }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">No donors found.</td></tr>
+        {% endfor %}
+    </table>
+
+    <h2>Patient List</h2>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Blood Group</th>
+            <th>Phone</th>
+            <th>Required Units</th>
+        </tr>
+        {% for patient in patients %}
+        <tr>
+            <td>{{ patient.user.username }}</td>
+            <td>{{ patient.blood_group }}</td>
+            <td>{{ patient.phone }}</td>
+            <td>{{ patient.required_units }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">No patients found.</td></tr>
+        {% endfor %}
+    </table>
+
+    <div class="logout">
+        <form method="POST" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>
