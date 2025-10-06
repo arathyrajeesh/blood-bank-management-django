@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Blood Bank | Save a Life, Donate Blood</title>
 <style>
-/* --- Base Reset --- */
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -19,7 +19,6 @@ body {
     background: #fff5f5;
 }
 
-/* --- Header & Navigation --- */
 header {
     background-color: rgb(172, 5, 5);
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
@@ -40,7 +39,7 @@ nav ul {
 }
 
 nav ul li {
-    position: relative; /* For dropdown positioning */
+    position: relative; 
 }
 
 nav ul li a {
@@ -57,7 +56,6 @@ nav ul li a:focus {
     background-color: #111;
 }
 
-/* --- Dropdown Menu --- */
 .dropdown-content {
     display: none;
     position: absolute;
@@ -83,13 +81,11 @@ nav ul li a:focus {
     color: rgb(172, 5, 5);
 }
 
-/* Show dropdown on hover/focus */
 .dropdown:hover .dropdown-content,
 .dropdown:focus-within .dropdown-content {
     display: block;
 }
 
-/* --- Main Content --- */
 main {
     max-width: 1200px;
     margin: 0 auto;
@@ -113,12 +109,35 @@ main {
     text-align: justify;
 }
 
-/* Home specific styling */
 #home h1 {
     font-size: 4rem;
 }
 
-/* --- Footer --- */
+#stock table {
+    width: 50%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+#stock th, #stock td {
+    padding: 12px 15px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+#stock th {
+    background: rgb(172, 5, 5);
+    color: white;
+}
+#stock tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+#stock .low-stock {
+    background-color: #ffcccc !important; 
+    color: #a00000;
+    font-weight: bold;
+}
+
+
 footer {
     background-color: rgb(172, 5, 5);
     color: white;
@@ -127,7 +146,6 @@ footer {
     border-top: 1px solid #ddd;
 }
 
-/* --- Responsive Design --- */
 @media (max-width: 768px) {
     nav ul {
         flex-direction: column;
@@ -153,6 +171,9 @@ footer {
         min-width: 100%;
         border-radius: 0;
     }
+    #stock table {
+        width: 100%;
+    }
 }
 
 </style>
@@ -163,6 +184,7 @@ footer {
     <nav>
         <ul>
             <li><a href="#home">Home</a></li>
+            <li><a href="#stock">Stock</a></li>
             <li><a href="#about">About</a></li>
             <li><a href="#contact">Contact</a></li>
             <li class="dropdown">
@@ -170,7 +192,7 @@ footer {
                 <div class="dropdown-content">
                     <a href="{% url 'donor-login' %}">Donor Login</a>
                     <a href="{% url 'admin-login' %}">Admin Login</a>
-                    <a href="{% url 'patient-login' %}">patient Login</a>
+                    <a href="{% url 'patient-login' %}">Patient Login</a>
                     <a href="{% url 'register' %}">Register</a>
                 </div>
             </li>
@@ -183,6 +205,24 @@ footer {
         <h1>Blood Bank</h1>
         <p><strong>Every donation saves a life.</strong> Welcome to our Blood Bank Management System. Here you can find information on how to donate, check our current blood stock levels, and learn about the profound impact your generosity has on our community. Our mission is to ensure a safe and sufficient blood supply is available for every patient in need.</p>
         <p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.</p>
+    </section>
+
+    <section id="stock" class="content-section">
+        <h1>Current Blood Stock 🩸</h1>
+        <table>
+            <tr>
+                <th>Blood Group</th>
+                <th>Units Available</th>
+            </tr>
+            {% for item in stock %}
+            <tr class="{% if item.units < 5 %}low-stock{% endif %}">
+                <td>{{ item.blood_group }}</td>
+                <td><strong>{{ item.units }}</strong></td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="2">No stock information available. (Admin needs to populate the data)</td></tr>
+            {% endfor %}
+        </table>
     </section>
 
     <section id="about" class="content-section">

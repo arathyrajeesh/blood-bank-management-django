@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Find Donors | Blood Bank</title>
+<style>
+body { 
+    font-family: 'Segoe UI', Tahoma, sans-serif; 
+    background: #fff5f5;
+    margin: 0; 
+    padding: 0; 
+}
+header { 
+    background: rgb(172, 5, 5); 
+    color: white; 
+    padding: 1rem; 
+    text-align: center; 
+}
+.container { 
+    max-width: 900px; 
+    background: white; 
+    margin: 30px auto; 
+    padding: 2rem; 
+    border-radius: 10px; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+}
+h2 { 
+    color: rgb(172, 5, 5); 
+}
+table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-top: 15px; 
+}
+th, td { 
+    padding: 10px; 
+    text-align: left; 
+    border-bottom: 1px solid #ddd; 
+}
+th { 
+    background: #dcdcdc; 
+    color: #333; 
+}
+.message-box { 
+    background: #e6f7ff; 
+    border: 1px solid #b3e0ff; 
+    padding: 15px; 
+    border-radius: 5px; 
+    margin-bottom: 20px;
+}
+.exact-match-header {
+    background: #ffebeb; 
+}
+.compatible-header { 
+    background: #fff7e6; 
+}
+.logout { 
+    text-align: right; 
+    margin-top: 20px; 
+}
+.logout a {
+    text-decoration: none;
+    color: rgb(172, 5, 5);
+}
+</style>
+</head>
+<body>
+<header>
+    <h1>Find Available Donors</h1>
+</header>
+
+<div class="container">
+    <div class="message-box">
+        Your required Blood Group is **{{ required_blood_group }}**. You can receive blood from the following groups: <strong>{{ compatible_groups|join:", " }}</strong>.
+    </div>
+
+    <h2 style="margin-bottom: 5px;" class="exact-match-header">Exact Match Donors ({{ required_blood_group }})</h2>
+    
+    {% if exact_match_donors %}
+    <table>
+        <tr>
+            <th>Donor Name</th>
+            <th>Phone</th>
+            <th>Address</th>
+        </tr>
+        {% for donor in exact_match_donors %}
+        <tr>
+            <td>{{ donor.user.username }}</td>
+            <td>{{ donor.phone }}</td>
+            <td>{{ donor.address }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>❌ No available donors found with an **exact {{ required_blood_group }}** match currently.</p>
+    {% endif %}
+
+    <h2 style="margin-top: 30px; margin-bottom: 5px;" class="compatible-header">Compatible Donors (Other Groups)</h2>
+    
+    {% if compatible_donors %}
+    <table>
+        <tr>
+            <th>Donor Name</th>
+            <th>Blood Group</th>
+            <th>Phone</th>
+        </tr>
+        {% for donor in compatible_donors %}
+        <tr>
+            <td>{{ donor.user.username }}</td>
+            <td>{{ donor.blood_group }}</td>
+            <td>{{ donor.phone }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>❌ No other compatible, available donors found.</p>
+    {% endif %}
+
+    <div class="logout">
+        <a href="{% url 'patient-dashboard' %}">Go Back to Dashboard</a>
+    </div>
+</div>
+</body>
+</html>

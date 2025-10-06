@@ -1,5 +1,4 @@
 from django.urls import path
-
 from . import views
 
 urlpatterns = [
@@ -12,6 +11,8 @@ urlpatterns = [
     path('donor-dashboard/', views.donor_dashboard, name='donor-dashboard'),
     path('admin-dashboard/', views.admin_dashboard, name='admin-dashboard'),
     path('patient-dashboard/', views.patient_dashboard, name='patient-dashboard'),
+    
+    path('patient/search-donors/', views.search_donors, name='search-donors'),
+    
     path('logout/', views.logout_view, name='logout'),
-
 ]

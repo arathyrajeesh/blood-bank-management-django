@@ -44,6 +44,17 @@ button {
 button:hover {
     background: #a00000;
 }
+.errorlist {
+    color: red;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.9em;
+}
+.radio-select label {
+    margin-right: 15px;
+    font-weight: normal;
+}
 </style>
 </head>
 <body>
@@ -58,7 +69,24 @@ button:hover {
 
     <form method="POST">
         {% csrf_token %}
-        {{ form.as_p }}
+        {% for field in form %}
+            <p>
+                {% if field.errors %}
+                    {% for error in field.errors %}
+                        <span class="errorlist">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+                <label for="{{ field.id_for_label }}">
+                    {{ field.label }}:
+                </label>
+                {% if field.name == 'role' %}
+                    <div class="radio-select">{{ field }}</div>
+                {% else %}
+                    {{ field }}
+                {% endif %}
+            </p>
+        {% endfor %}
+
         <button type="submit">Register</button>
     </form>
 </div>

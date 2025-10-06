@@ -30,6 +30,13 @@ h2 { color: rgb(172, 5, 5); }
     margin-top: 20px;
     line-height: 1.8;
 }
+input[type="date"] {
+    padding: 0.6rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 200px;
+    margin-right: 10px;
+}
 button {
     padding: 0.6rem 1rem;
     background: rgb(172, 5, 5);
@@ -43,6 +50,13 @@ button:hover { background: #a00000; }
     text-align: right;
     margin-top: 20px;
 }
+.success {
+    background:#e6ffe6; 
+    color:green; 
+    padding:10px; 
+    border-radius:5px; 
+    margin-bottom: 15px;
+}
 </style>
 </head>
 <body>
@@ -52,14 +66,43 @@ button:hover { background: #a00000; }
 
 <div class="container">
     <h2>Welcome, {{ donor.user.username }}!</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="success">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
     <div class="info">
         <p><strong>Blood Group:</strong> {{ donor.blood_group }}</p>
         <p><strong>Phone:</strong> {{ donor.phone }}</p>
         <p><strong>Gender:</strong> {{ donor.gender }}</p>
         <p><strong>Address:</strong> {{ donor.address }}</p>
         <p><strong>Age:</strong> {{ donor.age }}</p>
-        <p><strong>Available:</strong> {{ donor.available }}</p>
+        <p><strong>Last Donation:</strong> {{ donor.last_donation_date|default:"Never" }}</p>
+        <p><strong>Available to Donate:</strong> 
+            {% if donor.available %}
+                <strong style="color: green;">Yes! 🎉</strong>
+            {% else %}
+                <strong style="color: orange;">No (Must wait 90 days from last donation)</strong>
+            {% endif %}
+        </p>
     </div>
+
+    <hr style="margin: 30px 0;">
+
+    <h3>Update Donation Status</h3>
+    
+    <form method="POST">
+        {% csrf_token %}
+        <p style="display: flex; align-items: center; gap: 10px;">
+            <label for="{{ form.last_donation_date.id_for_label }}"><strong>Last Donation Date:</strong></label>
+            {{ form.last_donation_date }}
+            <button type="submit">Update Date</button>
+        </p>
+        <small style="display: block; color: #666; margin-top: 5px;">Update this date after a donation to recalculate your availability (must be at least 90 days apart).</small>
+    </form>
+    
     <div class="logout">
         <form method="POST" action="{% url 'logout' %}">
             {% csrf_token %}

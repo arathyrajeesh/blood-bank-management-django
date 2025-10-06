@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from datetime import date
 
 BLOOD_GROUP_CHOICES = [
     ('A+', 'A+'), ('A-', 'A-'), ('B+', 'B+'), ('B-', 'B-'),
@@ -25,6 +26,13 @@ class Donor(models.Model):
     def __str__(self):
         return f"{self.user.username} ({self.blood_group})"
 
+    def save(self, *args, **kwargs):
+        if self.last_donation_date and (date.today() - self.last_donation_date).days < 90:
+            self.available = False
+        else:
+            self.available = True
+        super().save(*args, **kwargs)
+
 
 class Patient(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -36,3 +44,11 @@ class Patient(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.blood_group}"
+
+
+class BloodStock(models.Model):
+    blood_group = models.CharField(max_length=3, choices=BLOOD_GROUP_CHOICES, unique=True)
+    units = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f"Stock: {self.blood_group} - {self.units} units"
