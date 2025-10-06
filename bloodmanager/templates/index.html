@@ -5,6 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Blood Bank | Save a Life, Donate Blood</title>
 <style>
+    :root {
+        --primary-red: #B71C1C; 
+        --light-background: #f4f6f8;
+        --accent-red: #C70039;
+        --text-dark: #333;
+        --border-light: #e0e0e0;
+        --low-stock-warning: #FFCDD2;
+        --low-stock-text: #D32F2F;
+    }
 
     * {
         box-sizing: border-box;
@@ -13,33 +22,33 @@
     }
 
     body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        color: #333;
+        font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: var(--text-dark);
         line-height: 1.6;
-        background: #fff5f5;
+        background: var(--light-background);
+        scroll-behavior: smooth;
     }
 
     header {
-        background-color: rgb(172, 5, 5);
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        background-color: var(--primary-red);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         position: sticky;
         top: 0;
         z-index: 1000;
+        padding: 0 20px;
     }
 
     nav {
+        max-width: 1200px;
+        margin: 0 auto;
         display: flex;
-        justify-content: center;
+        justify-content: flex-end; 
+        align-items: center;
     }
 
     nav ul {
         list-style-type: none;
         display: flex;
-        flex-wrap: wrap;
-    }
-
-    nav ul li {
-        position: relative; 
     }
 
     nav ul li a {
@@ -48,12 +57,14 @@
         text-align: center;
         padding: 1rem 1.2rem;
         text-decoration: none;
-        transition: background 0.3s;
+        font-weight: 500;
+        transition: background 0.3s, color 0.3s;
     }
 
     nav ul li a:hover,
-    nav ul li a:focus {
-        background-color: #111;
+    .dropdown:hover > a {
+        background-color: var(--accent-red);
+        color: white;
     }
 
     .dropdown-content {
@@ -61,24 +72,24 @@
         position: absolute;
         right: 0;
         top: 100%;
-        background-color: #f9f9f9;
-        min-width: 160px;
-        box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
-        border-radius: 4px;
+        background-color: white;
+        min-width: 180px;
+        box-shadow: 0px 8px 16px rgba(0,0,0,0.15);
+        border-radius: 0 0 4px 4px;
+        overflow: hidden;
         z-index: 10;
     }
 
     .dropdown-content a {
-        color: #333;
+        color: var(--text-dark);
         padding: 12px 16px;
-        text-decoration: none;
-        display: block;
         text-align: left;
+        border-bottom: 1px solid #eee;
     }
 
     .dropdown-content a:hover {
         background-color: #f1f1f1;
-        color: rgb(172, 5, 5);
+        color: var(--primary-red);
     }
 
     .dropdown:hover .dropdown-content,
@@ -89,87 +100,138 @@
     main {
         max-width: 1200px;
         margin: 0 auto;
-        padding: 60px 20px 40px 20px;
+        padding: 20px;
     }
 
     .content-section {
         margin-bottom: 60px;
+        background: white;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
     }
 
     .content-section h1 {
-        color: rgb(172, 5, 5);
-        font-size: 2.5rem;
+        color: var(--primary-red);
+        font-size: 2.2rem;
         margin-bottom: 1rem;
         text-align: center;
+        border-bottom: 2px solid var(--border-light);
+        padding-bottom: 10px;
     }
 
     .content-section p {
-        font-size: 1.1rem;
-        margin-top: 1rem;
+        font-size: 1.05rem;
+        margin-top: 15px;
         text-align: justify;
     }
 
+    #home {
+        background: linear-gradient(rgba(183, 28, 28, 0.85), rgba(183, 28, 28, 0.85)), url('https://picsum.photos/1200/500?random=1') no-repeat center center/cover;
+        color: white;
+        padding: 80px 40px;
+        text-align: center;
+        margin-top: 0;
+        margin-bottom: 40px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+
     #home h1 {
-        font-size: 4rem;
+        font-size: 3.5rem;
+        margin-bottom: 20px;
+        border-bottom: none;
+        color: white;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+    }
+    #home p {
+        font-size: 1.3rem;
+        max-width: 800px;
+        margin: 0 auto 30px auto;
+    }
+    .cta-button {
+        display: inline-block;
+        background-color: white;
+        color: var(--primary-red);
+        padding: 15px 30px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 1.1rem;
+        transition: background-color 0.3s, transform 0.2s;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    .cta-button:hover {
+        background-color: #f0f0f0;
+        transform: translateY(-2px);
     }
 
     #stock table {
-        width: 50%;
-        margin: 20px auto;
-        border-collapse: collapse;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        width: 60%;
+        margin: 30px auto;
+        border-collapse: separate;
+        border-spacing: 0;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
     #stock th, #stock td {
-        padding: 12px 15px;
+        padding: 15px;
         text-align: center;
-        border: 1px solid #ddd;
+        border: none;
     }
     #stock th {
-        background: rgb(172, 5, 5);
+        background: var(--primary-red);
         color: white;
+        font-weight: 600;
+        text-transform: uppercase;
     }
     #stock tr:nth-child(even) {
         background-color: #f9f9f9;
     }
-    #stock .low-stock {
-        background-color: #ffcccc !important; 
-        color: #a00000;
-        font-weight: bold;
+    #stock tr:hover {
+        background-color: #fff7f7;
     }
-
+    #stock .low-stock {
+        background-color: var(--low-stock-warning) !important; 
+        color: var(--low-stock-text);
+        font-weight: bold;
+        animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.8; }
+        100% { opacity: 1; }
+    }
 
     footer {
-        background-color: rgb(172, 5, 5);
+        background-color: var(--primary-red);
         color: white;
         text-align: center;
-        padding: 1rem;
-        border-top: 1px solid #ddd;
+        padding: 1.5rem;
+        margin-top: 40px;
     }
 
+    @media (max-width: 900px) {
+        #stock table {
+            width: 80%;
+        }
+    }
     @media (max-width: 768px) {
+        nav {
+            justify-content: space-between;
+        }
         nav ul {
-            flex-direction: column;
-            align-items: center;
+            display: none; 
         }
-
-        nav ul li {
-            width: 100%;
-            text-align: center;
+        
+        #home {
+            padding: 50px 20px;
         }
-
         #home h1 {
             font-size: 2.5rem;
         }
-
         .content-section {
-            padding: 20px 10px;
-        }
-
-        .dropdown-content {
-            position: static;
-            box-shadow: none;
-            min-width: 100%;
-            border-radius: 0;
+            padding: 30px 20px;
         }
         #stock table {
             width: 100%;
@@ -188,12 +250,12 @@
             <li><a href="#about">About</a></li>
             <li><a href="#contact">Contact</a></li>
             <li class="dropdown">
-                <a href="javascript:void(0)" class="dropbtn">Login/Account</a>
+                <a href="javascript:void(0)" class="dropbtn">Login/Account ▼</a>
                 <div class="dropdown-content">
                     <a href="{% url 'donor-login' %}">Donor Login</a>
-                    <a href="{% url 'admin-login' %}">Admin Login</a>
                     <a href="{% url 'patient-login' %}">Patient Login</a>
-                    <a href="{% url 'register' %}">Register</a>
+                    <a href="{% url 'admin-login' %}">Admin Login</a>
+                    <a href="{% url 'register' %}">Register Now</a>
                 </div>
             </li>
         </ul>
@@ -201,39 +263,49 @@
 </header>
 
 <main>
-    <section id="home" class="content-section">
-        <h1>Blood Bank</h1>
-        <p><strong>Every donation saves a life.</strong> Welcome to our Blood Bank Management System. Here you can find information on how to donate, check our current blood stock levels, and learn about the profound impact your generosity has on our community. Our mission is to ensure a safe and sufficient blood supply is available for every patient in need.</p>
-        <p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.</p>
+    <section id="home">
+        <h1>You are the Lifeline. Donate Blood.</h1>
+        <p>Every donation saves a life. Welcome to our Blood Bank Management System. Our mission is to ensure a safe and sufficient blood supply is available for every patient in need.</p>
+        <a href="{% url 'register' %}" class="cta-button">Register to Donate Today</a>
     </section>
 
     <section id="stock" class="content-section">
         <h1>Current Blood Stock 🩸</h1>
+        <p style="text-align: center; max-width: 600px; margin: 10px auto 20px;">Check our real-time inventory. Groups highlighted in pink are critically low and require immediate attention from our community!</p>
         <table>
-            <tr>
-                <th>Blood Group</th>
-                <th>Units Available</th>
-            </tr>
-            {% for item in stock %}
-            <tr class="{% if item.units < 5 %}low-stock{% endif %}">
-                <td>{{ item.blood_group }}</td>
-                <td><strong>{{ item.units }}</strong></td>
-            </tr>
-            {% empty %}
-            <tr><td colspan="2">No stock information available. (Admin needs to populate the data)</td></tr>
-            {% endfor %}
+            <thead>
+                <tr>
+                    <th>Blood Group</th>
+                    <th>Units Available</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in stock %}
+                <tr class="{% if item.units < 5 %}low-stock{% endif %}">
+                    <td>{{ item.blood_group }}</td>
+                    <td><strong>{{ item.units }}</strong></td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="2" style="color: #777;">No stock information available. (Admin needs to populate the data)</td></tr>
+                {% endfor %}
+            </tbody>
         </table>
     </section>
 
     <section id="about" class="content-section">
-        <h1>About Us</h1>
-        <p>We are a dedicated non-profit organization committed to the safe collection, testing, processing, storage, and distribution of blood products. Our facilities adhere to the highest standards of safety and care, ensuring that both our donors and the recipients are protected. We work closely with local hospitals and medical centers to meet the critical need for blood.</p>
-        <p>The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum" by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.</p>
+        <h1>The Heart of Our Mission</h1>
+        <p>We are a dedicated non-profit organization committed to the safe collection, testing, processing, storage, and distribution of blood products. Our facilities adhere to the highest standards of safety and care, ensuring that both our **donors and recipients are protected**. We work closely with local hospitals and medical centers to meet the critical, life-saving need for blood across the region.</p>
+        <p>Your contribution, whether through donation or volunteering, fuels our ability to respond instantly to emergencies and maintain adequate reserves for planned surgeries and treatments. Join us in making a profound difference.</p>
     </section>
 
     <section id="contact" class="content-section">
-        <h1>Contact Us</h1>
-        <p>Reach out to us to schedule an appointment, ask donor eligibility questions, or inquire about volunteer opportunities. We're here to help!</p>
+        <h1>Connect With Us</h1>
+        <p style="text-align: center; max-width: 600px; margin: 10px auto 20px;">Reach out to us to schedule an appointment, ask donor eligibility questions, or inquire about volunteer opportunities. We're here to help you become a lifesaver.</p>
+        <div style="text-align: center;">
+            <p><strong>Email:</strong> info@bloodbank.org</p>
+            <p><strong>Phone:</strong> (555) 123-4567</p>
+            <p><strong>Address:</strong> 100 Life-Saver Lane, Community City</p>
+        </div>
     </section>
 </main>
 
