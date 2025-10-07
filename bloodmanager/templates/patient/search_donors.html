@@ -72,7 +72,7 @@
 
 <div class="container">
     <div class="message-box">
-        Your required Blood Group is **{{ required_blood_group }}**. You can receive blood from the following groups: <strong>{{ compatible_groups|join:", " }}</strong>.
+        Your required Blood Group is {{ required_blood_group }}. You can receive blood from the following groups: <strong>{{ compatible_groups|join:", " }}</strong>.
     </div>
 
     <h2 style="margin-bottom: 5px;" class="exact-match-header">Exact Match Donors ({{ required_blood_group }})</h2>
@@ -93,7 +93,7 @@
         {% endfor %}
     </table>
     {% else %}
-    <p>❌ No available donors found with an **exact {{ required_blood_group }}** match currently.</p>
+    <p> No available donors found with an exact {{ required_blood_group }} match currently.</p>
     {% endif %}
 
     <h2 style="margin-top: 30px; margin-bottom: 5px;" class="compatible-header">Compatible Donors (Other Groups)</h2>
@@ -114,7 +114,7 @@
         {% endfor %}
     </table>
     {% else %}
-    <p>❌ No other compatible, available donors found.</p>
+    <p> No other compatible, available donors found.</p>
     {% endif %}
 
     <div class="logout">
