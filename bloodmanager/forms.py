@@ -49,3 +49,6 @@ class LastDonationForm(forms.ModelForm):
         widgets = {
             'last_donation_date': forms.DateInput(attrs={'type': 'date'})
         }
+        
+        
+        
