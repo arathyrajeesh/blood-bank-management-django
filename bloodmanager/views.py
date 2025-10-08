@@ -6,8 +6,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import user_passes_test
 from datetime import date, timedelta 
-from .models import Donor, Patient, BloodStock
-from .forms import RegistrationForm, BloodStockForm, LastDonationForm
+from .models import Donor, Patient, BloodStock, Hospital
+from .forms import RegistrationForm, BloodStockForm, LastDonationForm,HospitalRegistrationForm
 
 
 
@@ -39,6 +39,9 @@ def register(request):
                 required_units = form.cleaned_data.get('required_units') or 1
                 Patient.objects.create(user=user, phone=phone, gender=gender,
                                         blood_group=blood_group, address=address, required_units=required_units)
+            elif role == 'hospital':
+                name = form.cleaned_data['name']
+                Hospital.objects.create(user=user, name=name, phone=phone, address=address)
 
             messages.success(request, 'Registration successful! You can now log in.')
             return redirect('main')
@@ -90,6 +93,39 @@ def admin_login(request):
             messages.error(request, "Invalid admin credentials.")
     return render(request, 'admin_login.html')
 
+def hospital_login(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user:
+            if Hospital.objects.filter(user=user).exists():
+                login(request, user)
+                return redirect('hospital-dashboard')
+            messages.error(request, 'Not registered as a hospital.')
+        else:
+            messages.error(request, 'Invalid username or password.')
+    return render(request, 'hospital/hospital_login.html')
+def hospital_register(request):
+    if request.method == 'POST':
+        form = HospitalRegistrationForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            name = form.cleaned_data['name']
+            phone = form.cleaned_data['phone']
+            address = form.cleaned_data['address']
+
+            user = User.objects.create_user(username=username, email=email, password=password)
+            Hospital.objects.create(user=user, name=name, phone=phone, address=address)
+
+            messages.success(request, 'Hospital registration successful! You can now log in.')
+            return redirect('hospital-login')
+    else:
+        form = HospitalRegistrationForm()
+    
+    return render(request, 'hospital/hospital_register.html', {'form': form})
 
 def logout_view(request):
     logout(request)
@@ -97,6 +133,15 @@ def logout_view(request):
     return redirect('main')
 
 
+@login_required
+def hospital_dashboard(request):
+    hospital = Hospital.objects.get(user=request.user)
+    stock = BloodStock.objects.all().order_by('blood_group')
+
+    return render(request, 'hospital/hospital_dashboard.html', {
+        'hospital': hospital,
+        'stock': stock,
+    })
 
 @login_required
 def donor_dashboard(request):

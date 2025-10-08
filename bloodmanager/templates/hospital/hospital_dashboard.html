@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Hospital Dashboard | Blood Bank</title>
+<style>
+body {
+    background: #f8f8f8; font-family: 'Segoe UI', Tahoma;
+    margin: 0; padding: 0;
+}
+header {
+    background: #B71C1C; color: white; padding: 1rem;
+    text-align: center; font-size: 1.5rem;
+}
+.container {
+    max-width: 800px; margin: 30px auto; background: white;
+    padding: 20px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+h2 { color: #B71C1C; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+table {
+    width: 100%; border-collapse: collapse; margin-top: 20px;
+}
+th, td {
+    padding: 10px; text-align: center; border-bottom: 1px solid #ddd;
+}
+th { background: #B71C1C; color: white; }
+</style>
+</head>
+<body>
+<header>Hospital Dashboard</header>
+<div class="container">
+    <h2>Welcome, {{ hospital.name }}</h2>
+    <p><strong>Address:</strong> {{ hospital.address }}</p>
+    <p><strong>Phone:</strong> {{ hospital.phone }}</p>
+
+    <h3>Current Blood Stock</h3>
+    <table>
+        <thead>
+            <tr><th>Blood Group</th><th>Available Units</th></tr>
+        </thead>
+        <tbody>
+            {% for item in stock %}
+            <tr>
+                <td>{{ item.blood_group }}</td>
+                <td>{{ item.units }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="2">No stock available.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

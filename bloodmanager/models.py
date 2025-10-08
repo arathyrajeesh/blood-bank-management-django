@@ -52,3 +52,14 @@ class BloodStock(models.Model):
 
     def __str__(self):
         return f"Stock: {self.blood_group} - {self.units} units"
+    
+    
+    
+class Hospital(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    phone = models.CharField(max_length=15)
+    address = models.TextField()
+
+    def __str__(self):
+        return f"{self.name} ({self.user.username})"

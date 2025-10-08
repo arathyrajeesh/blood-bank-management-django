@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Hospital Login | Blood Bank</title>
+<style>
+body {
+    background: #fff5f5;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex; justify-content: center; align-items: center;
+    height: 100vh;
+}
+.login-container {
+    background: white; padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    width: 360px; text-align: center;
+}
+h2 { color: #B71C1C; margin-bottom: 20px; }
+input[type="text"], input[type="password"] {
+    width: 100%; padding: 10px; margin-bottom: 15px;
+    border: 1px solid #ccc; border-radius: 5px;
+}
+button {
+    width: 100%; background: #B71C1C; color: white;
+    padding: 10px; border: none; border-radius: 5px;
+    cursor: pointer; font-weight: 600;
+}
+button:hover { background: #C70039; }
+.error { color: red; font-size: 0.9em; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+<div class="login-container">
+    <h2>Hospital Login</h2>
+    {% if messages %}
+        {% for message in messages %}
+            <p class="error">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+    <form method="POST">
+        {% csrf_token %}
+        <input type="text" name="username" placeholder="Username" required><br>
+        <input type="password" name="password" placeholder="Password" required><br>
+        <button type="submit">Login</button>
+    </form>
+    <p style="margin-top:10px;">
+        <a href="{% url 'hospital-register' %}" style="color:#333; text-decoration:none;"> Don't have an Account </a>
+    </p>
+</div>
+</body>
+</html>
