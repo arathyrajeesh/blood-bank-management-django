@@ -1,6 +1,6 @@
 from django import forms 
 from django.contrib.auth.models import User
-from .models import Donor, Patient, BloodStock, BLOOD_GROUP_CHOICES, GENDER_CHOICES
+from .models import Donor, Patient, BloodStock, BLOOD_GROUP_CHOICES, GENDER_CHOICES,Hospital
 
 ROLE_CHOICES = [
     ('donor', 'Donor'),
@@ -71,4 +71,12 @@ class LastDonationForm(forms.ModelForm):
         }
         
         
-        
+class HospitalProfileForm(forms.ModelForm):
+    class Meta:
+        model = Hospital
+        fields = ['name', 'phone', 'address']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control'}),
+            'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }        

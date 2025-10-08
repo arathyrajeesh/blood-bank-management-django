@@ -46,15 +46,6 @@ class Patient(models.Model):
         return f"{self.user.username} - {self.blood_group}"
 
 
-class BloodStock(models.Model):
-    blood_group = models.CharField(max_length=3, choices=BLOOD_GROUP_CHOICES, unique=True)
-    units = models.PositiveIntegerField(default=0)
-
-    def __str__(self):
-        return f"Stock: {self.blood_group} - {self.units} units"
-    
-    
-    
 class Hospital(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
@@ -63,3 +54,12 @@ class Hospital(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.user.username})"
+
+
+class BloodStock(models.Model):
+    hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE, null=True, blank=True)
+    blood_group = models.CharField(max_length=3, choices=BLOOD_GROUP_CHOICES)
+    units = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.hospital.name} - {self.blood_group}: {self.units}"

@@ -252,14 +252,14 @@
             </tr>
         </thead>
         <tbody>
-        {% for item in stock %}
-        <tr class="{% if item.units < 5 %}low-stock{% endif %}">
-            <td>{{ item.blood_group }}</td>
-            <td><strong>{{ item.units }}</strong></td>
-        </tr>
-        {% empty %}
-        <tr><td colspan="2" style="text-align: center; color: #777;">No stock records found.</td></tr>
-        {% endfor %}
+            {% for item in stock %}
+            <tr class="{% if item.total_units < 5 %}low-stock{% endif %}">
+                <td>{{ item.blood_group }}</td>
+                <td><strong>{{ item.total_units }}</strong></td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="2" style="text-align: center; color: #777;">No stock records found.</td></tr>
+            {% endfor %}            
         </tbody>
     </table>
     
