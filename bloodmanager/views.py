@@ -130,42 +130,29 @@ def logout_view(request):
 
 
 # ---------------- Hospital Dashboard ----------------
-@login_required
 def hospital_dashboard(request):
-    hospital = Hospital.objects.get(user=request.user)
-    stock = BloodStock.objects.filter(hospital=hospital).order_by('blood_group')
+    stock = BloodStock.objects.all()
 
     if request.method == 'POST':
-        if 'update_profile' in request.POST:
-            hospital.name = request.POST.get('name', hospital.name)
-            hospital.phone = request.POST.get('phone', hospital.phone)
-            hospital.address = request.POST.get('address', hospital.address)
-            hospital.save()
-            messages.success(request, "Profile updated successfully!")
-            return redirect('hospital-dashboard')
+        blood_group = request.POST['blood_group']
+        units = int(request.POST['units'])
+        hospital = request.user.hospital  # assuming logged in user is Hospital
 
-        elif 'update_stock' in request.POST:
-            blood_group = request.POST.get('blood_group')
-            units = int(request.POST.get('units', 0))
+        obj, created = BloodStock.objects.get_or_create(
+            hospital=hospital,
+            blood_group=blood_group,
+            defaults={'units': units}
+        )
+        if not created:
+            obj.units += units
+            obj.save()
+        return redirect('hospital-dashboard')
 
-            stock_item, created = BloodStock.objects.get_or_create(
-                hospital=hospital,
-                blood_group=blood_group,
-                defaults={'units': units}
-            )
-            if not created:
-                stock_item.units = units
-                stock_item.save()
-
-            messages.success(request, f"{blood_group} stock updated successfully!")
-            return redirect('hospital-dashboard')
-
-    return render(request, 'hospital/hospital_dashboard.html', {
-        'hospital': hospital,
+    context = {
         'stock': stock,
-        'blood_groups': [item.blood_group for item in stock]  # <-- only added blood groups
-    })
-
+        'BLOOD_GROUP_CHOICES': BLOOD_GROUP_CHOICES,  # pass it to template
+    }
+    return render(request, 'hospital/hospital_dashboard.html', context)
 # ---------------- Hospital Profile Edit ----------------
 @login_required
 def hospital_edit_profile(request):
@@ -180,8 +167,13 @@ def hospital_edit_profile(request):
         form = HospitalProfileForm(instance=hospital)
 
     return render(request, 'hospital/edit_profile.html', {'form': form})
-
-
+@login_required
+def delete_stock(request, stock_id):
+    hospital = request.user.hospital
+    stock_item = get_object_or_404(BloodStock, id=stock_id, hospital=hospital)
+    if request.method == 'POST':
+        stock_item.delete()
+    return redirect('hospital-dashboard')
 # ---------------- Donor Dashboard ----------------
 @login_required
 def donor_dashboard(request):

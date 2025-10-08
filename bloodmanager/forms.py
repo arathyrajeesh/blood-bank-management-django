@@ -74,9 +74,9 @@ class LastDonationForm(forms.ModelForm):
 class HospitalProfileForm(forms.ModelForm):
     class Meta:
         model = Hospital
-        fields = ['name', 'phone', 'address']
+        fields = ['name', 'email', 'phone']
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'phone': forms.TextInput(attrs={'class': 'form-control'}),
-            'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-        }        
+            'name': forms.TextInput(attrs={'class': 'input-field'}),
+            'email': forms.EmailInput(attrs={'class': 'input-field'}),
+            'phone': forms.TextInput(attrs={'class': 'input-field'}),
+        }     
