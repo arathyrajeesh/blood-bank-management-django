@@ -125,43 +125,35 @@ def logout_view(request):
     return redirect('main')
 
 
+@login_required
 def hospital_dashboard(request):
-    stock = BloodStock.objects.all()
+    hospital = request.user.hospital 
+    stock = BloodStock.objects.filter(hospital=hospital)  
+    if request.method == 'POST' and 'add_stock' in request.POST:
+        blood_group = request.POST.get('blood_group')
+        units = int(request.POST.get('units', 0))
 
-    if request.method == 'POST':
-        blood_group = request.POST['blood_group']
-        units = int(request.POST['units'])
-        hospital = request.user.hospital  
-
-        obj, created = BloodStock.objects.get_or_create(
-            hospital=hospital,
-            blood_group=blood_group,
-            defaults={'units': units}
-        )
-        if not created:
-            obj.units += units
-            obj.save()
-        return redirect('hospital-dashboard')
+        if blood_group and units > 0:
+            obj, created = BloodStock.objects.get_or_create(
+                hospital=hospital,
+                blood_group=blood_group,
+                defaults={'units': units}
+            )
+            if not created:
+                obj.units += units
+                obj.save()
+            messages.success(request, f"{units} units of {blood_group} added/updated successfully!")
+            return redirect('hospital-dashboard')
+        else:
+            messages.error(request, "Please select a blood group and enter valid units.")
 
     context = {
         'stock': stock,
-        'BLOOD_GROUP_CHOICES': BLOOD_GROUP_CHOICES,  
+        'BLOOD_GROUP_CHOICES': BLOOD_GROUP_CHOICES,
     }
+
     return render(request, 'hospital/hospital_dashboard.html', context)
 
-@login_required
-def hospital_edit_profile(request):
-    hospital = get_object_or_404(Hospital, user=request.user)
-    if request.method == 'POST':
-        form = HospitalProfileForm(request.POST, instance=hospital)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Profile updated successfully!")
-            return redirect('hospital-dashboard')
-    else:
-        form = HospitalProfileForm(instance=hospital)
-
-    return render(request, 'hospital/edit_profile.html', {'form': form})
 
 @login_required
 def delete_stock(request, stock_id):
@@ -169,8 +161,24 @@ def delete_stock(request, stock_id):
     stock_item = get_object_or_404(BloodStock, id=stock_id, hospital=hospital)
     if request.method == 'POST':
         stock_item.delete()
+        messages.success(request, f"{stock_item.blood_group} stock deleted successfully.")
     return redirect('hospital-dashboard')
+@login_required
+def hospital_edit_profile(request):
+    hospital = get_object_or_404(Hospital, user=request.user)
 
+    if request.method == 'POST':
+        form = HospitalProfileForm(request.POST, instance=hospital)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile updated successfully!")
+            return redirect('hospital-dashboard')
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        form = HospitalProfileForm(instance=hospital)
+
+    return render(request, 'hospital/edit_profile.html', {'form': form})
 
 @login_required
 def donor_dashboard(request):

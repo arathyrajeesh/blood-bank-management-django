@@ -2,63 +2,34 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Edit Profile | Hospital</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edit Hospital Profile</title>
 <style>
-body {
-    font-family: 'Segoe UI', Tahoma, sans-serif;
-    background: #f4f4f4;
-    margin: 0;
-    padding: 0;
-}
-.container {
-    max-width: 600px;
-    margin: 50px auto;
-    background: white;
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-h2 {
-    color: #B71C1C;
-    margin-bottom: 20px;
-    text-align: center;
-}
-form label {
-    display: block;
-    margin-top: 10px;
-    font-weight: bold;
-}
-form input, form textarea {
-    width: 100%;
-    padding: 8px 10px;
-    margin-top: 5px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-}
-form textarea { resize: vertical; }
-button {
-    background: #B71C1C;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    margin-top: 15px;
-    border-radius: 6px;
-    cursor: pointer;
-}
-button:hover { background: #8e1414; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; margin: 0; padding: 0; }
+    .container { max-width: 600px; margin: 50px auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+    h2 { color: #c70039; text-align: center; margin-bottom: 25px; }
+    form label { display: block; margin-bottom: 5px; font-weight: 600; }
+    form input { width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 6px; border: 1px solid #ccc; }
+    button { width: 100%; padding: 12px; background: #c70039; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+    button:hover { background: #a81616; }
+    .success { background: #e8f5e9; color: #388E3C; padding: 10px; border-left: 5px solid #388E3C; margin-bottom: 20px; }
 </style>
 </head>
 <body>
 <div class="container">
     <h2>Edit Hospital Profile</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="success">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
     <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Save Changes</button>
+        <button type="submit">Update Profile</button>
     </form>
-    <p style="text-align:center; margin-top:15px;">
-        <a href="{% url 'hospital-dashboard' %}">Back to Dashboard</a>
-    </p>
 </div>
 </body>
 </html>

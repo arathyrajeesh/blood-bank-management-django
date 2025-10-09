@@ -4,129 +4,256 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Hospital Dashboard | Blood Bank</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
+    /* Global Reset and Typography */
     body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: #f0f2f5;
+        font-family: 'Poppins', sans-serif; /* Modern, clean font */
+        background: #f4f7f9; /* Light, cool background */
         margin: 0;
         padding: 0;
+        line-height: 1.6;
+        color: #333; /* Darker text for better readability */
     }
 
+    /* Main Container */
     .container {
-        max-width: 900px;
-        margin: 50px auto;
-        background: #fff;
-        padding: 30px;
-        border-radius: 12px;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        max-width: 950px;
+        margin: 60px auto;
+        background: #ffffff;
+        padding: 40px;
+        border-radius: 15px; /* Softer rounded corners */
+        box-shadow: 0 15px 35px rgba(0,0,0,0.08); /* More pronounced, softer shadow */
     }
 
+    /* Headings */
     h2 {
-        color: #c70039;
-        margin-bottom: 25px;
+        color: #c70039; /* Primary Red */
+        margin-bottom: 35px;
         text-align: center;
-        font-size: 2rem;
+        font-size: 2.5rem;
+        font-weight: 700;
+        letter-spacing: -0.5px;
     }
 
     h3 {
-        color: #a81616;
-        margin-bottom: 15px;
-        font-size: 1.3rem;
+        color: #a81616; /* Secondary Red/Dark Red */
+        margin-top: 30px;
+        margin-bottom: 20px;
+        font-size: 1.5rem;
+        font-weight: 600;
+        padding-bottom: 5px;
+        border-bottom: 2px solid #f0f2f5; /* Subtle separator */
     }
 
+    /* Forms & Inputs */
     form {
         display: flex;
         gap: 20px;
         flex-wrap: wrap;
         margin-bottom: 30px;
+        align-items: flex-end; /* Align elements nicely */
+    }
+
+    .form-group {
+        flex: 1;
+        min-width: 150px; /* Ensures inputs don't become too small */
     }
 
     form label {
         display: block;
-        margin-bottom: 5px;
+        margin-bottom: 8px;
         font-weight: 600;
+        color: #555;
+        font-size: 0.95rem;
     }
 
     form select,
     form input[type=number] {
-        padding: 10px;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-        flex: 1;
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        transition: border-color 0.3s, box-shadow 0.3s;
+        box-sizing: border-box;
     }
 
-    form button {
+    form select:focus,
+    form input[type=number]:focus {
+        border-color: #c70039;
+        box-shadow: 0 0 0 3px rgba(199, 0, 57, 0.1);
+        outline: none;
+    }
+
+    /* Primary Button - Add Stock */
+    form button[name="add_stock"] {
         background: #c70039;
         color: #fff;
         border: none;
-        padding: 12px 20px;
+        padding: 12px 25px;
         border-radius: 8px;
         cursor: pointer;
         font-weight: 600;
-        transition: 0.3s;
-        flex-basis: 100%;
+        transition: background-color 0.3s, transform 0.2s;
+        flex-basis: 100%; /* Default to full width on smaller screens */
+        min-height: 44px; /* Ensure consistent height with inputs */
     }
 
-    form button:hover {
+    form button[name="add_stock"]:hover {
         background: #a81616;
+        transform: translateY(-2px); /* Subtle hover effect */
+        box-shadow: 0 5px 15px rgba(199, 0, 57, 0.2);
     }
-
+    
+    /* Current Stock Table */
     table {
         width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-        border-radius: 8px;
+        border-collapse: separate; /* Use separate for border-radius on table */
+        border-spacing: 0;
+        margin-top: 25px;
+        border-radius: 10px;
         overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
     }
 
     th, td {
-        padding: 12px 15px;
+        padding: 15px;
         text-align: center;
-        border-bottom: 1px solid #ddd;
+        border-bottom: 1px solid #eee; /* Lighter borders */
     }
 
     th {
-        background: #f8d7da;
+        background: #f8e4e6; /* Lightest Red/Pink header */
         color: #a81616;
-        font-weight: 600;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        letter-spacing: 0.5px;
+    }
+    
+    tr:last-child td {
+        border-bottom: none; /* Remove border from last row */
     }
 
-    tr:hover {
-        background: #ffe5e5;
+    tbody tr:hover {
+        background: #fffafa; /* Very light hover background */
+    }
+
+    /* Delete Button in Table */
+    table button {
+        background: #dc3545; /* Bootstrap-like danger red */
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background-color 0.3s;
+    }
+
+    table button:hover {
+        background: #c82333;
+    }
+    
+    /* Edit Profile Button */
+    .profile-link button {
+        background: #1e88e5; /* A vibrant blue for a secondary action */
+        color: #fff;
+        border-radius: 8px;
+        padding: 12px 25px;
+        cursor: pointer;
+        border: none;
+        margin-top: 15px;
+        font-weight: 600;
+        transition: background-color 0.3s;
+    }
+    
+    .profile-link button:hover {
+        background: #1565c0;
+    }
+
+    /* Logout Section */
+    .logout {
+        margin-top: 40px;
+        text-align: right;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+    }
+
+    .logout button {
+        background: #5a6268; /* Subtle gray for less critical action */
+        padding: 10px 20px;
+        border-radius: 8px;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background-color 0.3s;
+    }
+
+    .logout button:hover {
+        background: #343a40;
+    }
+
+    /* Responsive adjustments */
+    @media (min-width: 601px) {
+        /* Distribute the form items more evenly on wider screens */
+        form.add-stock-form .form-group {
+            flex-basis: calc(33.33% - 13.33px); /* Three items per row */
+            min-width: 0;
+        }
+
+        form.add-stock-form button[name="add_stock"] {
+            flex-basis: 100%; /* Keep button full width */
+        }
     }
 
     @media (max-width: 600px) {
+        .container {
+            margin: 20px;
+            padding: 20px;
+        }
+        
         form {
             flex-direction: column;
+            gap: 15px;
         }
 
         form button {
             flex-basis: auto;
+        }
+
+        th, td {
+            padding: 10px;
         }
     }
 </style>
 </head>
 <body>
 <div class="container">
-    <h2>Hospital Dashboard</h2>
+    <h2><i class="fas fa-heartbeat"></i> Blood Bank Dashboard</h2>
 
-    <form method="POST">
+    <h3>Add Blood Stock</h3>
+    <form method="POST" class="add-stock-form">
         {% csrf_token %}
-        <div>
+        <div class="form-group">
             <label for="blood_group">Blood Group</label>
-            <select name="blood_group" id="blood_group" required>
-                {% for group, _ in BLOOD_GROUP_CHOICES %}
-                    <option value="{{ group }}">{{ group }}</option>
+            <select name="blood_group" id="blood_group">
+                {% for bg in BLOOD_GROUP_CHOICES %}
+                    <option value="{{ bg.0 }}">{{ bg.1 }}</option>
                 {% endfor %}
             </select>
         </div>
 
-        <div>
+        <div class="form-group">
             <label for="units">Units</label>
-            <input type="number" name="units" id="units" min="1" required>
+            <input type="number" name="units" id="units" min="1" placeholder="Enter units">
         </div>
+        
+        <div class="form-group" style="visibility: hidden;">
+            </div>
 
-        <button type="submit">Add / Update Stock</button>
+        <button type="submit" name="add_stock">Add / Update Stock</button>
     </form>
 
     <h3>Current Blood Stock</h3>
@@ -134,29 +261,37 @@
         <thead>
             <tr>
                 <th>Blood Group</th>
-                <th>Units</th>
+                <th>Units Available</th>
                 <th>Action</th>
             </tr>
         </thead>
         <tbody>
-            {% for item in stock %}
+            {% for s in stock %}
             <tr>
-                <td>{{ item.blood_group }}</td>
-                <td>{{ item.units }}</td>
+                <td><strong>{{ s.blood_group }}</strong></td>
+                <td>{{ s.units }}</td>
                 <td>
-                    <form method="POST" action="{% url 'delete_stock' item.id %}">
+                    <form method="POST" action="{% url 'delete_stock' s.id %}" style="margin: 0;">
                         {% csrf_token %}
-                        <button type="submit" style="background:#ff4d4d;">Delete</button>
+                        <button type="submit">Delete</button>
                     </form>
                 </td>
             </tr>
-            {% empty %}
-            <tr>
-                <td colspan="3">No stock available.</td>
-            </tr>
             {% endfor %}
-        </tbody>
+            </tbody>
     </table>
+
+    <h3>Account & Settings</h3>
+    <a href="{% url 'hospital_edit_profile' %}" class="profile-link">
+        <button type="button">Update Profile</button>
+    </a>
+
+    <div class="logout">
+        <form method="POST" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>
+    </div>
 </div>
 </body>
 </html>
