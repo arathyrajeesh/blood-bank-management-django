@@ -163,6 +163,8 @@ def delete_stock(request, stock_id):
         stock_item.delete()
         messages.success(request, f"{stock_item.blood_group} stock deleted successfully.")
     return redirect('hospital-dashboard')
+
+
 @login_required
 def hospital_edit_profile(request):
     hospital = get_object_or_404(Hospital, user=request.user)
@@ -188,8 +190,25 @@ def donor_dashboard(request):
     health_form = None
     health_record = DonorHealthCheck.objects.filter(donor=donor).order_by('-submitted_at').first()
 
-    if donor.available and (not health_record or not health_record.is_approved):
-        if request.method == 'POST' and 'submit_health' in request.POST:
+    if request.method == 'POST':
+        # Update last donation date
+        if 'update_donation' in request.POST:
+            form = LastDonationForm(request.POST, instance=donor)
+            if form.is_valid():
+                donor = form.save(commit=False)
+                # Automatically update availability
+                if donor.last_donation_date:
+                    donor.available = (date.today() - donor.last_donation_date).days >= 90
+                else:
+                    donor.available = True
+                donor.save()
+                messages.success(request, 'Last donation date updated successfully!')
+                return redirect('donor-dashboard')
+            else:
+                messages.error(request, f"Error: {form.errors}")
+
+        # Submit health form
+        if 'submit_health' in request.POST:
             health_form = DonorHealthCheckForm(request.POST)
             if health_form.is_valid():
                 health = health_form.save(commit=False)
@@ -197,15 +216,11 @@ def donor_dashboard(request):
                 health.save()
                 messages.success(request, "Health form submitted! Awaiting admin approval.")
                 return redirect('donor-dashboard')
-        else:
+            else:
+                messages.error(request, f"Health form error: {health_form.errors}")
+    else:
+        if donor.available and (not health_record or not health_record.is_approved):
             health_form = DonorHealthCheckForm()
-
-    elif request.method == 'POST' and 'update_donation' in request.POST:
-        form = LastDonationForm(request.POST, instance=donor)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Last donation date updated successfully!')
-            return redirect('donor-dashboard')
 
     context = {
         'donor': donor,
@@ -253,12 +268,18 @@ def search_donors(request):
         available=True
     ).exclude(blood_group=required_blood_group).select_related('user')
 
+    hospitals_with_stock = BloodStock.objects.filter(
+        blood_group__in=compatible_groups,
+        units__gt=0
+    ).select_related('hospital')
+
     return render(request, 'patient/search_donors.html', {
         'patient': patient,
         'required_blood_group': required_blood_group,
         'exact_match_donors': exact_match_donors,
         'compatible_donors': compatible_donors,
-        'compatible_groups': compatible_groups
+        'compatible_groups': compatible_groups,
+        'hospitals_with_stock': hospitals_with_stock
     })
 
 

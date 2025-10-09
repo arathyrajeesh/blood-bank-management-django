@@ -259,17 +259,12 @@
 
     <hr>
     <h3>Update Donation Status</h3>
-    <form method="POST" class="donation-form">
+    <form method="POST">
         {% csrf_token %}
-        <div class="form-group">
-            <label for="{{ form.last_donation_date.id_for_label }}">Last Donation Date:</label>
-            {{ form.last_donation_date }}
-            <button type="submit" name="update_donation">Update Date</button>
-        </div>
-        <small style="display: block; color: #777; margin-top: 15px;">
-            **Important:** Update this date immediately after your donation. Your availability status will be automatically recalculated (90-day minimum gap enforced).
-        </small>
+        {{ form.last_donation_date }}
+        <button type="submit" name="update_donation">Update Date</button>
     </form>
+    
 
     <div class="logout">
         <form method="POST" action="{% url 'logout' %}">
