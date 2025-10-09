@@ -62,14 +62,22 @@
     </div>
     
     <hr style="margin: 30px 0;">
+
+    {% if is_approved %}
+        <p style="text-align: center;">
+            <a href="{% url 'search-donors' %}" style="text-decoration: none;">
+                <button style="width: 60%; max-width: 400px;">
+                    Find Compatible Donors Now 🩸
+                </button>
+            </a>
+        </p>
+    {% else %}
+        <div style="text-align: center; background: #fff3cd; color: #856404; padding: 15px; border-radius: 8px;">
+            <strong>⏳ Waiting for Admin Approval</strong><br>
+            You’ll be able to find donors once your blood request is approved.
+        </div>
+    {% endif %}
     
-    <p style="text-align: center;">
-        <a href="{% url 'search-donors' %}" style="text-decoration: none;">
-            <button style="width: 60%; max-width: 400px;">
-                Find Compatible Donors Now 🩸
-            </button>
-        </a>
-    </p>
 
     <div class="logout">
         <form method="POST" action="{% url 'logout' %}">

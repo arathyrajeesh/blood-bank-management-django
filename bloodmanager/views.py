@@ -204,37 +204,51 @@ def donor_dashboard(request):
 
 
 # ---------------- Patient Dashboard ----------------
+# ---------------- Patient Dashboard ----------------
 @login_required
 def patient_dashboard(request):
     patient = Patient.objects.get(user=request.user)
-    return render(request, 'patient/patient_dashboard.html', {'patient': patient})
+    context = {
+        'patient': patient,
+        'is_approved': patient.approved,  # ✅ pass approval status to template
+    }
+    return render(request, 'patient/patient_dashboard.html', context)
 
 
 # ---------------- Search Donors ----------------
 @login_required
 def search_donors(request):
-    try:
-        patient = Patient.objects.get(user=request.user)
-    except Patient.DoesNotExist:
-        messages.error(request, "Patient profile not found.")
-        return redirect('patient-dashboard')
+    patient = Patient.objects.get(user=request.user)
+    required_blood_group = patient.blood_group
 
-    # ✅ Restrict access until admin approves
-    if not patient.approved:
-        messages.warning(request, "Your request is pending admin approval. Please wait before viewing donors.")
-        return redirect('patient-dashboard')
+    compatible_groups = {
+        'A+': ['A+', 'A-', 'O+', 'O-'],
+        'A-': ['A-', 'O-'],
+        'B+': ['B+', 'B-', 'O+', 'O-'],
+        'B-': ['B-', 'O-'],
+        'AB+': ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
+        'AB-': ['AB-', 'A-', 'B-', 'O-'],
+        'O+': ['O+', 'O-'],
+        'O-': ['O-'],
+    }.get(required_blood_group, [])
 
-    # ✅ Continue normal donor search logic
-    donors = []
-    if request.method == 'GET':
-        blood_group = request.GET.get('blood_group', None)
-        if blood_group:
-            donors = Donor.objects.filter(blood_group=blood_group, available=True)
-        else:
-            donors = Donor.objects.filter(available=True)
+    exact_match_donors = Donor.objects.filter(
+        blood_group=required_blood_group,
+        available=True
+    ).select_related('user')
 
-    # ✅ Always return a response
-    return render(request, 'patient/search_donors.html', {'donors': donors})
+    compatible_donors = Donor.objects.filter(
+        blood_group__in=compatible_groups,
+        available=True
+    ).exclude(blood_group=required_blood_group).select_related('user')
+
+    return render(request, 'patient/search_donors.html', {
+        'patient': patient,
+        'required_blood_group': required_blood_group,
+        'exact_match_donors': exact_match_donors,
+        'compatible_donors': compatible_donors,
+        'compatible_groups': compatible_groups
+    })
 
 
 # ---------------- Admin Dashboard ----------------
@@ -246,38 +260,36 @@ def is_admin(user):
 def admin_dashboard(request):
     donors = Donor.objects.all()
     patients = Patient.objects.all()
-
-    # Aggregate stock from all hospitals + admin stock (hospital=None)
     from django.db.models import Sum
-    stock = BloodStock.objects.values('blood_group').annotate(
-        total_units=Sum('units')
-    ).order_by('blood_group')
-    
+    stock = BloodStock.objects.values('blood_group').annotate(total_units=Sum('units')).order_by('blood_group')
+
     total_donors = donors.count()
     available_donors = donors.filter(available=True).count()
     total_patients = patients.count()
     total_stock_units = sum(item['total_units'] for item in stock)
 
+    # ✅ Handle approval submission
     if request.method == 'POST':
+        if 'approve_patient' in request.POST:
+            patient_id = request.POST.get('patient_id')
+            patient = get_object_or_404(Patient, id=patient_id)
+            patient.approved = True
+            patient.save()
+            messages.success(request, f"Patient {patient.user.username} approved successfully.")
+            return redirect('admin-dashboard')
+
+        # ✅ Handle stock updates as before
         stock_form = BloodStockForm(request.POST)
         if stock_form.is_valid():
             blood_group = stock_form.cleaned_data['blood_group']
             units = stock_form.cleaned_data['units']
-
-            # Admin stock entry (hospital=None)
             stock_item, created = BloodStock.objects.get_or_create(
-                blood_group=blood_group,
-                hospital=None,
-                defaults={'units': units}
+                blood_group=blood_group, hospital=None, defaults={'units': units}
             )
             if not created:
-                stock_item.units += units   # ✅ increment existing units
-            else:
-                stock_item.units = units    # if new entry, set directly
+                stock_item.units += units
             stock_item.save()
-
-
-            messages.success(request, f'Blood Stock for {blood_group} updated to {units} units.')
+            messages.success(request, f'Blood stock for {blood_group} updated successfully.')
             return redirect('admin-dashboard')
     else:
         stock_form = BloodStockForm()
