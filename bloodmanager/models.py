@@ -33,8 +33,6 @@ class Donor(models.Model):
             self.available = True
         super().save(*args, **kwargs)
 
-
-# models.py
 class Patient(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone = models.CharField(max_length=15)
@@ -65,3 +63,16 @@ class BloodStock(models.Model):
 
     def __str__(self):
         return f"{self.hospital.name} - {self.blood_group}: {self.units}"
+
+
+class DonorHealthCheck(models.Model):
+    donor = models.ForeignKey(Donor, on_delete=models.CASCADE)
+    age = models.PositiveIntegerField()
+    weight = models.FloatField()
+    hemoglobin_level = models.FloatField()
+    has_disease = models.BooleanField(default=False)
+    is_approved = models.BooleanField(default=False)
+    submitted_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.donor.user.username} - Health Check"

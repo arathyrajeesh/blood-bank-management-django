@@ -189,14 +189,28 @@
     </div>
 
     {% if donor.available %}
-        <div class="availability-card available-yes">
-            <p> Great News! You are **Available to Donate** today. Help save a life!</p>
-        </div>
-    {% else %}
-        <div class="availability-card available-no">
-            <p>⏳ **Not Available:** You must wait 90 days from your last donation date ({{ donor.last_donation_date }}).</p>
-        </div>
+        {% if health_record %}
+            {% if health_record.is_approved %}
+                <div class="availability-card available-yes">
+                    ✅ Your health form has been approved by admin. You’re cleared for donation!
+                </div>
+            {% else %}
+                <div class="availability-card available-no">
+                    ⏳ Health form submitted. Waiting for admin approval.
+                </div>
+            {% endif %}
+        {% else %}
+            <hr>
+            <h3>Health Declaration Form</h3>
+            <form method="POST" class="donation-form">
+                {% csrf_token %}
+                {{ health_form.as_p }}
+                <button type="submit" name="submit_health">Submit Health Info</button>
+            </form>
+        {% endif %}
     {% endif %}
+
+
 
     <hr>
 

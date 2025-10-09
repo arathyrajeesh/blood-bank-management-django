@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Hospital Dashboard | Blood Bank</title>
 <style>
-    /* Reset & Body */
     body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         background: #f0f2f5;
@@ -13,7 +12,6 @@
         padding: 0;
     }
 
-    /* Container */
     .container {
         max-width: 900px;
         margin: 50px auto;
@@ -23,7 +21,6 @@
         box-shadow: 0 8px 20px rgba(0,0,0,0.1);
     }
 
-    /* Headings */
     h2 {
         color: #c70039;
         margin-bottom: 25px;
@@ -37,7 +34,6 @@
         font-size: 1.3rem;
     }
 
-    /* Form Styles */
     form {
         display: flex;
         gap: 20px;
@@ -75,7 +71,6 @@
         background: #a81616;
     }
 
-    /* Table Styles */
     table {
         width: 100%;
         border-collapse: collapse;
@@ -100,7 +95,6 @@
         background: #ffe5e5;
     }
 
-    /* Responsive */
     @media (max-width: 600px) {
         form {
             flex-direction: column;
@@ -116,7 +110,6 @@
 <div class="container">
     <h2>Hospital Dashboard</h2>
 
-    <!-- Add / Update Stock Form -->
     <form method="POST">
         {% csrf_token %}
         <div>

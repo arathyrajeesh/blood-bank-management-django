@@ -1,6 +1,6 @@
 from django import forms 
 from django.contrib.auth.models import User
-from .models import Donor, Patient, BloodStock, BLOOD_GROUP_CHOICES, GENDER_CHOICES,Hospital
+from .models import Donor, Patient, BloodStock, BLOOD_GROUP_CHOICES, GENDER_CHOICES,Hospital,DonorHealthCheck
 
 ROLE_CHOICES = [
     ('donor', 'Donor'),
@@ -80,3 +80,14 @@ class HospitalProfileForm(forms.ModelForm):
             'email': forms.EmailInput(attrs={'class': 'input-field'}),
             'phone': forms.TextInput(attrs={'class': 'input-field'}),
         }     
+
+class DonorHealthCheckForm(forms.ModelForm):
+    class Meta:
+        model = DonorHealthCheck
+        fields = ['age', 'weight', 'hemoglobin_level', 'has_disease']
+        widgets = {
+            'age': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Your age'}),
+            'weight': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Weight in kg'}),
+            'hemoglobin_level': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Hemoglobin (g/dL)'}),
+            'has_disease': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }

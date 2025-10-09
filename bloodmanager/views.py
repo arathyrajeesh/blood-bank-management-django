@@ -4,17 +4,16 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from datetime import date, timedelta
-from .models import Donor, Patient, BloodStock, Hospital, BLOOD_GROUP_CHOICES
-from .forms import RegistrationForm, BloodStockForm, LastDonationForm, HospitalRegistrationForm, HospitalProfileForm
+from .models import Donor, Patient, BloodStock, Hospital, BLOOD_GROUP_CHOICES,DonorHealthCheck
+from .forms import RegistrationForm, BloodStockForm, LastDonationForm, HospitalRegistrationForm, HospitalProfileForm,DonorHealthCheckForm
+from django.db.models import Sum
 
 
-# ---------------- Home ----------------
 def home(request):
     stock = BloodStock.objects.all()
     return render(request, 'index.html', {'stock': stock})
 
 
-# ---------------- Registration ----------------
 def register(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
@@ -33,11 +32,11 @@ def register(request):
             if role == 'donor':
                 age = form.cleaned_data['age']
                 Donor.objects.create(user=user, phone=phone, gender=gender,
-                                     blood_group=blood_group, address=address, age=age)
+                                        blood_group=blood_group, address=address, age=age)
             elif role == 'patient':
                 required_units = form.cleaned_data.get('required_units') or 1
                 Patient.objects.create(user=user, phone=phone, gender=gender,
-                                       blood_group=blood_group, address=address, required_units=required_units)
+                                        blood_group=blood_group, address=address, required_units=required_units)
             elif role == 'hospital':
                 name = form.cleaned_data['name']
                 Hospital.objects.create(user=user, name=name, phone=phone, address=address)
@@ -50,7 +49,6 @@ def register(request):
     return render(request, 'register.html', {'form': form})
 
 
-# ---------------- Login Views ----------------
 def donor_login(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -99,7 +97,6 @@ def admin_login(request):
     return render(request, 'admin_login.html')
 
 
-# ---------------- Hospital Registration ----------------
 def hospital_register(request):
     if request.method == 'POST':
         form = HospitalRegistrationForm(request.POST)
@@ -122,21 +119,19 @@ def hospital_register(request):
     return render(request, 'hospital/hospital_register.html', {'form': form})
 
 
-# ---------------- Logout ----------------
 def logout_view(request):
     logout(request)
     messages.info(request, "You have been logged out.")
     return redirect('main')
 
 
-# ---------------- Hospital Dashboard ----------------
 def hospital_dashboard(request):
     stock = BloodStock.objects.all()
 
     if request.method == 'POST':
         blood_group = request.POST['blood_group']
         units = int(request.POST['units'])
-        hospital = request.user.hospital  # assuming logged in user is Hospital
+        hospital = request.user.hospital  
 
         obj, created = BloodStock.objects.get_or_create(
             hospital=hospital,
@@ -150,10 +145,10 @@ def hospital_dashboard(request):
 
     context = {
         'stock': stock,
-        'BLOOD_GROUP_CHOICES': BLOOD_GROUP_CHOICES,  # pass it to template
+        'BLOOD_GROUP_CHOICES': BLOOD_GROUP_CHOICES,  
     }
     return render(request, 'hospital/hospital_dashboard.html', context)
-# ---------------- Hospital Profile Edit ----------------
+
 @login_required
 def hospital_edit_profile(request):
     hospital = get_object_or_404(Hospital, user=request.user)
@@ -167,6 +162,7 @@ def hospital_edit_profile(request):
         form = HospitalProfileForm(instance=hospital)
 
     return render(request, 'hospital/edit_profile.html', {'form': form})
+
 @login_required
 def delete_stock(request, stock_id):
     hospital = request.user.hospital
@@ -174,48 +170,56 @@ def delete_stock(request, stock_id):
     if request.method == 'POST':
         stock_item.delete()
     return redirect('hospital-dashboard')
-# ---------------- Donor Dashboard ----------------
+
+
 @login_required
 def donor_dashboard(request):
     donor = Donor.objects.get(user=request.user)
-    if request.method == 'POST':
+    form = LastDonationForm(instance=donor)
+
+    # Health form logic
+    health_form = None
+    health_record = DonorHealthCheck.objects.filter(donor=donor).order_by('-submitted_at').first()
+
+    if donor.available and (not health_record or not health_record.is_approved):
+        if request.method == 'POST' and 'submit_health' in request.POST:
+            health_form = DonorHealthCheckForm(request.POST)
+            if health_form.is_valid():
+                health = health_form.save(commit=False)
+                health.donor = donor
+                health.save()
+                messages.success(request, "Health form submitted! Awaiting admin approval.")
+                return redirect('donor-dashboard')
+        else:
+            health_form = DonorHealthCheckForm()
+
+    elif request.method == 'POST' and 'update_donation' in request.POST:
         form = LastDonationForm(request.POST, instance=donor)
         if form.is_valid():
-            new_date = form.cleaned_data['last_donation_date']
-
-            if new_date and (new_date == date.today() or new_date > (date.today() - timedelta(days=7))):
-                try:
-                    stock_item, created = BloodStock.objects.get_or_create(
-                        blood_group=donor.blood_group,
-                        hospital=None
-                    )
-                    stock_item.units += 1
-                    stock_item.save()
-                except Exception as e:
-                    messages.warning(request, f'Stock update failed: {e}')
-
             form.save()
             messages.success(request, 'Last donation date updated successfully!')
             return redirect('donor-dashboard')
-    else:
-        form = LastDonationForm(instance=donor)
 
-    return render(request, 'donor/donor_dashboard.html', {'donor': donor, 'form': form})
+    context = {
+        'donor': donor,
+        'form': form,
+        'health_form': health_form,
+        'health_record': health_record,
+    }
+    return render(request, 'donor/donor_dashboard.html', context)
 
 
-# ---------------- Patient Dashboard ----------------
-# ---------------- Patient Dashboard ----------------
 @login_required
 def patient_dashboard(request):
     patient = Patient.objects.get(user=request.user)
     context = {
         'patient': patient,
-        'is_approved': patient.approved,  # ✅ pass approval status to template
+        'is_approved': patient.approved,  
     }
     return render(request, 'patient/patient_dashboard.html', context)
 
 
-# ---------------- Search Donors ----------------
+
 @login_required
 def search_donors(request):
     patient = Patient.objects.get(user=request.user)
@@ -251,7 +255,6 @@ def search_donors(request):
     })
 
 
-# ---------------- Admin Dashboard ----------------
 def is_admin(user):
     return user.is_superuser
 
@@ -260,16 +263,17 @@ def is_admin(user):
 def admin_dashboard(request):
     donors = Donor.objects.all()
     patients = Patient.objects.all()
-    from django.db.models import Sum
     stock = BloodStock.objects.values('blood_group').annotate(total_units=Sum('units')).order_by('blood_group')
+    health_forms = DonorHealthCheck.objects.all().order_by('-submitted_at')
 
     total_donors = donors.count()
     available_donors = donors.filter(available=True).count()
     total_patients = patients.count()
     total_stock_units = sum(item['total_units'] for item in stock)
 
-    # ✅ Handle approval submission
+    # Handle POST actions
     if request.method == 'POST':
+        # Approve patient
         if 'approve_patient' in request.POST:
             patient_id = request.POST.get('patient_id')
             patient = get_object_or_404(Patient, id=patient_id)
@@ -278,23 +282,33 @@ def admin_dashboard(request):
             messages.success(request, f"Patient {patient.user.username} approved successfully.")
             return redirect('admin-dashboard')
 
-        # ✅ Handle stock updates as before
-        stock_form = BloodStockForm(request.POST)
-        if stock_form.is_valid():
-            blood_group = stock_form.cleaned_data['blood_group']
-            units = stock_form.cleaned_data['units']
-            stock_item, created = BloodStock.objects.get_or_create(
-                blood_group=blood_group, hospital=None, defaults={'units': units}
-            )
-            if not created:
-                stock_item.units += units
-            stock_item.save()
-            messages.success(request, f'Blood stock for {blood_group} updated successfully.')
+        # Update blood stock
+        if 'update_stock' in request.POST:
+            stock_form = BloodStockForm(request.POST)
+            if stock_form.is_valid():
+                blood_group = stock_form.cleaned_data['blood_group']
+                units = stock_form.cleaned_data['units']
+                stock_item, created = BloodStock.objects.get_or_create(
+                    blood_group=blood_group, hospital=None, defaults={'units': units}
+                )
+                if not created:
+                    stock_item.units += units
+                    stock_item.save()
+                messages.success(request, f'Blood stock for {blood_group} updated successfully.')
+                return redirect('admin-dashboard')
+
+        # Approve donor health form
+        if 'approve_health' in request.POST:
+            health_id = request.POST.get('health_id')
+            record = get_object_or_404(DonorHealthCheck, id=health_id)
+            record.is_approved = True
+            record.save()
+            messages.success(request, f"{record.donor.user.username}'s health form approved!")
             return redirect('admin-dashboard')
     else:
         stock_form = BloodStockForm()
 
-    return render(request, 'admin/admin_dashboard.html', {
+    context = {
         'donors': donors,
         'patients': patients,
         'stock': stock,
@@ -303,4 +317,7 @@ def admin_dashboard(request):
         'total_patients': total_patients,
         'total_stock_units': total_stock_units,
         'stock_form': stock_form,
-    })
+        'health_forms': health_forms,
+    }
+
+    return render(request, 'admin/admin_dashboard.html', context)
