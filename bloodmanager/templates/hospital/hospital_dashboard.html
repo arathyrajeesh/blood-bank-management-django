@@ -6,29 +6,26 @@
 <title>Hospital Dashboard | Blood Bank</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
-    /* Global Reset and Typography */
     body {
-        font-family: 'Poppins', sans-serif; /* Modern, clean font */
-        background: #f4f7f9; /* Light, cool background */
+        font-family: 'Poppins', sans-serif; 
+        background: #f4f7f9; 
         margin: 0;
         padding: 0;
         line-height: 1.6;
-        color: #333; /* Darker text for better readability */
+        color: #333; 
     }
 
-    /* Main Container */
     .container {
         max-width: 950px;
         margin: 60px auto;
         background: #ffffff;
         padding: 40px;
-        border-radius: 15px; /* Softer rounded corners */
-        box-shadow: 0 15px 35px rgba(0,0,0,0.08); /* More pronounced, softer shadow */
+        border-radius: 15px; 
+        box-shadow: 0 15px 35px rgba(0,0,0,0.08); 
     }
 
-    /* Headings */
     h2 {
-        color: #c70039; /* Primary Red */
+        color: #c70039;
         margin-bottom: 35px;
         text-align: center;
         font-size: 2.5rem;
@@ -37,27 +34,26 @@
     }
 
     h3 {
-        color: #a81616; /* Secondary Red/Dark Red */
+        color: #a81616; 
         margin-top: 30px;
         margin-bottom: 20px;
         font-size: 1.5rem;
         font-weight: 600;
         padding-bottom: 5px;
-        border-bottom: 2px solid #f0f2f5; /* Subtle separator */
+        border-bottom: 2px solid #f0f2f5; 
     }
 
-    /* Forms & Inputs */
     form {
         display: flex;
         gap: 20px;
         flex-wrap: wrap;
         margin-bottom: 30px;
-        align-items: flex-end; /* Align elements nicely */
+        align-items: flex-end; 
     }
 
     .form-group {
         flex: 1;
-        min-width: 150px; /* Ensures inputs don't become too small */
+        min-width: 150px; 
     }
 
     form label {
@@ -85,7 +81,6 @@
         outline: none;
     }
 
-    /* Primary Button - Add Stock */
     form button[name="add_stock"] {
         background: #c70039;
         color: #fff;
@@ -95,20 +90,19 @@
         cursor: pointer;
         font-weight: 600;
         transition: background-color 0.3s, transform 0.2s;
-        flex-basis: 100%; /* Default to full width on smaller screens */
-        min-height: 44px; /* Ensure consistent height with inputs */
+        flex-basis: 100%; 
+        min-height: 44px; 
     }
 
     form button[name="add_stock"]:hover {
         background: #a81616;
-        transform: translateY(-2px); /* Subtle hover effect */
+        transform: translateY(-2px); 
         box-shadow: 0 5px 15px rgba(199, 0, 57, 0.2);
     }
     
-    /* Current Stock Table */
     table {
         width: 100%;
-        border-collapse: separate; /* Use separate for border-radius on table */
+        border-collapse: separate; 
         border-spacing: 0;
         margin-top: 25px;
         border-radius: 10px;
@@ -119,11 +113,11 @@
     th, td {
         padding: 15px;
         text-align: center;
-        border-bottom: 1px solid #eee; /* Lighter borders */
+        border-bottom: 1px solid #eee;
     }
 
     th {
-        background: #f8e4e6; /* Lightest Red/Pink header */
+        background: #f8e4e6; 
         color: #a81616;
         font-weight: 700;
         text-transform: uppercase;
@@ -132,16 +126,15 @@
     }
     
     tr:last-child td {
-        border-bottom: none; /* Remove border from last row */
+        border-bottom: none;
     }
 
     tbody tr:hover {
-        background: #fffafa; /* Very light hover background */
+        background: #fffafa; 
     }
 
-    /* Delete Button in Table */
     table button {
-        background: #dc3545; /* Bootstrap-like danger red */
+        background: #dc3545;
         color: white;
         border: none;
         padding: 8px 15px;
@@ -155,9 +148,8 @@
         background: #c82333;
     }
     
-    /* Edit Profile Button */
     .profile-link button {
-        background: #1e88e5; /* A vibrant blue for a secondary action */
+        background: #1e88e5; 
         color: #fff;
         border-radius: 8px;
         padding: 12px 25px;
@@ -172,7 +164,6 @@
         background: #1565c0;
     }
 
-    /* Logout Section */
     .logout {
         margin-top: 40px;
         text-align: right;
@@ -181,7 +172,7 @@
     }
 
     .logout button {
-        background: #5a6268; /* Subtle gray for less critical action */
+        background: #5a6268; 
         padding: 10px 20px;
         border-radius: 8px;
         color: #fff;
@@ -195,16 +186,14 @@
         background: #343a40;
     }
 
-    /* Responsive adjustments */
     @media (min-width: 601px) {
-        /* Distribute the form items more evenly on wider screens */
         form.add-stock-form .form-group {
-            flex-basis: calc(33.33% - 13.33px); /* Three items per row */
+            flex-basis: calc(33.33% - 13.33px); 
             min-width: 0;
         }
 
         form.add-stock-form button[name="add_stock"] {
-            flex-basis: 100%; /* Keep button full width */
+            flex-basis: 100%; 
         }
     }
 
