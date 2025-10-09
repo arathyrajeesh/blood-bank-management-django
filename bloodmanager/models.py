@@ -34,16 +34,18 @@ class Donor(models.Model):
         super().save(*args, **kwargs)
 
 
+# models.py
 class Patient(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone = models.CharField(max_length=15)
-    gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
+    gender = models.CharField(max_length=10)
     blood_group = models.CharField(max_length=3, choices=BLOOD_GROUP_CHOICES)
     address = models.TextField()
     required_units = models.PositiveIntegerField(default=1)
+    approved = models.BooleanField(default=False)  
 
     def __str__(self):
-        return f"{self.user.username} - {self.blood_group}"
+        return self.user.username
 
 
 class Hospital(models.Model):

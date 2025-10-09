@@ -213,37 +213,28 @@ def patient_dashboard(request):
 # ---------------- Search Donors ----------------
 @login_required
 def search_donors(request):
-    patient = Patient.objects.get(user=request.user)
-    required_blood_group = patient.blood_group
+    try:
+        patient = Patient.objects.get(user=request.user)
+    except Patient.DoesNotExist:
+        messages.error(request, "Patient profile not found.")
+        return redirect('patient-dashboard')
 
-    compatible_groups = {
-        'A+': ['A+', 'A-', 'O+', 'O-'],
-        'A-': ['A-', 'O-'],
-        'B+': ['B+', 'B-', 'O+', 'O-'],
-        'B-': ['B-', 'O-'],
-        'AB+': ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
-        'AB-': ['AB-', 'A-', 'B-', 'O-'],
-        'O+': ['O+', 'O-'],
-        'O-': ['O-'],
-    }.get(required_blood_group, [])
+    # ✅ Restrict access until admin approves
+    if not patient.approved:
+        messages.warning(request, "Your request is pending admin approval. Please wait before viewing donors.")
+        return redirect('patient-dashboard')
 
-    exact_match_donors = Donor.objects.filter(
-        blood_group=required_blood_group,
-        available=True
-    ).select_related('user')
+    # ✅ Continue normal donor search logic
+    donors = []
+    if request.method == 'GET':
+        blood_group = request.GET.get('blood_group', None)
+        if blood_group:
+            donors = Donor.objects.filter(blood_group=blood_group, available=True)
+        else:
+            donors = Donor.objects.filter(available=True)
 
-    compatible_donors = Donor.objects.filter(
-        blood_group__in=compatible_groups,
-        available=True
-    ).exclude(blood_group=required_blood_group).select_related('user')
-
-    return render(request, 'patient/search_donors.html', {
-        'patient': patient,
-        'required_blood_group': required_blood_group,
-        'exact_match_donors': exact_match_donors,
-        'compatible_donors': compatible_donors,
-        'compatible_groups': compatible_groups
-    })
+    # ✅ Always return a response
+    return render(request, 'patient/search_donors.html', {'donors': donors})
 
 
 # ---------------- Admin Dashboard ----------------
@@ -280,8 +271,11 @@ def admin_dashboard(request):
                 defaults={'units': units}
             )
             if not created:
-                stock_item.units = units
-                stock_item.save()
+                stock_item.units += units   # ✅ increment existing units
+            else:
+                stock_item.units = units    # if new entry, set directly
+            stock_item.save()
+
 
             messages.success(request, f'Blood Stock for {blood_group} updated to {units} units.')
             return redirect('admin-dashboard')
