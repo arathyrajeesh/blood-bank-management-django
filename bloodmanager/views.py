@@ -177,7 +177,6 @@ def donor_dashboard(request):
     donor = Donor.objects.get(user=request.user)
     form = LastDonationForm(instance=donor)
 
-    # Health form logic
     health_form = None
     health_record = DonorHealthCheck.objects.filter(donor=donor).order_by('-submitted_at').first()
 
@@ -271,9 +270,7 @@ def admin_dashboard(request):
     total_patients = patients.count()
     total_stock_units = sum(item['total_units'] for item in stock)
 
-    # Handle POST actions
     if request.method == 'POST':
-        # Approve patient
         if 'approve_patient' in request.POST:
             patient_id = request.POST.get('patient_id')
             patient = get_object_or_404(Patient, id=patient_id)
@@ -282,7 +279,6 @@ def admin_dashboard(request):
             messages.success(request, f"Patient {patient.user.username} approved successfully.")
             return redirect('admin-dashboard')
 
-        # Update blood stock
         if 'update_stock' in request.POST:
             stock_form = BloodStockForm(request.POST)
             if stock_form.is_valid():
@@ -297,7 +293,6 @@ def admin_dashboard(request):
                 messages.success(request, f'Blood stock for {blood_group} updated successfully.')
                 return redirect('admin-dashboard')
 
-        # Approve donor health form
         if 'approve_health' in request.POST:
             health_id = request.POST.get('health_id')
             record = get_object_or_404(DonorHealthCheck, id=health_id)
