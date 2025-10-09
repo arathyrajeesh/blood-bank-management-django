@@ -51,10 +51,10 @@ class Hospital(models.Model):
     name = models.CharField(max_length=255)
     email = models.EmailField(null=True, blank=True)
     phone = models.CharField(max_length=20)
+    address = models.TextField(null=True, blank=True)  # <-- add this
 
     def __str__(self):
         return self.name
-
 
 class BloodStock(models.Model):
     hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE, null=True, blank=True)

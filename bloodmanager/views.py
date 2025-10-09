@@ -191,12 +191,10 @@ def donor_dashboard(request):
     health_record = DonorHealthCheck.objects.filter(donor=donor).order_by('-submitted_at').first()
 
     if request.method == 'POST':
-        # Update last donation date
         if 'update_donation' in request.POST:
             form = LastDonationForm(request.POST, instance=donor)
             if form.is_valid():
                 donor = form.save(commit=False)
-                # Automatically update availability
                 if donor.last_donation_date:
                     donor.available = (date.today() - donor.last_donation_date).days >= 90
                 else:
@@ -207,7 +205,6 @@ def donor_dashboard(request):
             else:
                 messages.error(request, f"Error: {form.errors}")
 
-        # Submit health form
         if 'submit_health' in request.POST:
             health_form = DonorHealthCheckForm(request.POST)
             if health_form.is_valid():

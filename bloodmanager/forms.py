@@ -5,7 +5,6 @@ from .models import Donor, Patient, BloodStock, BLOOD_GROUP_CHOICES, GENDER_CHOI
 ROLE_CHOICES = [
     ('donor', 'Donor'),
     ('patient', 'Patient'),
-    ('hospital', 'Hospital'),
 ]
 
 class RegistrationForm(forms.ModelForm):
