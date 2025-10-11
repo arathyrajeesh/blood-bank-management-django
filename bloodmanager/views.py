@@ -3,10 +3,17 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
-from datetime import date, timedelta
-from .models import Donor, Patient, BloodStock, Hospital, BLOOD_GROUP_CHOICES,DonorHealthCheck,Donation
-from .forms import RegistrationForm, BloodStockForm, LastDonationForm, HospitalRegistrationForm, HospitalProfileForm,DonorHealthCheckForm,PatientRequestForm
+from datetime import date
 from django.db.models import Sum
+from .models import (
+    Donor, Patient, BloodStock, Hospital,
+    DonorHealthCheck, Donation
+)
+from .forms import (
+    RegistrationForm, BloodStockForm, LastDonationForm,
+    HospitalRegistrationForm, HospitalProfileForm,
+    DonorHealthCheckForm, PatientRequestForm
+)
 
 
 def home(request):
@@ -31,15 +38,22 @@ def register(request):
 
             if role == 'donor':
                 age = form.cleaned_data['age']
-                Donor.objects.create(user=user, phone=phone, gender=gender,
-                                        blood_group=blood_group, address=address, age=age)
+                Donor.objects.create(
+                    user=user, phone=phone, gender=gender,
+                    blood_group=blood_group, address=address, age=age
+                )
             elif role == 'patient':
                 required_units = form.cleaned_data.get('required_units') or 1
-                Patient.objects.create(user=user, phone=phone, gender=gender,
-                                        blood_group=blood_group, address=address, required_units=required_units)
+                Patient.objects.create(
+                    user=user, phone=phone, gender=gender,
+                    blood_group=blood_group, address=address,
+                    required_units=required_units
+                )
             elif role == 'hospital':
                 name = form.cleaned_data['name']
-                Hospital.objects.create(user=user, name=name, phone=phone, address=address)
+                Hospital.objects.create(
+                    user=user, name=name, phone=phone, address=address
+                )
 
             messages.success(request, 'Registration successful! You can now log in.')
             return redirect('main')
@@ -127,8 +141,9 @@ def logout_view(request):
 
 @login_required
 def hospital_dashboard(request):
-    hospital = request.user.hospital 
-    stock = BloodStock.objects.filter(hospital=hospital)  
+    hospital = request.user.hospital
+    stock = BloodStock.objects.filter(hospital=hospital)
+
     if request.method == 'POST' and 'add_stock' in request.POST:
         blood_group = request.POST.get('blood_group')
         units = int(request.POST.get('units', 0))
@@ -149,38 +164,9 @@ def hospital_dashboard(request):
 
     context = {
         'stock': stock,
-        'BLOOD_GROUP_CHOICES': BLOOD_GROUP_CHOICES,
     }
-
     return render(request, 'hospital/hospital_dashboard.html', context)
 
-
-@login_required
-def delete_stock(request, stock_id):
-    hospital = request.user.hospital
-    stock_item = get_object_or_404(BloodStock, id=stock_id, hospital=hospital)
-    if request.method == 'POST':
-        stock_item.delete()
-        messages.success(request, f"{stock_item.blood_group} stock deleted successfully.")
-    return redirect('hospital-dashboard')
-
-
-@login_required
-def hospital_edit_profile(request):
-    hospital = get_object_or_404(Hospital, user=request.user)
-
-    if request.method == 'POST':
-        form = HospitalProfileForm(request.POST, instance=hospital)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Profile updated successfully!")
-            return redirect('hospital-dashboard')
-        else:
-            messages.error(request, "Please correct the errors below.")
-    else:
-        form = HospitalProfileForm(instance=hospital)
-
-    return render(request, 'hospital/edit_profile.html', {'form': form})
 
 @login_required
 def donor_dashboard(request):
@@ -221,7 +207,6 @@ def donor_dashboard(request):
             return redirect('donor-dashboard')
         else:
             messages.error(request, f"Health form error: {health_form.errors}")
-
     else:
         if donor.available and (not health_record or not health_record.is_approved):
             health_form = DonorHealthCheckForm()
@@ -235,6 +220,27 @@ def donor_dashboard(request):
     }
     return render(request, 'donor/donor_dashboard.html', context)
 
+@login_required 
+def hospital_edit_profile(request): 
+    hospital = get_object_or_404(Hospital, user=request.user) 
+    if request.method == 'POST': 
+        form = HospitalProfileForm(request.POST, instance=hospital) 
+        if form.is_valid(): 
+            form.save() 
+            messages.success(request, "Profile updated successfully!") 
+            return redirect('hospital-dashboard') 
+        else: messages.error(request, "Please correct the errors below.") 
+    else: form = HospitalProfileForm(instance=hospital) 
+    return render(request, 'hospital/edit_profile.html', {'form': form})
+@login_required 
+def delete_stock(request, stock_id): 
+    hospital = request.user.hospital 
+    stock_item = get_object_or_404(BloodStock, id=stock_id, hospital=hospital) 
+    if request.method == 'POST': 
+        stock_item.delete()
+        messages.success(request, f"{stock_item.blood_group} stock deleted successfully.")
+        return redirect('hospital-dashboard')
+    
 @login_required
 def submit_blood_request(request):
     patient = get_object_or_404(Patient, user=request.user)
@@ -243,7 +249,7 @@ def submit_blood_request(request):
         form = PatientRequestForm(request.POST, instance=patient)
         if form.is_valid():
             patient = form.save(commit=False)
-            patient.approved = False  
+            patient.approved = False
             patient.save()
             messages.success(request, "Blood request submitted! Awaiting admin approval.")
             return redirect('patient-dashboard')
@@ -252,14 +258,27 @@ def submit_blood_request(request):
     else:
         form = PatientRequestForm(instance=patient)
 
-    return render(request, 'patient/submit_request.html', {'form': form})
+    # Get patient request history
+    history = Patient.objects.filter(user=request.user).order_by('-id')
+
+    return render(request, 'patient/submit_request.html', {'form': form, 'history': history})
+
 
 @login_required
 def patient_dashboard(request):
     patient = Patient.objects.get(user=request.user)
+
+    # Fetch previous blood requests (history)
+    history = Patient.objects.filter(user=request.user).order_by('-id')
+    no_request_message = None
+    if not history.exists():
+        no_request_message = "You have not submitted any blood request yet."
+
     context = {
         'patient': patient,
-        'is_approved': patient.approved,  
+        'is_approved': patient.approved,
+        'history': history,
+        'no_request_message': no_request_message,
     }
     return render(request, 'patient/patient_dashboard.html', context)
 
@@ -321,8 +340,8 @@ def is_admin(user):
 @user_passes_test(is_admin)
 def admin_dashboard(request):
     donors = Donor.objects.all()
-    patients = Patient.objects.all().order_by('-approved', 'user__username')    
-    requested_patients = Patient.objects.filter(approved=False)  
+    patients = Patient.objects.all().order_by('-approved', 'user__username')
+    requested_patients = Patient.objects.filter(approved=False)
     stock = BloodStock.objects.values('blood_group').annotate(total_units=Sum('units')).order_by('blood_group')
     health_forms = DonorHealthCheck.objects.all().order_by('-submitted_at')
 
@@ -366,7 +385,7 @@ def admin_dashboard(request):
 
     context = {
         'donors': donors,
-        'requested_patients': requested_patients,  
+        'requested_patients': requested_patients,
         'patients': patients,
         'stock': stock,
         'total_donors': total_donors,
