@@ -15,6 +15,7 @@ urlpatterns = [
     path('hospital/register/', views.hospital_register, name='hospital-register'),
     path('patient/search-donors/', views.search_donors, name='search-donors'),
     path('hospital-login/', views.hospital_login, name='hospital-login'),
+    path('patient/search-hospitals/', views.search_hospitals, name='search-hospitals'),
     path('hospital-dashboard/', views.hospital_dashboard, name='hospital-dashboard'),
     path('edit-profile/',views.hospital_edit_profile,name='hospital_edit_profile'),
     path('delete-stock/<int:stock_id>/', views.delete_stock, name='delete_stock'),

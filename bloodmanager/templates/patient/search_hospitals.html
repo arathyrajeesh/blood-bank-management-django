@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hospital Blood Availability</title>
+<style>
+    body { font-family: 'Segoe UI', sans-serif; background: #fff5f5; margin: 0; padding: 0; }
+    header { background: rgb(172, 5, 5); color: white; padding: 1rem; text-align: center; }
+    .container { max-width: 900px; background: white; margin: 30px auto; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+    th { background: rgb(172, 5, 5); color: white; }
+</style>
+</head>
+<body>
+<header>
+    <h1>Hospital Blood Availability</h1>
+</header>
+<div class="container">
+    {% if hospitals_with_stock %}
+    <table>
+        <tr>
+            <th>Hospital Name</th>
+            <th>Blood Group</th>
+            <th>Available Units</th>
+            <th>Address</th>
+        </tr>
+        {% for stock in hospitals_with_stock %}
+        <tr>
+            <td>{{ stock.hospital.name }}</td>
+            <td>{{ stock.blood_group }}</td>
+            <td>{{ stock.units }}</td>
+            <td>{{ stock.hospital.address }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>No hospital has available blood at the moment.</p>
+    {% endif %}
+</div>
+</body>
+</html>

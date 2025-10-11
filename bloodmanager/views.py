@@ -249,6 +249,14 @@ def patient_dashboard(request):
     }
     return render(request, 'patient/patient_dashboard.html', context)
 
+@login_required
+def search_hospitals(request):
+    # Only BloodStock entries with a linked hospital
+    hospitals_with_stock = BloodStock.objects.filter(units__gt=0, hospital__isnull=False).select_related('hospital').order_by('hospital__name', 'blood_group')
+
+    return render(request, 'patient/search_hospitals.html', {
+        'hospitals_with_stock': hospitals_with_stock
+    })
 
 
 @login_required
