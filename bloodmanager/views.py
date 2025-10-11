@@ -186,11 +186,11 @@ def hospital_edit_profile(request):
 def donor_dashboard(request):
     donor = Donor.objects.get(user=request.user)
     form = LastDonationForm(instance=donor)
-
-    health_form = None
-    health_record = DonorHealthCheck.objects.filter(donor=donor).order_by('-submitted_at').first()
     donation_history = Donation.objects.filter(donor=donor).order_by('-date')
-        
+    health_record = DonorHealthCheck.objects.filter(donor=donor).order_by('-submitted_at').first()
+    health_form = None
+
+    # ✅ Update donation details (date + units)
     if 'update_donation' in request.POST:
         form = LastDonationForm(request.POST, instance=donor)
         units = request.POST.get('units')
@@ -201,7 +201,8 @@ def donor_dashboard(request):
             else:
                 donor.available = True
             donor.save()
-            
+
+            # Record donation
             Donation.objects.create(
                 donor=donor,
                 date=donor.last_donation_date,
@@ -212,26 +213,29 @@ def donor_dashboard(request):
         else:
             messages.error(request, "Please enter a valid date and units.")
 
-        if 'submit_health' in request.POST:
-            health_form = DonorHealthCheckForm(request.POST)
-            if health_form.is_valid():
-                health = health_form.save(commit=False)
-                health.donor = donor
-                health.save()
-                messages.success(request, "Health form submitted! Awaiting admin approval.")
-                return redirect('donor-dashboard')
-            else:
-                messages.error(request, f"Health form error: {health_form.errors}")
+    # ✅ Handle health form submission
+    elif 'submit_health' in request.POST:
+        health_form = DonorHealthCheckForm(request.POST)
+        if health_form.is_valid():
+            health = health_form.save(commit=False)
+            health.donor = donor
+            health.save()
+            messages.success(request, "Health form submitted! Awaiting admin approval.")
+            return redirect('donor-dashboard')
         else:
-            if donor.available and (not health_record or not health_record.is_approved):
-                health_form = DonorHealthCheckForm()
+            messages.error(request, f"Health form error: {health_form.errors}")
+
+    # ✅ Load form normally
+    else:
+        if donor.available and (not health_record or not health_record.is_approved):
+            health_form = DonorHealthCheckForm()
 
     context = {
         'donor': donor,
         'form': form,
         'health_form': health_form,
         'health_record': health_record,
-        'donation_history': donation_history, 
+        'donation_history': donation_history,
     }
     return render(request, 'donor/donor_dashboard.html', context)
 
