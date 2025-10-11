@@ -5,11 +5,13 @@ urlpatterns = [
     path('',views.home,name='main'),
     path('register/',views.register,name='register'),
     path('login/', views.universal_login, name='login'),
+    path('hospital-register/', views.hospital_register, name='hospital-register'),
     
     path('donor-dashboard/', views.donor_dashboard, name='donor-dashboard'),
     path('admin-dashboard/', views.admin_dashboard, name='admin-dashboard'),
     path('patient-dashboard/', views.patient_dashboard, name='patient-dashboard'),
     
+    path('help/',views.help,name='help'),
     path('patient/submit-request/', views.submit_blood_request, name='submit-blood-request'),
     path('hospital/register/', views.hospital_register, name='hospital-register'),
     path('patient/search-donors/', views.search_donors, name='search-donors'),

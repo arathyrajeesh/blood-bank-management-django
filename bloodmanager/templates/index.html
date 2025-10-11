@@ -562,10 +562,10 @@
             <li><a href="#stock">Stock</a></li>
             <li><a href="#about">About</a></li>
             <li><a href="#contact">Contact</a></li>
+            <li><a href="{% url 'help' %}">Help / Support</a></li> 
             <li class="dropdown">
                 <a href="javascript:void(0)" class="dropbtn">Account <i class="fas fa-caret-down"></i></a>
                 <div class="dropdown-content">
-                    <a href="#contact">Help / Support</a> 
                     <a href="{% url 'login' %}">Login</a>
                     <a href="{% url 'register' %}">Register Now</a>
                 </div>
@@ -621,58 +621,6 @@
         </div>
     </section>
 </main>
-<main id="help-page" class="content-section">
-    <h1>Help & Support Center</h1>
-    <p style="text-align: center; font-size: 1.1rem; color: var(--text-light);">
-        Find answers to common questions about donation, eligibility, and using the Blood Bank Management System.
-    </p>
-
-    <h2>Frequently Asked Questions (FAQ)</h2>
-
-    <div class="faq-item">
-        <h3>Am I eligible to donate blood?</h3>
-        <p>Eligibility typically requires you to be over 18, weigh at least 50 kg (110 lbs), and be in good general health. Restrictions may apply based on recent travel, medications, and certain health conditions. Please check our detailed donor guide for specifics.</p>
-    </div>
-
-    <div class="faq-item">
-        <h3>How should I prepare for my donation?</h3>
-        <p>The night before, get at least 8 hours of sleep. On the day of, eat a full, iron-rich meal (avoid fatty foods) and drink plenty of water or juice. Bring a photo ID and your donor card if you have one.</p>
-    </div>
-
-    <div class="faq-item">
-        <h3>How long does the donation process take?</h3>
-        <p>The actual blood draw usually takes less than 15 minutes. However, the registration, medical screening, and post-donation recovery/refreshments will take a total time of about 45 minutes to one hour.</p>
-    </div>
-
-    <div class="faq-item">
-        <h3>I forgot my password. How do I reset it?</h3>
-        <p>Navigate to the Login page and click the "Forgot Password" link. You will be prompted to enter your registered email address. We will send you a secure link to reset your password instantly.</p>
-    </div>
-
-    <div class="faq-item">
-        <h3>How often is the blood stock inventory updated?</h3>
-        <p>The blood stock table on the homepage is updated in real-time as units are processed and distributed to hospitals. The "low-stock" alerts are active indicators of urgent needs.</p>
-    </div>
-
-    <h2>Need Technical or Direct Support?</h2>
-    
-    <div class="support-contact">
-        <div class="support-box">
-            <i class="fas fa-headset"></i>
-            <h3>Technical Support</h3>
-            <p>Experiencing issues with your account or registration? Contact our IT team for system assistance.</p>
-            <p><strong>Email:</strong> <a href="mailto:support@bloodbank.com">support@bloodbank.com</a></p>
-        </div>
-
-        <div class="support-box">
-            <i class="fas fa-hospital"></i>
-            <h3>Donor Queries</h3>
-            <p>Have specific questions about medical eligibility or scheduling appointments?</p>
-            <p><strong>Call:</strong> <a href="tel:+1234567890">123-4567</a> (M-F, 9am-5pm)</p>
-        </div>
-    </div>
-</main>
-
 <footer>
     &copy; 2025 Blood Bank Management | Saving Lives Together
 </footer>

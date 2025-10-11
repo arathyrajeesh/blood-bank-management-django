@@ -20,7 +20,8 @@ def home(request):
     stock = BloodStock.objects.values('blood_group').annotate(units=Sum('units')).order_by('blood_group')
     return render(request, 'index.html', {'stock': stock})
 
-
+def help(request):
+    return render(request,'Help.html')
 def register(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)

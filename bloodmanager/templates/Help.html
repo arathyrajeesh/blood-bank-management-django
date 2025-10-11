@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Help & Support | Blood Bank</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<style>
+    /* ---------------------------------------------------------------------- */
+    /* 1. CSS VARIABLES (Palette) - REQUIRED FOR STYLING TO WORK */
+    /* ---------------------------------------------------------------------- */
+    :root {
+        --primary-red: #B71C1C;
+        --dark-red: #8B0000;
+        --accent-red: #D32F2F;
+        --light-background: #fdfdfd;
+        --body-background: #f0f2f5;
+        --text-dark: #333333;
+        --text-light: #666666;
+        --border-light: #e0e0e0;
+        --low-stock-warning-bg: #ffebee;
+        --low-stock-warning-text: #c62828;
+        --shadow-light: rgba(0, 0, 0, 0.08);
+        --shadow-medium: rgba(0, 0, 0, 0.15);
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* 2. BASE STYLES & LAYOUT - REQUIRED FOR PAGE TO LOOK CORRECT */
+    /* ---------------------------------------------------------------------- */
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        color: var(--text-dark);
+        line-height: 1.6;
+        background: var(--body-background);
+        scroll-behavior: smooth;
+    }
+
+    /* Standard main and content section styles (mimics your previous page structure) */
+    main {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .content-section {
+        margin-bottom: 50px;
+        background: var(--light-background);
+        padding: 50px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px var(--shadow-light);
+        border: 1px solid var(--border-light);
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* BUTTON STYLING (FOR REGISTER BUTTON) - NEW ADDITION */
+    /* ---------------------------------------------------------------------- */
+    .cta-button, 
+    #help-page button {
+        display: inline-block;
+        background-color: var(--accent-red);
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        letter-spacing: 0.5px;
+        margin: 20px auto; 
+        display: block;
+        max-width: 250px;
+        text-align: center;
+        font-family: 'Montserrat', sans-serif;
+    }
+    
+    .cta-button:hover,
+    #help-page button:hover {
+        background-color: var(--dark-red);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+    }
+    
+    /* ---------------------------------------------------------------------- */
+    /* 3. HELP/SUPPORT PAGE STYLING */
+    /* ---------------------------------------------------------------------- */
+    
+    #help-page {
+        padding-top: 50px;
+        padding-bottom: 50px;
+    }
+
+    #help-page h1 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 3rem;
+        color: var(--primary-red);
+        text-align: center;
+        margin-bottom: 20px;
+        border-bottom: none; 
+        padding-bottom: 0;
+    }
+    
+    #help-page h2 {
+        font-family: 'Montserrat', sans-serif;
+        color: var(--dark-red);
+        font-size: 1.8rem;
+        border-bottom: 2px solid var(--border-light);
+        padding-bottom: 10px;
+        margin-top: 40px;
+        margin-bottom: 25px;
+        font-weight: 600;
+    }
+
+    /* FAQ Item Styles */
+    .faq-item {
+        margin-bottom: 20px;
+        padding: 15px;
+        background: var(--light-background);
+        border: 1px solid var(--border-light);
+        border-radius: 8px;
+        transition: box-shadow 0.3s ease;
+    }
+    .faq-item:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+    .faq-item h3 {
+        color: var(--text-dark);
+        font-size: 1.2rem;
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
+    .faq-item p {
+        color: var(--text-light);
+        font-size: 1rem;
+        line-height: 1.5;
+        text-align: left;
+        margin-top: 0; 
+    }
+
+    /* Support Boxes Layout */
+    .support-contact {
+        display: flex;
+        justify-content: space-around;
+        gap: 30px;
+        margin-top: 40px;
+        text-align: center;
+    }
+    .support-box {
+        flex: 1;
+        padding: 30px;
+        border: 2px solid var(--accent-red);
+        border-radius: 10px;
+        background-color: #fff;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .support-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px var(--shadow-medium);
+    }
+    .support-box i {
+        font-size: 2.5rem; 
+        color: var(--primary-red);
+        margin-bottom: 15px;
+    }
+    .support-box h3 {
+        font-size: 1.4rem;
+        color: var(--primary-red);
+        margin-bottom: 10px;
+        font-family: 'Montserrat', sans-serif;
+    }
+    .support-box p {
+        /* Reset p margins within the box */
+        margin: 0;
+        text-align: center; 
+        font-size: 1rem;
+    }
+    .support-box p strong {
+        display: block; 
+        margin-top: 10px;
+    }
+    .support-box a {
+        color: var(--primary-red);
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.2s;
+    }
+    .support-box a:hover {
+        color: var(--dark-red);
+        text-decoration: underline;
+    }
+
+
+    /* Responsive adjustments for this specific page content */
+    @media (max-width: 768px) {
+        #help-page h1 {
+            font-size: 2.5rem;
+        }
+        #help-page h2 {
+            font-size: 1.6rem;
+        }
+        .support-contact {
+            flex-direction: column;
+        }
+    }
+</style>
+</head>
+<body>
+    <main id="help-page" class="content-section">
+        <h1>Help & Support Center</h1>
+        <a href="{% url 'register' %}" class="cta-button">Register to Donate</a>
+        
+        <p style="text-align: center; font-size: 1.1rem; color: var(--text-light);">
+            Find answers to common questions about donation, eligibility, and using the Blood Bank Management System.
+        </p>
+    
+        <h2>Frequently Asked Questions (FAQ)</h2>
+    
+        <div class="faq-item">
+            <h3>Am I eligible to donate blood?</h3>
+            <p>Eligibility typically requires you to be **over 18**, weigh at least **50 kg (110 lbs)**, and be in good general health. Restrictions may apply based on recent travel, medications, and certain health conditions. Please check our detailed donor guide for specifics.</p>
+        </div>
+    
+        <div class="faq-item">
+            <h3>How should I prepare for my donation?</h3>
+            <p>The night before, get at least **8 hours of sleep**. On the day of, **eat a full, iron-rich meal** (avoid fatty foods) and **drink plenty of water** or juice. Bring a photo ID and your donor card if you have one.</p>
+        </div>
+    
+        <div class="faq-item">
+            <h3>How long does the donation process take?</h3>
+            <p>The actual blood draw usually takes less than 15 minutes. However, the registration, medical screening, and post-donation recovery/refreshments will take a total time of about **45 minutes to one hour**.</p>
+        </div>
+    
+        <div class="faq-item">
+            <h3>I forgot my password. How do I reset it?</h3>
+            <p>Navigate to the Login page and click the "Forgot Password" link. You will be prompted to enter your registered email address. We will send you a **secure link to reset your password** instantly.</p>
+        </div>
+    
+        <div class="faq-item">
+            <h3>How often is the blood stock inventory updated?</h3>
+            <p>The blood stock table on the homepage is updated in **real-time** as units are processed and distributed to hospitals. The "low-stock" alerts are active indicators of urgent needs.</p>
+        </div>
+    
+        <h2>Need Technical or Direct Support?</h2>
+        
+        <div class="support-contact">
+            <div class="support-box">
+                <i class="fas fa-headset"></i>
+                <h3>Technical Support</h3>
+                <p>Experiencing issues with your account or registration? Contact our IT team for system assistance.</p>
+                <p><strong>Email:</strong> <a href="mailto:support@bloodbank.com">support@bloodbank.com</a></p>
+            </div>
+    
+            <div class="support-box">
+                <i class="fas fa-hospital"></i>
+                <h3>Donor Queries</h3>
+                <p>Have specific questions about medical eligibility or scheduling appointments?</p>
+                <p><strong>Call:</strong> <a href="tel:+1234567890">123-4567</a> (M-F, 9am-5pm)</p>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
