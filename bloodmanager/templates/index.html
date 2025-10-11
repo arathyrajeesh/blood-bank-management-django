@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <style>
+    /* CSS Variables for a refined palette */
     :root {
         --primary-red: #B71C1C;
         --dark-red: #8B0000;
@@ -22,6 +23,7 @@
         --shadow-medium: rgba(0, 0, 0, 0.15);
     }
 
+    /* Base Styles */
     * {
         box-sizing: border-box;
         margin: 0;
@@ -38,6 +40,7 @@
         -moz-osx-font-smoothing: grayscale;
     }
 
+    /* Header */
     header {
         background-color: var(--primary-red);
         box-shadow: 0 6px 15px var(--shadow-medium);
@@ -107,6 +110,7 @@
         transform: translateY(-2px);
     }
 
+    /* Dropdown */
     .dropdown {
         position: relative;
     }
@@ -153,6 +157,7 @@
         padding-left: 25px;
     }
 
+    /* Main Content Layout */
     main {
         max-width: 1200px;
         margin: 0 auto;
@@ -187,13 +192,14 @@
         color: var(--text-light);
     }
 
-
+    /* ---------------------------------------------------------------------- */
+    /* SMALLER HERO SECTION (#home) */
+    /* ---------------------------------------------------------------------- */
     #home {
-        background: linear-gradient(rgba(183, 28, 28, 0.75), rgba(183, 28, 28, 0.75)),
-        url('https://images.unsplash.com/photo-1582719293881-2283d582e2ec?auto=format&fit=crop&w=1470&q=80')
-        center/cover no-repeat;        
+        background: linear-gradient(rgba(183, 28, 28, 0.9), rgba(183, 28, 28, 0.9)),
+                    url('https://images.unsplash.com/photo-1582719293881-2283d582e2ec?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80') no-repeat center center/cover;
         color: white;
-        padding: 60px 40px; 
+        padding: 60px 40px; /* Reduced vertical padding */
         text-align: center;
         margin-top: 0;
         margin-bottom: 60px;
@@ -203,11 +209,11 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        min-height: 300px; 
+        min-height: 300px; /* Reduced minimum height */
     }
 
     #home h1 {
-        font-size: 3rem; 
+        font-size: 3rem; /* Reduced font size */
         margin-bottom: 20px;
         border-bottom: none;
         color: white;
@@ -217,7 +223,7 @@
         line-height: 1.2;
     }
     #home p {
-        font-size: 1.2rem; 
+        font-size: 1.2rem; /* Reduced font size */
         max-width: 900px;
         margin: 0 auto 30px auto;
         color: rgba(255, 255, 255, 0.9);
@@ -227,11 +233,11 @@
         display: inline-block;
         background-color: white;
         color: var(--accent-red);
-        padding: 15px 35px; 
+        padding: 15px 35px; /* Slightly reduced button padding */
         border-radius: 50px;
         text-decoration: none;
         font-weight: 700;
-        font-size: 1.1rem; 
+        font-size: 1.1rem; /* Slightly reduced font size */
         transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
         box-shadow: 0 6px 15px rgba(0,0,0,0.25);
         letter-spacing: 0.5px;
@@ -245,6 +251,7 @@
         margin-right: 8px;
     }
 
+    /* Blood Stock Table */
     #stock h1 + p {
         font-size: 1rem;
         max-width: 700px;
@@ -296,6 +303,7 @@
         100% { transform: scale(1.01); opacity: 1; }
     }
 
+    /* About & Contact Sections */
     #about p, #contact p {
         text-align: left;
         max-width: 900px;
@@ -325,6 +333,7 @@
         text-decoration: underline;
     }
 
+    /* Footer */
     footer {
         background-color: var(--primary-red);
         color: white;
@@ -335,7 +344,90 @@
         font-weight: 400;
         box-shadow: 0 -4px 10px var(--shadow-medium);
     }
+        /* Styling specific to the Help/Support content */
+    #help-page {
+        padding-top: 50px;
+        padding-bottom: 50px;
+    }
+    #help-page h1 {
+        font-size: 3rem;
+        color: var(--primary-red);
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    #help-page h2 {
+        font-family: 'Montserrat', sans-serif;
+        color: var(--dark-red);
+        font-size: 1.8rem;
+        border-bottom: 2px solid var(--border-light);
+        padding-bottom: 10px;
+        margin-top: 40px;
+        margin-bottom: 25px;
+        font-weight: 600;
+    }
+    .faq-item {
+        margin-bottom: 20px;
+        padding: 15px;
+        background: var(--light-background);
+        border: 1px solid var(--border-light);
+        border-radius: 8px;
+        transition: box-shadow 0.3s ease;
+    }
+    .faq-item:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+    .faq-item h3 {
+        color: var(--text-dark);
+        font-size: 1.2rem;
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
+    .faq-item p {
+        color: var(--text-light);
+        font-size: 1rem;
+        line-height: 1.5;
+        text-align: left;
+        margin-top: 0; /* Override section p margin */
+    }
+    .support-contact {
+        display: flex;
+        justify-content: space-around;
+        gap: 30px;
+        margin-top: 40px;
+        text-align: center;
+    }
+    .support-box {
+        flex: 1;
+        padding: 30px;
+        border: 2px solid var(--accent-red);
+        border-radius: 10px;
+        background-color: #fff;
+    }
+    .support-box i {
+        font-size: 2rem;
+        color: var(--primary-red);
+        margin-bottom: 15px;
+    }
+    .support-box h3 {
+        font-size: 1.4rem;
+        color: var(--primary-red);
+        margin-bottom: 10px;
+        font-family: 'Montserrat', sans-serif;
+    }
 
+        /* Responsive adjustments for this page */
+    @media (max-width: 768px) {
+        #help-page h1 {
+            font-size: 2.5rem;
+        }
+        #help-page h2 {
+            font-size: 1.6rem;
+        }
+        .support-contact {
+            flex-direction: column;
+        }
+    }
+    /* Responsive Adjustments */
     @media (max-width: 1024px) {
         #stock table {
             width: 85%;
@@ -471,8 +563,9 @@
             <li><a href="#about">About</a></li>
             <li><a href="#contact">Contact</a></li>
             <li class="dropdown">
-                <a href="javascript:void(0)" class="dropbtn">Login/Account <i class="fas fa-caret-down"></i></a>
+                <a href="javascript:void(0)" class="dropbtn">Account <i class="fas fa-caret-down"></i></a>
                 <div class="dropdown-content">
+                    <a href="#contact">Help / Support</a> 
                     <a href="{% url 'login' %}">Login</a>
                     <a href="{% url 'register' %}">Register Now</a>
                 </div>
@@ -482,10 +575,10 @@
 </header>
 
 <main>
-    <section id="home" >
+    <section id="home">
         <h1>You are the Lifeline. Donate Blood.</h1>
         <p>Every donation saves a life. Welcome to our Blood Bank Management System. Our mission is to ensure a safe and sufficient blood supply is available for every patient in need.</p>
-        <a href="{% url 'register' %}" class="cta-button"><i class="fas fa-heartbeat"></i> Register</a>
+        <a href="{% url 'register' %}" class="cta-button"><i class="fas fa-heartbeat"></i> Register to Donate Today</a>
     </section>
 
     <section id="stock" class="content-section">
@@ -527,6 +620,57 @@
             <p><strong>Address:</strong> Blood bank , Bengaluru </p>
         </div>
     </section>
+</main>
+<main id="help-page" class="content-section">
+    <h1>Help & Support Center</h1>
+    <p style="text-align: center; font-size: 1.1rem; color: var(--text-light);">
+        Find answers to common questions about donation, eligibility, and using the Blood Bank Management System.
+    </p>
+
+    <h2>Frequently Asked Questions (FAQ)</h2>
+
+    <div class="faq-item">
+        <h3>Am I eligible to donate blood?</h3>
+        <p>Eligibility typically requires you to be over 18, weigh at least 50 kg (110 lbs), and be in good general health. Restrictions may apply based on recent travel, medications, and certain health conditions. Please check our detailed donor guide for specifics.</p>
+    </div>
+
+    <div class="faq-item">
+        <h3>How should I prepare for my donation?</h3>
+        <p>The night before, get at least 8 hours of sleep. On the day of, eat a full, iron-rich meal (avoid fatty foods) and drink plenty of water or juice. Bring a photo ID and your donor card if you have one.</p>
+    </div>
+
+    <div class="faq-item">
+        <h3>How long does the donation process take?</h3>
+        <p>The actual blood draw usually takes less than 15 minutes. However, the registration, medical screening, and post-donation recovery/refreshments will take a total time of about 45 minutes to one hour.</p>
+    </div>
+
+    <div class="faq-item">
+        <h3>I forgot my password. How do I reset it?</h3>
+        <p>Navigate to the Login page and click the "Forgot Password" link. You will be prompted to enter your registered email address. We will send you a secure link to reset your password instantly.</p>
+    </div>
+
+    <div class="faq-item">
+        <h3>How often is the blood stock inventory updated?</h3>
+        <p>The blood stock table on the homepage is updated in real-time as units are processed and distributed to hospitals. The "low-stock" alerts are active indicators of urgent needs.</p>
+    </div>
+
+    <h2>Need Technical or Direct Support?</h2>
+    
+    <div class="support-contact">
+        <div class="support-box">
+            <i class="fas fa-headset"></i>
+            <h3>Technical Support</h3>
+            <p>Experiencing issues with your account or registration? Contact our IT team for system assistance.</p>
+            <p><strong>Email:</strong> <a href="mailto:support@bloodbank.com">support@bloodbank.com</a></p>
+        </div>
+
+        <div class="support-box">
+            <i class="fas fa-hospital"></i>
+            <h3>Donor Queries</h3>
+            <p>Have specific questions about medical eligibility or scheduling appointments?</p>
+            <p><strong>Call:</strong> <a href="tel:+1234567890">123-4567</a> (M-F, 9am-5pm)</p>
+        </div>
+    </div>
 </main>
 
 <footer>
