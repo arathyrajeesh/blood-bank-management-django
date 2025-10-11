@@ -272,7 +272,9 @@
 
     <section id="stock" class="content-section">
         <h1>Current Blood Stock 🩸</h1>
-        <p style="text-align: center; max-width: 600px; margin: 10px auto 20px;">Check our real-time inventory. Groups highlighted in pink are critically low and require immediate attention from our community!</p>
+        <p style="text-align: center; max-width: 600px; margin: 10px auto 20px;">
+            Check our real-time inventory. Groups highlighted in pink are critically low (<5 units) and require immediate attention!
+        </p>
         <table>
             <thead>
                 <tr>
@@ -286,12 +288,11 @@
                     <td>{{ item.blood_group }}</td>
                     <td><strong>{{ item.units }}</strong></td>
                 </tr>
-                {% empty %}
-                <tr><td colspan="2" style="color: #777;">No stock information available. (Admin needs to populate the data)</td></tr>
                 {% endfor %}
             </tbody>
         </table>
     </section>
+    
 
     <section id="about" class="content-section">
         <h1>The Heart of Our Mission</h1>

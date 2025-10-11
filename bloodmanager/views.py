@@ -10,7 +10,7 @@ from django.db.models import Sum
 
 
 def home(request):
-    stock = BloodStock.objects.all()
+    stock = BloodStock.objects.values('blood_group').annotate(units=Sum('units')).order_by('blood_group')
     return render(request, 'index.html', {'stock': stock})
 
 
