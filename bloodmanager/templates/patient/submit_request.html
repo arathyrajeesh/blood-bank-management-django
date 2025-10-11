@@ -5,11 +5,116 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Submit Blood Request</title>
 <style>
-    body { font-family: 'Segoe UI', sans-serif; background: #fff5f5; margin:0; padding:0; }
-    .container { max-width: 600px; margin: 50px auto; background:white; padding:2rem; border-radius:10px; box-shadow:0 4px 15px rgba(0,0,0,0.1); }
-    h2 { color: rgb(172,5,5); text-align:center; }
-    button { padding: 0.8rem 1.5rem; background: rgb(172,5,5); color:white; border:none; border-radius:5px; cursor:pointer; font-size:1.1em; display:block; margin:20px auto 0; }
-    button:hover { background:#a00000; }
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background: #fff5f5;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 650px;
+        margin: 50px auto;
+        background: white;
+        padding: 2.5rem;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+        color: rgb(172,5,5);
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    label {
+        font-weight: 600;
+        margin-bottom: 0.3rem;
+        color: #333;
+    }
+
+    input, select, textarea {
+        padding: 0.7rem;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        width: 100%;
+        font-size: 1rem;
+    }
+
+    textarea {
+        resize: vertical;
+        min-height: 60px;
+    }
+
+    button {
+        padding: 0.9rem 1.5rem;
+        background: rgb(172,5,5);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 1.1em;
+        margin-top: 1rem;
+        transition: background 0.3s, transform 0.1s;
+    }
+
+    button:hover {
+        background: #a00000;
+        transform: translateY(-1px);
+    }
+
+    hr {
+        margin: 2rem 0;
+        border: none;
+        height: 1px;
+        background: #eee;
+    }
+
+    h3 {
+        color: rgb(172,5,5);
+        margin-bottom: 1rem;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 5px;
+        font-size: 1.2rem;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+    }
+
+    th, td {
+        padding: 10px 15px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    th {
+        background: rgb(172,5,5);
+        color: white;
+        font-weight: 600;
+    }
+
+    tr:nth-child(even) {
+        background: #f9f9f9;
+    }
+
+    .status-pending {
+        color: #856404;
+        font-weight: 600;
+    }
+
+    .status-approved {
+        color: #388e3c;
+        font-weight: 600;
+    }
 </style>
 </head>
 <body>
@@ -20,6 +125,35 @@
         {{ form.as_p }}
         <button type="submit">Submit Request 🩸</button>
     </form>
+
+    <hr>
+    <h3>Previous Blood Requests</h3>
+    {% if history %}
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Blood Group</th>
+                <th>Units</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for request in history %}
+            <tr>
+                <td>{{ request.submitted_at|date:"d M Y H:i" }}</td>
+                <td>{{ request.blood_group }}</td>
+                <td>{{ request.units }}</td>
+                <td class="{% if request.approved %}status-approved{% else %}status-pending{% endif %}">
+                    {% if request.approved %}Approved{% else %}Pending{% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="text-align:center; margin-top:1rem;">No previous requests found.</p>
+    {% endif %}
 </div>
 </body>
 </html>
