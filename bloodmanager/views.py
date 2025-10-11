@@ -62,53 +62,87 @@ def register(request):
 
     return render(request, 'register.html', {'form': form})
 
-
-def donor_login(request):
+def universal_login(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
+        role = request.POST.get('role')
+        username = request.POST.get('username')
+        password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
-        if user and Donor.objects.filter(user=user).exists():
-            login(request, user)
-            return redirect('donor-dashboard')
-        messages.error(request, 'Invalid credentials or not registered as a donor.')
-    return render(request, 'donor_login.html')
+
+        if user is not None:
+            # Donor
+            if role == 'donor' and Donor.objects.filter(user=user).exists():
+                login(request, user)
+                return redirect('donor-dashboard')
+
+            # Patient
+            elif role == 'patient' and Patient.objects.filter(user=user).exists():
+                login(request, user)
+                return redirect('patient-dashboard')
+
+            # Hospital
+            elif role == 'hospital' and Hospital.objects.filter(user=user).exists():
+                login(request, user)
+                return redirect('hospital-dashboard')
+
+            # Admin
+            elif role == 'admin' and user.is_superuser:
+                login(request, user)
+                return redirect('admin-dashboard')
+
+            else:
+                messages.error(request, f"You are not registered as a {role}.")
+        else:
+            messages.error(request, "Invalid username or password.")
+            
+    return render(request, 'login.html')
+
+# def donor_login(request):
+#     if request.method == 'POST':
+#         username = request.POST['username']
+#         password = request.POST['password']
+#         user = authenticate(request, username=username, password=password)
+#         if user and Donor.objects.filter(user=user).exists():
+#             login(request, user)
+#             return redirect('donor-dashboard')
+#         messages.error(request, 'Invalid credentials or not registered as a donor.')
+#     return render(request, 'donor_login.html')
 
 
-def patient_login(request):
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-        if user and Patient.objects.filter(user=user).exists():
-            login(request, user)
-            return redirect('patient-dashboard')
-        messages.error(request, 'Invalid credentials or not registered as a patient.')
-    return render(request, 'patient_login.html')
+# def patient_login(request):
+#     if request.method == 'POST':
+#         username = request.POST['username']
+#         password = request.POST['password']
+#         user = authenticate(request, username=username, password=password)
+#         if user and Patient.objects.filter(user=user).exists():
+#             login(request, user)
+#             return redirect('patient-dashboard')
+#         messages.error(request, 'Invalid credentials or not registered as a patient.')
+#     return render(request, 'patient_login.html')
 
 
-def hospital_login(request):
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-        if user and Hospital.objects.filter(user=user).exists():
-            login(request, user)
-            return redirect('hospital-dashboard')
-        messages.error(request, 'Invalid credentials or not registered as a hospital.')
-    return render(request, 'hospital/hospital_login.html')
+# def hospital_login(request):
+#     if request.method == 'POST':
+#         username = request.POST['username']
+#         password = request.POST['password']
+#         user = authenticate(request, username=username, password=password)
+#         if user and Hospital.objects.filter(user=user).exists():
+#             login(request, user)
+#             return redirect('hospital-dashboard')
+#         messages.error(request, 'Invalid credentials or not registered as a hospital.')
+#     return render(request, 'hospital/hospital_login.html')
 
 
-def admin_login(request):
-    if request.method == "POST":
-        username = request.POST.get("username")
-        password = request.POST.get("password")
-        user = authenticate(username=username, password=password)
-        if user and user.is_superuser:
-            login(request, user)
-            return redirect('admin-dashboard')
-        messages.error(request, "Invalid admin credentials.")
-    return render(request, 'admin_login.html')
+# def admin_login(request):
+#     if request.method == "POST":
+#         username = request.POST.get("username")
+#         password = request.POST.get("password")
+#         user = authenticate(username=username, password=password)
+#         if user and user.is_superuser:
+#             login(request, user)
+#             return redirect('admin-dashboard')
+#         messages.error(request, "Invalid admin credentials.")
+#     return render(request, 'admin_login.html')
 
 
 def hospital_register(request):

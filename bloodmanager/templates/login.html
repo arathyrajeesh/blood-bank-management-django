@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login | Blood Bank Lifeline</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+    :root {
+        --primary-red: #A4161A; 
+        --accent-red: #C70039;  
+        --background-light: #f4f6f8;
+        --text-dark: #333;
+        --shadow-color: rgba(0,0,0,0.15);
+        --input-border: #d0d0d0;
+    }
+
+    body {
+        font-family: 'Montserrat', sans-serif;
+        color: var(--text-dark);
+        background: linear-gradient(135deg, var(--background-light) 0%, #ffe8e8 100%);
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+    }
+
+    .login-box {
+        background: white;
+        padding: 45px 50px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px var(--shadow-color);
+        width: 100%;
+        max-width: 420px;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    h2 {
+        color: var(--primary-red);
+        text-align: center;
+        margin-bottom: 30px;
+        font-weight: 700;
+        font-size: 1.8rem;
+    }
+
+    .role-selection {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .role-button {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 15px 5px;
+        background: var(--background-light);
+        color: var(--text-dark);
+        border: 2px solid var(--input-border);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        font-weight: 600;
+        line-height: 1.2;
+    }
+
+    .role-button i {
+        font-size: 1.5rem;
+        margin-bottom: 5px;
+        color: var(--primary-red);
+    }
+
+    .role-button.selected,
+    .role-button:hover {
+        border-color: var(--primary-red);
+        background: #fdf5f5; 
+        box-shadow: 0 3px 8px rgba(164, 22, 26, 0.1);
+    }
+    
+    #role-select {
+        display: none; 
+    }
+    input[name="role"] {
+        display: none;
+    }
+
+    input[type="text"], 
+    input[type="password"] {
+        width: 100%;
+        padding: 12px 15px;
+        margin: 10px 0;
+        border: 1px solid var(--input-border);
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    input[type="text"]:focus, 
+    input[type="password"]:focus {
+        border-color: var(--primary-red);
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(164, 22, 26, 0.2);
+    }
+
+    button[type="submit"] {
+        width: 100%;
+        background: var(--primary-red);
+        color: white;
+        border: none;
+        padding: 14px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        cursor: pointer;
+        margin-top: 20px;
+        transition: background 0.2s, transform 0.1s;
+    }
+
+    button[type="submit"]:hover {
+        background: var(--accent-red);
+        transform: translateY(-1px);
+    }
+    
+    .message {
+        color: var(--primary-red);
+        background: #ffe0e0;
+        padding: 10px;
+        border: 1px solid var(--primary-red);
+        border-radius: 6px;
+        margin-bottom: 20px;
+        text-align: center;
+        font-size: 0.95rem;
+    }
+</style>
+</head>
+<body>
+    <div class="login-box">
+        <h2>Blood Bank Login</h2>
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        
+        <form id="login-form" method="POST">
+            {% csrf_token %}
+            
+            <input type="hidden" name="role" id="role-input" required>
+            
+            <div class="role-selection">
+                <div class="role-button" data-role="donor">
+                    <i class="fas fa-hand-holding-water"></i> Donor
+                </div>
+                <div class="role-button" data-role="hospital">
+                    <i class="fas fa-hospital"></i> Hospital
+                </div>
+                <div class="role-button" data-role="patient">
+                    <i class="fas fa-user-injured"></i> Patient
+                </div>
+                <div class="role-button" data-role="admin">
+                    <i class="fas fa-user-shield"></i> Admin
+                </div>
+            </div>
+
+            <input type="text" name="username" placeholder="Enter Username/ID" required>
+            <input type="password" name="password" placeholder="Enter Password" required>
+            
+            <button type="submit">Secure Login</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const roleButtons = document.querySelectorAll('.role-button');
+            const roleInput = document.getElementById('role-input');
+            const loginForm = document.getElementById('login-form');
+
+            roleButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    roleButtons.forEach(btn => btn.classList.remove('selected'));
+                    
+                    this.classList.add('selected');
+                    
+                    roleInput.value = this.getAttribute('data-role');
+                });
+            });
+
+            loginForm.addEventListener('submit', function(e) {
+                if (!roleInput.value) {
+                    alert('Please select a role before logging in.');
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

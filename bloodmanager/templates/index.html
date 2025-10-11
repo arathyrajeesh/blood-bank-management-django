@@ -4,15 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Blood Bank | Save a Life, Donate Blood</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <style>
     :root {
-        --primary-red: #B71C1C; 
-        --light-background: #f4f6f8;
-        --accent-red: #C70039;
-        --text-dark: #333;
+        --primary-red: #B71C1C;
+        --dark-red: #8B0000;
+        --accent-red: #D32F2F;
+        --light-background: #fdfdfd;
+        --body-background: #f0f2f5;
+        --text-dark: #333333;
+        --text-light: #666666;
         --border-light: #e0e0e0;
-        --low-stock-warning: #FFCDD2;
-        --low-stock-text: #D32F2F;
+        --low-stock-warning-bg: #ffebee;
+        --low-stock-warning-text: #c62828;
+        --shadow-light: rgba(0, 0, 0, 0.08);
+        --shadow-medium: rgba(0, 0, 0, 0.15);
     }
 
     * {
@@ -22,49 +29,86 @@
     }
 
     body {
-        font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-family: 'Poppins', sans-serif;
         color: var(--text-dark);
         line-height: 1.6;
-        background: var(--light-background);
+        background: var(--body-background);
         scroll-behavior: smooth;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
     }
 
     header {
         background-color: var(--primary-red);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        box-shadow: 0 6px 15px var(--shadow-medium);
         position: sticky;
         top: 0;
         z-index: 1000;
         padding: 0 20px;
+        transition: background-color 0.3s ease;
     }
 
     nav {
         max-width: 1200px;
         margin: 0 auto;
         display: flex;
-        justify-content: flex-end; 
+        justify-content: space-between;
         align-items: center;
+        padding: 10px 0;
+    }
+
+    nav h1 {
+        color: white;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.8rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
     }
 
     nav ul {
         list-style-type: none;
         display: flex;
+        gap: 15px;
     }
 
     nav ul li a {
         display: block;
         color: white;
         text-align: center;
-        padding: 1rem 1.2rem;
+        padding: 0.8rem 1.2rem;
         text-decoration: none;
         font-weight: 500;
-        transition: background 0.3s, color 0.3s;
+        transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+        border-radius: 6px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    nav ul li a::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background-color: var(--accent-red);
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-out;
+    }
+
+    nav ul li a:hover::before {
+        transform: translateX(0);
     }
 
     nav ul li a:hover,
     .dropdown:hover > a {
-        background-color: var(--accent-red);
+        background-color: rgba(255, 255, 255, 0.15);
         color: white;
+        transform: translateY(-2px);
+    }
+
+    .dropdown {
+        position: relative;
     }
 
     .dropdown-content {
@@ -73,28 +117,40 @@
         right: 0;
         top: 100%;
         background-color: white;
-        min-width: 180px;
-        box-shadow: 0px 8px 16px rgba(0,0,0,0.15);
-        border-radius: 0 0 4px 4px;
+        min-width: 200px;
+        box-shadow: 0px 8px 20px var(--shadow-medium);
+        border-radius: 0 0 8px 8px;
         overflow: hidden;
         z-index: 10;
-    }
-
-    .dropdown-content a {
-        color: var(--text-dark);
-        padding: 12px 16px;
-        text-align: left;
-        border-bottom: 1px solid #eee;
-    }
-
-    .dropdown-content a:hover {
-        background-color: #f1f1f1;
-        color: var(--primary-red);
+        transform: translateY(10px);
+        opacity: 0;
+        transition: transform 0.3s ease-out, opacity 0.3s ease-out;
     }
 
     .dropdown:hover .dropdown-content,
     .dropdown:focus-within .dropdown-content {
         display: block;
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    .dropdown-content a {
+        color: var(--text-dark);
+        padding: 14px 20px;
+        text-align: left;
+        border-bottom: 1px solid #f1f1f1;
+        font-weight: 500;
+        transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .dropdown-content a:last-child {
+        border-bottom: none;
+    }
+
+    .dropdown-content a:hover {
+        background-color: #f7f7f7;
+        color: var(--primary-red);
+        padding-left: 25px;
     }
 
     main {
@@ -104,158 +160,320 @@
     }
 
     .content-section {
-        margin-bottom: 60px;
-        background: white;
-        padding: 40px;
-        border-radius: 10px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        margin-bottom: 50px;
+        background: var(--light-background);
+        padding: 50px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px var(--shadow-light);
+        border: 1px solid var(--border-light);
     }
 
     .content-section h1 {
-        color: var(--primary-red);
-        font-size: 2.2rem;
-        margin-bottom: 1rem;
+        font-family: 'Montserrat', sans-serif;
+        color: var(--dark-red);
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
         text-align: center;
         border-bottom: 2px solid var(--border-light);
-        padding-bottom: 10px;
+        padding-bottom: 15px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
     }
 
     .content-section p {
-        font-size: 1.05rem;
-        margin-top: 15px;
-        text-align: justify;
+        font-size: 1.1rem;
+        margin-top: 18px;
+        text-align: center;
+        color: var(--text-light);
     }
 
+
     #home {
-        background: linear-gradient(rgba(183, 28, 28, 0.85), rgba(183, 28, 28, 0.85)), url('https://picsum.photos/1200/500?random=1') no-repeat center center/cover;
+        background: linear-gradient(rgba(183, 28, 28, 0.75), rgba(183, 28, 28, 0.75)),
+        url('https://images.unsplash.com/photo-1582719293881-2283d582e2ec?auto=format&fit=crop&w=1470&q=80')
+        center/cover no-repeat;        
         color: white;
-        padding: 80px 40px;
+        padding: 60px 40px; 
         text-align: center;
         margin-top: 0;
-        margin-bottom: 40px;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        margin-bottom: 60px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px var(--shadow-medium);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 300px; 
     }
 
     #home h1 {
-        font-size: 3.5rem;
+        font-size: 3rem; 
         margin-bottom: 20px;
         border-bottom: none;
         color: white;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+        font-weight: 700;
+        font-family: 'Montserrat', sans-serif;
+        line-height: 1.2;
     }
     #home p {
-        font-size: 1.3rem;
-        max-width: 800px;
+        font-size: 1.2rem; 
+        max-width: 900px;
         margin: 0 auto 30px auto;
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 400;
     }
     .cta-button {
         display: inline-block;
         background-color: white;
-        color: var(--primary-red);
-        padding: 15px 30px;
+        color: var(--accent-red);
+        padding: 15px 35px; 
         border-radius: 50px;
         text-decoration: none;
         font-weight: 700;
-        font-size: 1.1rem;
-        transition: background-color 0.3s, transform 0.2s;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        font-size: 1.1rem; 
+        transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+        letter-spacing: 0.5px;
     }
     .cta-button:hover {
-        background-color: #f0f0f0;
-        transform: translateY(-2px);
+        background-color: #ffeeee;
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    }
+    .cta-button i {
+        margin-right: 8px;
+    }
+
+    #stock h1 + p {
+        font-size: 1rem;
+        max-width: 700px;
+        margin: 15px auto 30px;
+        color: var(--text-light);
     }
 
     #stock table {
-        width: 60%;
-        margin: 30px auto;
-        border-collapse: separate;
+        width: 70%;
+        margin: 40px auto;
+        border-collapse: collapse;
         border-spacing: 0;
-        border-radius: 8px;
+        border-radius: 10px;
         overflow: hidden;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        box-shadow: 0 6px 20px var(--shadow-light);
     }
     #stock th, #stock td {
-        padding: 15px;
+        padding: 18px;
         text-align: center;
-        border: none;
+        border: 1px solid #f0f0f0;
     }
     #stock th {
         background: var(--primary-red);
         color: white;
         font-weight: 600;
         text-transform: uppercase;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1rem;
+        letter-spacing: 0.5px;
     }
     #stock tr:nth-child(even) {
-        background-color: #f9f9f9;
+        background-color: #fcfcfc;
     }
     #stock tr:hover {
-        background-color: #fff7f7;
+        background-color: #fff9f9;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        transform: translateY(-1px);
+        transition: all 0.2s ease;
     }
     #stock .low-stock {
-        background-color: var(--low-stock-warning) !important; 
-        color: var(--low-stock-text);
-        font-weight: bold;
-        animation: pulse 1.5s infinite;
+        background-color: var(--low-stock-warning-bg) !important;
+        color: var(--low-stock-warning-text);
+        font-weight: 700;
+        animation: pulse 1.8s infinite alternate;
+        border-left: 5px solid var(--low-stock-warning-text);
     }
     @keyframes pulse {
-        0% { opacity: 1; }
-        50% { opacity: 0.8; }
-        100% { opacity: 1; }
+        0% { transform: scale(1); opacity: 0.9; }
+        100% { transform: scale(1.01); opacity: 1; }
+    }
+
+    #about p, #contact p {
+        text-align: left;
+        max-width: 900px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    #contact .content-section p {
+        text-align: center;
+    }
+    #contact div {
+        margin-top: 30px;
+        font-size: 1.1rem;
+        line-height: 2;
+        color: var(--text-light);
+    }
+    #contact div p strong {
+        color: var(--primary-red);
+    }
+    #contact div a {
+        color: var(--primary-red);
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.2s;
+    }
+    #contact div a:hover {
+        color: var(--accent-red);
+        text-decoration: underline;
     }
 
     footer {
         background-color: var(--primary-red);
         color: white;
         text-align: center;
-        padding: 1.5rem;
-        margin-top: 40px;
+        padding: 2rem;
+        margin-top: 50px;
+        font-size: 1rem;
+        font-weight: 400;
+        box-shadow: 0 -4px 10px var(--shadow-medium);
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 1024px) {
         #stock table {
-            width: 80%;
-        }
-    }
-    @media (max-width: 768px) {
-        nav {
-            justify-content: space-between;
-        }
-        nav ul {
-            display: none; 
-        }
-        
-        #home {
-            padding: 50px 20px;
+            width: 85%;
         }
         #home h1 {
-            font-size: 2.5rem;
+            font-size: 2.8rem;
+        }
+        #home p {
+            font-size: 1.2rem;
+        }
+        .content-section {
+            padding: 40px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        nav {
+            flex-direction: column;
+            padding: 10px 0;
+        }
+        nav h1 {
+            margin-bottom: 15px;
+        }
+        nav ul {
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+        nav ul li a {
+            padding: 0.6rem 1rem;
+        }
+        .dropdown {
+            width: 100%;
+            text-align: center;
+        }
+        .dropdown-content {
+            right: auto;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            min-width: unset;
+            width: 90%;
+            border-radius: 8px;
+        }
+        .dropdown:hover .dropdown-content,
+        .dropdown:focus-within .dropdown-content {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        #home {
+            padding: 40px 20px;
+            min-height: 250px;
+        }
+        #home h1 {
+            font-size: 2.4rem;
+        }
+        #home p {
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+        .cta-button {
+            padding: 12px 25px;
+            font-size: 1rem;
         }
         .content-section {
             padding: 30px 20px;
         }
+        .content-section h1 {
+            font-size: 2rem;
+        }
         #stock table {
             width: 100%;
+            margin: 20px auto;
+        }
+        #stock th, #stock td {
+            padding: 12px;
+            font-size: 0.9rem;
         }
     }
 
+    @media (max-width: 480px) {
+        nav h1 {
+            font-size: 1.5rem;
+        }
+        nav ul {
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        nav ul li {
+            width: 100%;
+            text-align: center;
+        }
+        .dropdown-content {
+            left: 0;
+            right: 0;
+            width: 100%;
+            transform: translateY(10px);
+        }
+        .dropdown:hover .dropdown-content,
+        .dropdown:focus-within .dropdown-content {
+            transform: translateY(0);
+        }
+        #home {
+            min-height: 200px;
+        }
+        #home h1 {
+            font-size: 1.8rem;
+        }
+        #home p {
+            font-size: 0.85rem;
+        }
+        .content-section h1 {
+            font-size: 1.8rem;
+        }
+        .content-section p {
+            font-size: 1rem;
+        }
+        .cta-button {
+            padding: 10px 20px;
+            font-size: 0.9rem;
+        }
+    }
 </style>
 </head>
 <body>
 
 <header>
     <nav>
+        <h1>Blood Bank Management</h1>
         <ul>
             <li><a href="#home">Home</a></li>
             <li><a href="#stock">Stock</a></li>
             <li><a href="#about">About</a></li>
             <li><a href="#contact">Contact</a></li>
             <li class="dropdown">
-                <a href="javascript:void(0)" class="dropbtn">Login/Account </a>
+                <a href="javascript:void(0)" class="dropbtn">Login/Account <i class="fas fa-caret-down"></i></a>
                 <div class="dropdown-content">
-                    <a href="{% url 'donor-login' %}">Donor Login</a>
-                    <a href="{% url 'hospital-login' %}">Hospital Login</a>
-                    <a href="{% url 'patient-login' %}">Patient Login</a>
-                    <a href="{% url 'admin-login' %}">Admin Login</a>
+                    <a href="{% url 'login' %}">Login</a>
                     <a href="{% url 'register' %}">Register Now</a>
                 </div>
             </li>
@@ -264,16 +482,16 @@
 </header>
 
 <main>
-    <section id="home">
+    <section id="home" >
         <h1>You are the Lifeline. Donate Blood.</h1>
         <p>Every donation saves a life. Welcome to our Blood Bank Management System. Our mission is to ensure a safe and sufficient blood supply is available for every patient in need.</p>
-        <a href="{% url 'register' %}" class="cta-button">Register to Donate Today</a>
+        <a href="{% url 'register' %}" class="cta-button"><i class="fas fa-heartbeat"></i> Register</a>
     </section>
 
     <section id="stock" class="content-section">
         <h1>Current Blood Stock 🩸</h1>
-        <p style="text-align: center; max-width: 600px; margin: 10px auto 20px;">
-            Check our real-time inventory. Groups highlighted in pink are critically low (<5 units) and require immediate attention!
+        <p>
+            Check our real-time inventory. Groups highlighted in pink are critically low (&lt;5 units) and require immediate attention!
         </p>
         <table>
             <thead>
@@ -302,11 +520,10 @@
 
     <section id="contact" class="content-section">
         <h1>Connect With Us</h1>
-        <p style="text-align: center; max-width: 600px; margin: 10px auto 20px;">Reach out to us to schedule an appointment, ask donor eligibility questions, or inquire about volunteer opportunities. We're here to help you become a lifesaver.</p>
+        <p>Reach out to us to schedule an appointment, ask donor eligibility questions, or inquire about volunteer opportunities. We're here to help you become a lifesaver.</p>
         <div style="text-align: center;">
-            <p><strong>Email:</strong> bloodbank@gmail.com</p>
-            <p><strong>Email:</strong> bloodbank@gmail.com</p>
-            <p><strong>Phone:</strong> 123-4567</p>
+            <p><strong>Email:</strong> <a href="mailto:bloodbanks@example.com">bloodbanks@example.com</a></p>
+            <p><strong>Phone:</strong> <a href="tel:+1234567890">123-4567</a></p>
             <p><strong>Address:</strong> Blood bank , Bengaluru </p>
         </div>
     </section>
