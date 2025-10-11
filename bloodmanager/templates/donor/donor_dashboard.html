@@ -74,20 +74,8 @@
         color: #555;
         font-weight: 600;
     }
-    .info {
-        margin-top: 20px;
-        line-height: 1.8;
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 10px 20px;
-    }
-
     .info p.address {
-        grid-column: 1 / -1;  
-        background: #fafafa;
-        border-radius: 6px;
-        border: 1px solid var(--border-light);
-        padding: 8px 12px;
+        grid-column: 1 / -1;
     }
 
     .availability-card {
@@ -186,6 +174,7 @@
         text-align: right;
         margin-top: 40px;
     }
+
     .logout-button {
         padding: 0.6rem 1.4rem;
     }
@@ -195,6 +184,30 @@
         height: 1px;
         background: var(--border-light);
         margin: 40px 0;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1.5rem;
+    }
+    th, td {
+        padding: 12px 15px;
+        text-align: left;
+    }
+    thead {
+        background: var(--primary-color);
+        color: white;
+    }
+    tbody tr {
+        border-bottom: 1px solid var(--border-light);
+        background: #fff;
+    }
+    tbody tr:nth-child(even) {
+        background: #fafafa;
+    }
+    tbody tr:hover {
+        background-color: #f2f2f2;
     }
 
     @media(max-width:600px){
@@ -207,6 +220,11 @@
         }
         .info {
             grid-template-columns: 1fr;
+        }
+        table {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
         }
     }
 </style>
@@ -249,7 +267,7 @@
         {% else %}
             <hr>
             <h3>Health Declaration Form</h3>
-            <form method="POST" class="donation-form">
+            <form method="POST" action="" class="donation-form">
                 {% csrf_token %}
                 {{ health_form.as_p }}
                 <button type="submit" name="submit_health">Submit Health Info</button>
@@ -259,12 +277,43 @@
 
     <hr>
     <h3>Update Donation Status</h3>
-    <form method="POST">
+    <form method="POST" action="">
         {% csrf_token %}
-        {{ form.last_donation_date }}
-        <button type="submit" name="update_donation">Update Date</button>
-    </form>
+        <div class="form-group">
+            <label for="id_last_donation_date"><strong>Last Donation Date:</strong></label>
+            {{ form.last_donation_date }}
+        </div>
+        <div class="form-group">
+            <label for="units"><strong>Units Donated:</strong></label>
+            <input type="number" name="units" min="1" max="10" required>
+        </div>
+        <button type="submit" name="update_donation">Update Donation</button>
+    </form>    
     
+    <hr>
+    <h3>Donation History</h3>
+    {% if donation_history %}
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Donation Date</th>
+                <th scope="col">Units Donated</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for donation in donation_history %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ donation.date }}</td>
+                <td>{{ donation.units }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="text-align:center; padding:15px; color:#777;">No donation history available yet.</p>
+    {% endif %}
 
     <div class="logout">
         <form method="POST" action="{% url 'logout' %}">

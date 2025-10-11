@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from datetime import date, timedelta
-from .models import Donor, Patient, BloodStock, Hospital, BLOOD_GROUP_CHOICES,DonorHealthCheck
+from .models import Donor, Patient, BloodStock, Hospital, BLOOD_GROUP_CHOICES,DonorHealthCheck,Donation
 from .forms import RegistrationForm, BloodStockForm, LastDonationForm, HospitalRegistrationForm, HospitalProfileForm,DonorHealthCheckForm
 from django.db.models import Sum
 
@@ -189,21 +189,28 @@ def donor_dashboard(request):
 
     health_form = None
     health_record = DonorHealthCheck.objects.filter(donor=donor).order_by('-submitted_at').first()
-
-    if request.method == 'POST':
-        if 'update_donation' in request.POST:
-            form = LastDonationForm(request.POST, instance=donor)
-            if form.is_valid():
-                donor = form.save(commit=False)
-                if donor.last_donation_date:
-                    donor.available = (date.today() - donor.last_donation_date).days >= 90
-                else:
-                    donor.available = True
-                donor.save()
-                messages.success(request, 'Last donation date updated successfully!')
-                return redirect('donor-dashboard')
+    donation_history = Donation.objects.filter(donor=donor).order_by('-date')
+        
+    if 'update_donation' in request.POST:
+        form = LastDonationForm(request.POST, instance=donor)
+        units = request.POST.get('units')
+        if form.is_valid() and units:
+            donor = form.save(commit=False)
+            if donor.last_donation_date:
+                donor.available = (date.today() - donor.last_donation_date).days >= 90
             else:
-                messages.error(request, f"Error: {form.errors}")
+                donor.available = True
+            donor.save()
+            
+            Donation.objects.create(
+                donor=donor,
+                date=donor.last_donation_date,
+                units=units
+            )
+            messages.success(request, f'Donation record added — {units} unit(s) donated on {donor.last_donation_date}.')
+            return redirect('donor-dashboard')
+        else:
+            messages.error(request, "Please enter a valid date and units.")
 
         if 'submit_health' in request.POST:
             health_form = DonorHealthCheckForm(request.POST)
@@ -215,15 +222,16 @@ def donor_dashboard(request):
                 return redirect('donor-dashboard')
             else:
                 messages.error(request, f"Health form error: {health_form.errors}")
-    else:
-        if donor.available and (not health_record or not health_record.is_approved):
-            health_form = DonorHealthCheckForm()
+        else:
+            if donor.available and (not health_record or not health_record.is_approved):
+                health_form = DonorHealthCheckForm()
 
     context = {
         'donor': donor,
         'form': form,
         'health_form': health_form,
         'health_record': health_record,
+        'donation_history': donation_history, 
     }
     return render(request, 'donor/donor_dashboard.html', context)
 

@@ -76,3 +76,12 @@ class DonorHealthCheck(models.Model):
 
     def __str__(self):
         return f"{self.donor.user.username} - Health Check"
+
+class Donation(models.Model):
+    donor = models.ForeignKey(Donor, on_delete=models.CASCADE)
+    date = models.DateField()
+    units = models.PositiveIntegerField(default=1)
+    recorded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.donor.user.username} donated {self.units} unit(s) on {self.date}"
