@@ -321,7 +321,8 @@ def is_admin(user):
 @user_passes_test(is_admin)
 def admin_dashboard(request):
     donors = Donor.objects.all()
-    patients = Patient.objects.all()
+    patients = Patient.objects.all().order_by('-approved', 'user__username')    
+    requested_patients = Patient.objects.filter(approved=False)  
     stock = BloodStock.objects.values('blood_group').annotate(total_units=Sum('units')).order_by('blood_group')
     health_forms = DonorHealthCheck.objects.all().order_by('-submitted_at')
 
@@ -365,6 +366,7 @@ def admin_dashboard(request):
 
     context = {
         'donors': donors,
+        'requested_patients': requested_patients,  
         'patients': patients,
         'stock': stock,
         'total_donors': total_donors,

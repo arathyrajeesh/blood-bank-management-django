@@ -85,3 +85,5 @@ class Donation(models.Model):
 
     def __str__(self):
         return f"{self.donor.user.username} donated {self.units} unit(s) on {self.date}"
+
+

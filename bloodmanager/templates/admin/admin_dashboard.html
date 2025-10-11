@@ -218,7 +218,44 @@ hr { border: 0; height: 1px; background: var(--border-light); margin: 40px 0; }
         </tbody>
     </table>
     
-
+    <h2>Blood Requests</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Blood Group</th>
+                <th>Phone</th>
+                <th>Required Units</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for patient in patients %}
+            <tr>
+                <td>{{ patient.user.username }}</td>
+                <td>{{ patient.blood_group }}</td>
+                <td>{{ patient.phone }}</td>
+                <td>{{ patient.required_units }}</td>
+                <td>{% if patient.approved %}Approved{% else %}Pending{% endif %}</td>
+                <td>
+                    {% if not patient.approved %}
+                    <form method="POST" style="display:inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="patient_id" value="{{ patient.id }}">
+                        <button type="submit" name="approve_patient" style="padding:5px 10px; background:green; color:white; border:none; border-radius:5px;">Approve</button>
+                    </form>
+                    {% else %}
+                        <button disabled style="opacity:0.5;">Approved</button>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" style="text-align:center;">No patient records found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
     <hr>
     <h2>Donor Health Forms</h2>
     <table>
