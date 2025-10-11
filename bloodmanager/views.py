@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from datetime import date, timedelta
 from .models import Donor, Patient, BloodStock, Hospital, BLOOD_GROUP_CHOICES,DonorHealthCheck,Donation
-from .forms import RegistrationForm, BloodStockForm, LastDonationForm, HospitalRegistrationForm, HospitalProfileForm,DonorHealthCheckForm
+from .forms import RegistrationForm, BloodStockForm, LastDonationForm, HospitalRegistrationForm, HospitalProfileForm,DonorHealthCheckForm,PatientRequestForm
 from django.db.models import Sum
 
 
@@ -190,7 +190,6 @@ def donor_dashboard(request):
     health_record = DonorHealthCheck.objects.filter(donor=donor).order_by('-submitted_at').first()
     health_form = None
 
-    # ✅ Update donation details (date + units)
     if 'update_donation' in request.POST:
         form = LastDonationForm(request.POST, instance=donor)
         units = request.POST.get('units')
@@ -202,7 +201,6 @@ def donor_dashboard(request):
                 donor.available = True
             donor.save()
 
-            # Record donation
             Donation.objects.create(
                 donor=donor,
                 date=donor.last_donation_date,
@@ -213,7 +211,6 @@ def donor_dashboard(request):
         else:
             messages.error(request, "Please enter a valid date and units.")
 
-    # ✅ Handle health form submission
     elif 'submit_health' in request.POST:
         health_form = DonorHealthCheckForm(request.POST)
         if health_form.is_valid():
@@ -225,7 +222,6 @@ def donor_dashboard(request):
         else:
             messages.error(request, f"Health form error: {health_form.errors}")
 
-    # ✅ Load form normally
     else:
         if donor.available and (not health_record or not health_record.is_approved):
             health_form = DonorHealthCheckForm()
@@ -239,6 +235,24 @@ def donor_dashboard(request):
     }
     return render(request, 'donor/donor_dashboard.html', context)
 
+@login_required
+def submit_blood_request(request):
+    patient = get_object_or_404(Patient, user=request.user)
+
+    if request.method == 'POST':
+        form = PatientRequestForm(request.POST, instance=patient)
+        if form.is_valid():
+            patient = form.save(commit=False)
+            patient.approved = False  
+            patient.save()
+            messages.success(request, "Blood request submitted! Awaiting admin approval.")
+            return redirect('patient-dashboard')
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        form = PatientRequestForm(instance=patient)
+
+    return render(request, 'patient/submit_request.html', {'form': form})
 
 @login_required
 def patient_dashboard(request):
@@ -249,9 +263,9 @@ def patient_dashboard(request):
     }
     return render(request, 'patient/patient_dashboard.html', context)
 
+
 @login_required
 def search_hospitals(request):
-    # Only BloodStock entries with a linked hospital
     hospitals_with_stock = BloodStock.objects.filter(units__gt=0, hospital__isnull=False).select_related('hospital').order_by('hospital__name', 'blood_group')
 
     return render(request, 'patient/search_hospitals.html', {

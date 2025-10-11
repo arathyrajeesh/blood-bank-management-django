@@ -12,6 +12,7 @@ urlpatterns = [
     path('admin-dashboard/', views.admin_dashboard, name='admin-dashboard'),
     path('patient-dashboard/', views.patient_dashboard, name='patient-dashboard'),
     
+    path('patient/submit-request/', views.submit_blood_request, name='submit-blood-request'),
     path('hospital/register/', views.hospital_register, name='hospital-register'),
     path('patient/search-donors/', views.search_donors, name='search-donors'),
     path('hospital-login/', views.hospital_login, name='hospital-login'),

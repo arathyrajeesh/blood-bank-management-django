@@ -78,7 +78,6 @@
         </div>
     {% endif %}
 
-    <!-- Always allow hospital stock search -->
     <p style="text-align: center; margin-top: 15px;">
         <a href="{% url 'search-hospitals' %}" style="text-decoration: none;">
             <button style="width: 60%; max-width: 400px; background: #006400;">
@@ -87,7 +86,15 @@
         </a>
     </p>
 
-    
+    {% if  patient.approved %}
+    <p style="text-align:center; margin-top:15px;">
+        <a href="{% url 'submit-blood-request' %}">
+            <button style="width:60%; max-width:400px; background:#006400;">
+                🩸 Submit / Update Blood Request
+            </button>
+        </a>
+    </p>    
+    {% endif %}
 
     <div class="logout">
         <form method="POST" action="{% url 'logout' %}">
