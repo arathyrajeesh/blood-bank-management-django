@@ -60,40 +60,6 @@
         <p><strong>Address:</strong> {{ patient.address }}</p>
         <p><strong>Required Units:</strong> {{ patient.required_units }}</p>
     </div>
-    <hr style="margin: 30px 0;">
-
-    <h3 style="color: rgb(172,5,5); text-align:center;">Your Blood Request History</h3>
-
-    {% if history %}
-    <table style="width:100%; border-collapse: collapse; margin-top: 15px;">
-        <thead>
-            <tr style="background: rgb(172,5,5); color:white;">
-                <th>Date Submitted</th>
-                <th>Required Units</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for request in history %}
-            <tr style="border-bottom: 1px solid #ddd;">
-                <td>{{ request.date_submitted|default:request.id|date:"d M Y" }}</td>
-                <td>{{ request.required_units }}</td>
-                <td>
-                    {% if request.approved %}
-                        <span style="color:green;font-weight:600;">Approved</span>
-                    {% else %}
-                        <span style="color:orange;font-weight:600;">Pending</span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-    <p style="text-align:center; color:#856404; font-weight:600; margin-top:15px;">
-        {{ no_request_message }}
-    </p>
-    {% endif %}
 
     <hr style="margin: 30px 0;">
 
