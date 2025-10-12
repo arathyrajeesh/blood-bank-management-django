@@ -274,6 +274,41 @@
     <a href="{% url 'hospital_edit_profile' %}" class="profile-link">
         <button type="button">Update Profile</button>
     </a>
+    
+    <h3>Pending Patient Requests</h3>
+    {% if pending_requests %}
+    <table>
+        <thead>
+            <tr>
+                <th>Patient Name</th>
+                <th>Blood Group</th>
+                <th>Required Units</th>
+                <th>Address</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for patient in pending_requests %}
+            <tr>
+                <td>{{ patient.user.username }}</td>
+                <td>{{ patient.blood_group }}</td>
+                <td>{{ patient.required_units }}</td>
+                <td>{{ patient.address }}</td>
+                <td>
+                    <form method="POST" style="margin: 0;">
+                        {% csrf_token %}
+                        <input type="hidden" name="patient_id" value="{{ patient.id }}">
+                        <button type="submit" name="approve_patient">Approve</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No pending patient requests at the moment.</p>
+    {% endif %}
+
 
     <div class="logout">
         <form method="POST" action="{% url 'logout' %}">

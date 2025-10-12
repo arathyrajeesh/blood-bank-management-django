@@ -11,6 +11,8 @@
     table { width: 100%; border-collapse: collapse; margin-top: 20px; }
     th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
     th { background: rgb(172, 5, 5); color: white; }
+    .request-btn { background: #c70039; color: white; padding: 5px 10px; border: none; border-radius: 6px; cursor: pointer; text-decoration: none; }
+    .request-btn:hover { background: #a81616; }
 </style>
 </head>
 <body>
@@ -25,6 +27,7 @@
             <th>Blood Group</th>
             <th>Available Units</th>
             <th>Address</th>
+            <th>Action</th>
         </tr>
         {% for stock in hospitals_with_stock %}
         <tr>
@@ -32,6 +35,16 @@
             <td>{{ stock.blood_group }}</td>
             <td>{{ stock.units }}</td>
             <td>{{ stock.hospital.address }}</td>
+            <td>
+                {% if request.user.patient %}
+                <form method="POST" action="{% url 'submit_blood_request' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="hospital_id" value="{{ stock.hospital.id }}">
+                    <input type="hidden" name="blood_group" value="{{ stock.blood_group }}">
+                    <button type="submit" class="request-btn">Request Blood</button>
+                </form>
+                {% endif %}
+            </td>
         </tr>
         {% endfor %}
     </table>

@@ -179,29 +179,47 @@ def hospital_dashboard(request):
     hospital = request.user.hospital
     stock = BloodStock.objects.filter(hospital=hospital)
 
-    if request.method == 'POST' and 'add_stock' in request.POST:
-        blood_group = request.POST.get('blood_group')
-        units = int(request.POST.get('units', 0))
+    # Get pending patient requests (approved=False)
+    pending_requests = Patient.objects.filter(approved=False).order_by('-id')
 
-        if blood_group and units > 0:
-            obj, created = BloodStock.objects.get_or_create(
-                hospital=hospital,
-                blood_group=blood_group,
-                defaults={'units': units}
-            )
-            if not created:
-                obj.units += units
-                obj.save()
-            messages.success(request, f"{units} units of {blood_group} added/updated successfully!")
+    if request.method == 'POST':
+        # Add blood stock
+        if 'add_stock' in request.POST:
+            blood_group = request.POST.get('blood_group')
+            units = int(request.POST.get('units', 0))
+
+            if blood_group and units > 0:
+                obj, created = BloodStock.objects.get_or_create(
+                    hospital=hospital,
+                    blood_group=blood_group,
+                    defaults={'units': units}
+                )
+                if not created:
+                    obj.units += units
+                    obj.save()
+                messages.success(request, f"{units} units of {blood_group} added/updated successfully!")
+                return redirect('hospital-dashboard')
+            else:
+                messages.error(request, "Please select a blood group and enter valid units.")
+
+        # Approve patient request
+        elif 'approve_patient' in request.POST:
+            patient_id = request.POST.get('patient_id')
+            patient = get_object_or_404(Patient, id=patient_id)
+            patient.approved = True
+            patient.save()
+            messages.success(request, f"Patient {patient.user.username} approved successfully!")
             return redirect('hospital-dashboard')
-        else:
-            messages.error(request, "Please select a blood group and enter valid units.")
 
     context = {
         'stock': stock,
+        'pending_requests': pending_requests,   # pass patient requests to template
+        'BLOOD_GROUP_CHOICES': BloodStock.BLOOD_GROUP_CHOICES if hasattr(BloodStock, 'BLOOD_GROUP_CHOICES') else [
+            ('A+', 'A+'), ('A-', 'A-'), ('B+', 'B+'), ('B-', 'B-'),
+            ('AB+', 'AB+'), ('AB-', 'AB-'), ('O+', 'O+'), ('O-', 'O-')
+        ],
     }
     return render(request, 'hospital/hospital_dashboard.html', context)
-
 
 @login_required
 def donor_dashboard(request):
