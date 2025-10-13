@@ -185,6 +185,151 @@
         color: var(--dark-red);
         text-decoration: underline;
     }
+    :root {
+        --primary-red: #B71C1C;
+        --dark-red: #8B0000;
+        --accent-red: #D32F2F;
+        --light-background: #fdfdfd;
+        --body-background: #f0f2f5;
+        --text-dark: #333333;
+        --text-light: #666666;
+        --border-light: #e0e0e0;
+        --low-stock-warning-bg: #ffebee;
+        --low-stock-warning-text: #c62828;
+        --shadow-light: rgba(0, 0, 0, 0.08);
+        --shadow-medium: rgba(0, 0, 0, 0.15);
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        color: var(--text-dark);
+        line-height: 1.6;
+        background: var(--body-background);
+        scroll-behavior: smooth;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    header {
+        background-color: var(--primary-red);
+        box-shadow: 0 6px 15px var(--shadow-medium);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        padding: 0 20px;
+        transition: background-color 0.3s ease;
+    }
+
+    nav {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+    }
+
+    nav h1 {
+        color: white;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.8rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+
+    nav ul {
+        list-style-type: none;
+        display: flex;
+        gap: 15px;
+    }
+
+    nav ul li a {
+        display: block;
+        color: white;
+        text-align: center;
+        padding: 0.8rem 1.2rem;
+        text-decoration: none;
+        font-weight: 500;
+        transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+        border-radius: 6px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    nav ul li a::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background-color: var(--accent-red);
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-out;
+    }
+
+    nav ul li a:hover::before {
+        transform: translateX(0);
+    }
+
+    nav ul li a:hover,
+    .dropdown:hover > a {
+        background-color: rgba(255, 255, 255, 0.15);
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .dropdown {
+        position: relative;
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 100%;
+        background-color: white;
+        min-width: 200px;
+        box-shadow: 0px 8px 20px var(--shadow-medium);
+        border-radius: 0 0 8px 8px;
+        overflow: hidden;
+        z-index: 10;
+        transform: translateY(10px);
+        opacity: 0;
+        transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+    }
+
+    .dropdown:hover .dropdown-content,
+    .dropdown:focus-within .dropdown-content {
+        display: block;
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    .dropdown-content a {
+        color: var(--text-dark);
+        padding: 14px 20px;
+        text-align: left;
+        border-bottom: 1px solid #f1f1f1;
+        font-weight: 500;
+        transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .dropdown-content a:last-child {
+        border-bottom: none;
+    }
+
+    .dropdown-content a:hover {
+        background-color: #f7f7f7;
+        color: var(--primary-red);
+        padding-left: 25px;
+    }
 
 
     @media (max-width: 768px) {
@@ -201,9 +346,29 @@
 </style>
 </head>
 <body>
+    <header>
+        <nav>
+            <h1>RedConnect</h1>
+            <ul>
+                <li><a href="{% url 'main' %}">Home</a></li>
+                <li><a href="#stock">Stock</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="{% url 'help' %}">Help / Support</a></li> 
+                <li class="dropdown">
+                    <a href="javascript:void(0)" class="dropbtn">Account <i class="fas fa-caret-down"></i></a>
+                    <div class="dropdown-content">
+                        <a href="{% url 'login' %}">Login</a>
+                        <a href="{% url 'register' %}">Donor / Patient Register</a>
+                        <a href="{% url 'hospital-register' %}">Hospital Register</a>                
+                    </div>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    
     <main id="help-page" class="content-section">
         <h1>Help & Support Center</h1>
-        <a href="{% url 'register' %}" class="cta-button">Register to Donate</a>
         
         <p style="text-align: center; font-size: 1.1rem; color: var(--text-light);">
             Find answers to common questions about donation, eligibility, and using the Blood Bank Management System.
