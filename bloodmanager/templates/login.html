@@ -138,6 +138,35 @@
         text-align: center;
         font-size: 0.95rem;
     }
+    .password-wrapper {
+        position: relative;
+    }
+    
+    .password-toggle {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        color: #999;
+        font-size: 0.9rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: color 0.2s, transform 0.2s;
+        font-size: 1rem;
+        color: #999;
+    }
+    
+    .password-toggle:focus {
+        outline: none;
+        color: var(--primary-red);
+    }
+    .password-toggle:hover i {
+        color: var(--primary-red);
+    }
+    
 </style>
 </head>
 <body>
@@ -169,12 +198,16 @@
                     <i class="fas fa-user-shield"></i> Admin
                 </div>
             </div>
-
-            <input type="text" name="username" placeholder="Enter Username/ID" required>
-            <input type="password" name="password" placeholder="Enter Password" required>
-            
+            <input type="text" name="username"  placeholder="Enter Username/ID" required>
+            <div class="password-wrapper">
+                <input type="password" name="password" id="password_input" placeholder="Enter Password" required>
+                <button type="button" class="password-toggle" id="toggle_password" aria-label="Show password">
+                    <i class="fas fa-eye"></i>                
+                </button>
+            </div>
             <button type="submit">Secure Login</button>
         </form>
+        
         <p style="text-align: center; margin-top: 20px;">
             <a href="{% url 'main' %}" style="color: #666; text-decoration: none; font-size: 0.9em;">
                 Go back to Homepage
@@ -208,6 +241,18 @@
                 }
             });
         });
+        const passwordInput = document.getElementById('password_input');
+        const toggleButton = document.getElementById('toggle_password');
+        const icon = toggleButton.querySelector('i');
+        
+        toggleButton?.addEventListener('click', () => {
+            const isPassword = passwordInput.type === 'password';
+            passwordInput.type = isPassword ? 'text' : 'password';
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
+            toggleButton.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+        });
+        
     </script>
 </body>
 </html>

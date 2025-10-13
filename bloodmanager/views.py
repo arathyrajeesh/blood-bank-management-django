@@ -5,15 +5,9 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from datetime import date
 from django.db.models import Sum
-from .models import (
-    Donor, Patient, BloodStock, Hospital,
-    DonorHealthCheck, Donation
-)
-from .forms import (
-    RegistrationForm, BloodStockForm, LastDonationForm,
-    HospitalRegistrationForm, HospitalProfileForm,
-    DonorHealthCheckForm, PatientRequestForm
-)
+from .models import ( Donor, Patient, BloodStock, Hospital,DonorHealthCheck, Donation)
+from .forms import (RegistrationForm, BloodStockForm, LastDonationForm,HospitalRegistrationForm, HospitalProfileForm,DonorHealthCheckForm, PatientRequestForm)
+
 
 
 def home(request):
@@ -71,22 +65,18 @@ def universal_login(request):
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
-            # Donor
             if role == 'donor' and Donor.objects.filter(user=user).exists():
                 login(request, user)
                 return redirect('donor-dashboard')
 
-            # Patient
             elif role == 'patient' and Patient.objects.filter(user=user).exists():
                 login(request, user)
                 return redirect('patient-dashboard')
 
-            # Hospital
             elif role == 'hospital' and Hospital.objects.filter(user=user).exists():
                 login(request, user)
                 return redirect('hospital-dashboard')
 
-            # Admin
             elif role == 'admin' and user.is_superuser:
                 login(request, user)
                 return redirect('admin-dashboard')
@@ -97,54 +87,6 @@ def universal_login(request):
             messages.error(request, "Invalid username or password.")
             
     return render(request, 'login.html')
-
-# def donor_login(request):
-#     if request.method == 'POST':
-#         username = request.POST['username']
-#         password = request.POST['password']
-#         user = authenticate(request, username=username, password=password)
-#         if user and Donor.objects.filter(user=user).exists():
-#             login(request, user)
-#             return redirect('donor-dashboard')
-#         messages.error(request, 'Invalid credentials or not registered as a donor.')
-#     return render(request, 'donor_login.html')
-
-
-# def patient_login(request):
-#     if request.method == 'POST':
-#         username = request.POST['username']
-#         password = request.POST['password']
-#         user = authenticate(request, username=username, password=password)
-#         if user and Patient.objects.filter(user=user).exists():
-#             login(request, user)
-#             return redirect('patient-dashboard')
-#         messages.error(request, 'Invalid credentials or not registered as a patient.')
-#     return render(request, 'patient_login.html')
-
-
-# def hospital_login(request):
-#     if request.method == 'POST':
-#         username = request.POST['username']
-#         password = request.POST['password']
-#         user = authenticate(request, username=username, password=password)
-#         if user and Hospital.objects.filter(user=user).exists():
-#             login(request, user)
-#             return redirect('hospital-dashboard')
-#         messages.error(request, 'Invalid credentials or not registered as a hospital.')
-#     return render(request, 'hospital/hospital_login.html')
-
-
-# def admin_login(request):
-#     if request.method == "POST":
-#         username = request.POST.get("username")
-#         password = request.POST.get("password")
-#         user = authenticate(username=username, password=password)
-#         if user and user.is_superuser:
-#             login(request, user)
-#             return redirect('admin-dashboard')
-#         messages.error(request, "Invalid admin credentials.")
-#     return render(request, 'admin_login.html')
-
 
 def hospital_register(request):
     if request.method == 'POST':
@@ -179,11 +121,9 @@ def hospital_dashboard(request):
     hospital = request.user.hospital
     stock = BloodStock.objects.filter(hospital=hospital)
 
-    # Get pending patient requests (approved=False)
     pending_requests = Patient.objects.filter(approved=False).order_by('-id')
 
     if request.method == 'POST':
-        # Add blood stock
         if 'add_stock' in request.POST:
             blood_group = request.POST.get('blood_group')
             units = int(request.POST.get('units', 0))
@@ -202,7 +142,6 @@ def hospital_dashboard(request):
             else:
                 messages.error(request, "Please select a blood group and enter valid units.")
 
-        # Approve patient request
         elif 'approve_patient' in request.POST:
             patient_id = request.POST.get('patient_id')
             patient = get_object_or_404(Patient, id=patient_id)
@@ -213,7 +152,7 @@ def hospital_dashboard(request):
 
     context = {
         'stock': stock,
-        'pending_requests': pending_requests,   # pass patient requests to template
+        'pending_requests': pending_requests,  
         'BLOOD_GROUP_CHOICES': BloodStock.BLOOD_GROUP_CHOICES if hasattr(BloodStock, 'BLOOD_GROUP_CHOICES') else [
             ('A+', 'A+'), ('A-', 'A-'), ('B+', 'B+'), ('B-', 'B-'),
             ('AB+', 'AB+'), ('AB-', 'AB-'), ('O+', 'O+'), ('O-', 'O-')
@@ -311,7 +250,6 @@ def submit_blood_request(request):
     else:
         form = PatientRequestForm(instance=patient)
 
-    # Get patient request history
     history = Patient.objects.filter(user=request.user).order_by('-id')
 
     return render(request, 'patient/submit_request.html', {'form': form, 'history': history})
@@ -321,7 +259,6 @@ def submit_blood_request(request):
 def patient_dashboard(request):
     patient = Patient.objects.get(user=request.user)
 
-    # Fetch previous blood requests (history)
     history = Patient.objects.filter(user=request.user).order_by('-id')
     no_request_message = None
     if not history.exists():
