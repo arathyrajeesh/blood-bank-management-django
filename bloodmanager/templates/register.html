@@ -167,7 +167,7 @@
     </div>
     {% endif %}
 
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         
         <fieldset>
@@ -214,7 +214,12 @@
                     {{ form.blood_group }}
                 </p>
             </div>
-
+            <p>
+                {% if form.profile_photo.errors %}<span class="errorlist">{{ form.profile_photo.errors.as_text }}</span>{% endif %}
+                <label for="{{ form.profile_photo.id_for_label }}">Profile Photo (Donor only):</label>
+                {{ form.profile_photo }}
+            </p>
+            
             <div class="field-group-row">
                 <p>
                     {% if form.gender.errors %}<span class="errorlist">{{ form.gender.errors.as_text }}</span>{% endif %}

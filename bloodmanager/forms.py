@@ -19,7 +19,7 @@ class RegistrationForm(forms.ModelForm):
     age = forms.IntegerField(required=False, label="Age (Donor only)")
     required_units = forms.IntegerField(required=False, label="Required Units (Patient only)")
     name = forms.CharField(required=False, label="Hospital Name (Hospital only)")
-
+    profile_photo = forms.ImageField(required=False, label="Profile Photo (Donor only)")
     class Meta:
         model = User
         fields = ['username', 'email', 'password']
@@ -29,12 +29,13 @@ class RegistrationForm(forms.ModelForm):
         role = cleaned_data.get('role')
         age = cleaned_data.get('age')
         name = cleaned_data.get('name')
-
+        profile_photo = cleaned_data.get('profile_photo')
         if role == 'donor' and not age:
             self.add_error('age', 'Donor must provide age.')
         elif role == 'hospital' and not name:
             self.add_error('name', 'Hospital must provide a name.')
-
+        elif role == 'donor' and not profile_photo:
+            self.add_error('profile_photo', 'Donor must upload a profile photo.')
         return cleaned_data
 
 class HospitalRegistrationForm(forms.ModelForm):

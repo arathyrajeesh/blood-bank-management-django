@@ -16,9 +16,10 @@ def home(request):
 
 def help(request):
     return render(request,'Help.html')
+
 def register(request):
     if request.method == 'POST':
-        form = RegistrationForm(request.POST)
+        form = RegistrationForm(request.POST, request.FILES)  # Note request.FILES for file uploads
         if form.is_valid():
             username = form.cleaned_data['username']
             email = form.cleaned_data['email']
@@ -33,21 +34,33 @@ def register(request):
 
             if role == 'donor':
                 age = form.cleaned_data['age']
+                profile_photo = form.cleaned_data.get('profile_photo')  # get uploaded file
                 Donor.objects.create(
-                    user=user, phone=phone, gender=gender,
-                    blood_group=blood_group, address=address, age=age
+                    user=user,
+                    phone=phone,
+                    gender=gender,
+                    blood_group=blood_group,
+                    address=address,
+                    age=age,
+                    profile_photo=profile_photo
                 )
             elif role == 'patient':
                 required_units = form.cleaned_data.get('required_units') or 1
                 Patient.objects.create(
-                    user=user, phone=phone, gender=gender,
-                    blood_group=blood_group, address=address,
+                    user=user,
+                    phone=phone,
+                    gender=gender,
+                    blood_group=blood_group,
+                    address=address,
                     required_units=required_units
                 )
             elif role == 'hospital':
                 name = form.cleaned_data['name']
                 Hospital.objects.create(
-                    user=user, name=name, phone=phone, address=address
+                    user=user,
+                    name=name,
+                    phone=phone,
+                    address=address
                 )
 
             messages.success(request, 'Registration successful! You can now log in.')

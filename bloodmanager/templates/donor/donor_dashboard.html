@@ -209,7 +209,27 @@
     tbody tr:hover {
         background-color: #f2f2f2;
     }
-
+    .profile-photo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 10px;
+    }
+    
+    .profile-photo img {
+        width: 80px;           
+        height: 80px;
+        border-radius: 50%;    
+        border: 2px solid var(--primary-color);
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .profile-photo img:hover {
+        transform: scale(1.1);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    
     @media(max-width:600px){
         .form-group {
             flex-direction: column;
@@ -232,11 +252,18 @@
 <body>
 <header>
     <h1>Donor Dashboard</h1>
+    <div class="profile-photo">
+        {% if donor.profile_photo %}
+            <a href="{{ donor.profile_photo.url }}" target="_blank" title="Click to view full image">
+                <img src="{{ donor.profile_photo.url }}" alt="Profile Photo">
+            </a>
+        {% endif %}
+    </div>
 </header>
 
 <div class="container">
     <h2>Welcome Back, {{ donor.user.username }}!</h2>
-
+    <i class=""></i>
     {% if messages %}
         {% for message in messages %}
             <div class="success">{{ message }}</div>

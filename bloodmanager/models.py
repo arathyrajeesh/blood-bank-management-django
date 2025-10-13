@@ -13,6 +13,7 @@ GENDER_CHOICES = [
     ('Other', 'Other'),
 ]
 
+
 class Donor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone = models.CharField(max_length=15)
@@ -22,6 +23,11 @@ class Donor(models.Model):
     age = models.PositiveIntegerField()
     last_donation_date = models.DateField(null=True, blank=True)
     available = models.BooleanField(default=True)
+    profile_photo = models.ImageField(
+        upload_to='donor_photos/', 
+        null=True, 
+        blank=True
+    )
 
     def __str__(self):
         return f"{self.user.username} ({self.blood_group})"
