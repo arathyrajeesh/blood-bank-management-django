@@ -6,6 +6,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Donor Dashboard | Blood Bank</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 <style>
     :root {
         --primary-color: rgb(168, 22, 22);
@@ -16,6 +19,7 @@
         --success-green: #388E3C;
         --warning-orange: #F57C00;
         --card-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        --menu-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* New variable for menu shadow */
     }
 
     body {
@@ -26,14 +30,103 @@
         color: var(--text-dark);
     }
 
+    /* --- Header and Profile Dropdown Styles --- */
     header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         background: var(--primary-color);
         color: white;
         padding: 1.5rem 1rem;
-        text-align: center;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        position: relative; /* Needed for menu positioning */
     }
 
+    header h1 {
+        margin: 0;
+        font-size: 1.8rem;
+    }
+
+    .header-profile {
+        position: relative;
+    }
+
+    /* Styles for the Profile Icon (Summary in the details tag) */
+    .profile-photo-trigger {
+        display: block;
+        cursor: pointer;
+        list-style: none; /* Removes the default arrow/marker */
+    }
+
+    /* Fix for Firefox/Safari to remove the marker */
+    .profile-photo-trigger::-webkit-details-marker,
+    .profile-photo-trigger::marker {
+        display: none;
+    }
+
+    .profile-photo-icon {
+        width: 50px;           
+        height: 50px;
+        border-radius: 50%;    
+        object-fit: cover;
+        border: 2px solid white;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .profile-photo-icon:hover {
+        transform: scale(1.05); /* Slightly less aggressive scale for menu trigger */
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .profile-placeholder {
+        font-size: 48px;
+        color: white;
+        /* Match the circular size of the image */
+        width: 50px;
+        height: 50px;
+        line-height: 50px;
+        text-align: center;
+        border-radius: 50%;
+        border: 2px solid white;
+        display: block;
+    }
+    
+    /* Dropdown Menu (The details content) */
+    .user-menu {
+        position: absolute;
+        top: 65px; /* Position below the header/icon */
+        right: 0;
+        background: white;
+        border-radius: 8px;
+        box-shadow: var(--menu-shadow);
+        z-index: 1000;
+        min-width: 200px;
+        overflow: hidden;
+        border: 1px solid var(--border-light);
+        padding: 0;
+        margin: 0;
+    }
+
+    .user-menu a, .user-menu button {
+        display: block;
+        padding: 12px 15px;
+        text-decoration: none;
+        color: var(--text-dark);
+        background: white;
+        border: none;
+        width: 100%;
+        text-align: left;
+        font-size: 1em;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .user-menu a:hover, .user-menu button:hover {
+        background-color: var(--background-light);
+        color: var(--primary-color);
+    }
+    
+    /* --- General Dashboard Styles (Retained) --- */
     .container {
         max-width: 900px;
         background: white;
@@ -89,10 +182,6 @@
         margin-top: 30px;
         box-shadow: var(--card-shadow);
         transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .availability-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.12);
     }
     .available-yes {
         background: #e8f5e9;
@@ -173,12 +262,7 @@
     }
 
     .logout {
-        text-align: right;
-        margin-top: 40px;
-    }
-
-    .logout-button {
-        padding: 0.6rem 1.4rem;
+        display: none; /* Hide the original logout button */
     }
 
     hr {
@@ -211,45 +295,6 @@
     tbody tr:hover {
         background-color: #f2f2f2;
     }
-    .profile-photo {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-top: 10px;
-    }
-    
-    .profile-photo img:hover {
-        transform: scale(1.1);
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    }
-    header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: var(--primary-color);
-        color: white;
-        padding: 1.5rem 1rem;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    
-    .header-profile a {
-        display: inline-block;
-    }
-    
-    .profile-photo-icon {
-        width: 50px;           
-        height: 50px;
-        border-radius: 50%;    
-        object-fit: cover;
-        border: 2px solid white;
-        cursor: pointer;
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
-    
-    .profile-photo-icon:hover {
-        transform: scale(1.1);
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    }
     
     @media(max-width:600px){
         .form-group {
@@ -272,24 +317,36 @@
 </head>
 <body>
 
-    <header>
-        <h1>Donor Dashboard</h1>
-        <div class="header-profile">
-            <a href="{% url 'donor_edit_profile' %}" title="Click to update your profile photo">
+<header>
+    <h1>Donor Dashboard</h1>
+    <div class="header-profile">
+        <details>
+            <summary class="profile-photo-trigger" title="Account Menu">
                 {% if donor.profile_photo %}
                     <img src="{{ donor.profile_photo.url }}" alt="Profile Photo" class="profile-photo-icon">
                 {% else %}
-                    <img src="{% static 'default_profile.png' %}" alt="No Photo" class="profile-photo-icon">
+                    <i class="fa fa-user-circle profile-placeholder"></i>
                 {% endif %}
-            </a>
-        </div>
-    </header>
-    
-    
+            </summary>
+            
+            <div class="user-menu">
+                <a href="{% url 'donor_edit_profile' %}">
+                    <i class="fas fa-user-edit" style="margin-right: 8px;"></i>Edit Profile
+                </a>              
+                <form method="POST" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit">
+                        <i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i>Logout
+                    </button>
+                </form>
+            </div>
+        </details>
+    </div>
+</header>
 
 <div class="container">
     <h2>Welcome Back, {{ donor.user.username }}!</h2>
-    <i class=""></i>
+
     {% if messages %}
         {% for message in messages %}
             <div class="success">{{ message }}</div>
@@ -342,9 +399,8 @@
         </div>
         <button type="submit" name="update_donation">Update Donation</button>
     </form>    
-    
-    <hr>
-    <h3>Donation History</h3>
+
+    <hr id="donation-history-anchor"> <h3>Donation History</h3>
     {% if donation_history %}
     <table>
         <thead>
@@ -375,5 +431,6 @@
         </form>
     </div>
 </div>
+
 </body>
 </html>
