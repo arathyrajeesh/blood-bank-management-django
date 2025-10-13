@@ -1,9 +1,11 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Donor Dashboard | Blood Bank</title>
+
 <style>
     :root {
         --primary-color: rgb(168, 22, 22);
@@ -216,16 +218,35 @@
         margin-top: 10px;
     }
     
-    .profile-photo img {
-        width: 80px;           
-        height: 80px;
+    .profile-photo img:hover {
+        transform: scale(1.1);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--primary-color);
+        color: white;
+        padding: 1.5rem 1rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .header-profile a {
+        display: inline-block;
+    }
+    
+    .profile-photo-icon {
+        width: 50px;           
+        height: 50px;
         border-radius: 50%;    
-        border: 2px solid var(--primary-color);
+        object-fit: cover;
+        border: 2px solid white;
         cursor: pointer;
         transition: transform 0.2s, box-shadow 0.2s;
     }
     
-    .profile-photo img:hover {
+    .profile-photo-icon:hover {
         transform: scale(1.1);
         box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
@@ -250,16 +271,21 @@
 </style>
 </head>
 <body>
-<header>
-    <h1>Donor Dashboard</h1>
-    <div class="profile-photo">
-        {% if donor.profile_photo %}
-            <a href="{{ donor.profile_photo.url }}" target="_blank" title="Click to view full image">
-                <img src="{{ donor.profile_photo.url }}" alt="Profile Photo">
+
+    <header>
+        <h1>Donor Dashboard</h1>
+        <div class="header-profile">
+            <a href="{% url 'donor_edit_profile' %}" title="Click to update your profile photo">
+                {% if donor.profile_photo %}
+                    <img src="{{ donor.profile_photo.url }}" alt="Profile Photo" class="profile-photo-icon">
+                {% else %}
+                    <img src="{% static 'default_profile.png' %}" alt="No Photo" class="profile-photo-icon">
+                {% endif %}
             </a>
-        {% endif %}
-    </div>
-</header>
+        </div>
+    </header>
+    
+    
 
 <div class="container">
     <h2>Welcome Back, {{ donor.user.username }}!</h2>

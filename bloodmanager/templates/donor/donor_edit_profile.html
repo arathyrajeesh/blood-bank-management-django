@@ -1,0 +1,120 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Edit Donor Profile</title>
+<link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<style>
+    :root {
+        --primary-color: rgb(168, 22, 22);
+        --secondary-color: #C70039;
+        --background-light: #f4f6f8;
+        --text-dark: #333;
+        --border-light: #e0e0e0;
+        --success-green: #388E3C;
+        --card-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    }
+
+    body {
+        font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: var(--background-light);
+        margin: 0;
+        padding: 0;
+        color: var(--text-dark);
+    }
+
+    h2 {
+        color: var(--primary-color);
+        text-align: center;
+        margin-top: 40px;
+        margin-bottom: 30px;
+        font-size: 2rem;
+    }
+
+    form {
+        max-width: 600px;
+        margin: 0 auto 50px auto;
+        padding: 30px 40px;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: var(--card-shadow);
+    }
+
+    form p {
+        margin-bottom: 15px;
+    }
+
+    label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 6px;
+        color: #555;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="number"],
+    input[type="password"],
+    input[type="file"],
+    textarea,
+    select {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 6px;
+        border: 1px solid #ddd;
+        font-size: 1rem;
+        transition: border-color 0.3s, box-shadow 0.2s;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(168, 22, 22, 0.1);
+        outline: none;
+    }
+
+    textarea {
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    button[type="submit"] {
+        width: 100%;
+        padding: 12px;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s, transform 0.1s, box-shadow 0.2s;
+        margin-top: 15px;
+    }
+
+    button[type="submit"]:hover {
+        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    }
+
+    @media(max-width: 600px){
+        form {
+            padding: 20px;
+            margin: 20px;
+        }
+    }
+
+</style>
+<body>
+    <h2>Edit Your Profile</h2>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Update Profile</button>
+    </form>
+</body>
+</html>

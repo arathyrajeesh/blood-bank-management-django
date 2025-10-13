@@ -102,3 +102,17 @@ class PatientRequestForm(forms.ModelForm):
             'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'phone': forms.TextInput(attrs={'class': 'form-control'}),
         }
+        
+        
+class DonorProfileForm(forms.ModelForm):
+    class Meta:
+        model = Donor
+        fields = ['profile_photo', 'phone', 'address', 'blood_group', 'age', 'gender']
+        widgets = {
+            'profile_photo': forms.FileInput(attrs={'class': 'form-control'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control'}),
+            'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'blood_group': forms.Select(choices=BLOOD_GROUP_CHOICES, attrs={'class': 'form-control'}),
+            'age': forms.NumberInput(attrs={'class': 'form-control'}),
+            'gender': forms.Select(choices=GENDER_CHOICES, attrs={'class': 'form-control'}),
+        }

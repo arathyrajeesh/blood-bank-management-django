@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from datetime import date
 from django.db.models import Sum
 from .models import ( Donor, Patient, BloodStock, Hospital,DonorHealthCheck, Donation)
-from .forms import (RegistrationForm, BloodStockForm, LastDonationForm,HospitalRegistrationForm, HospitalProfileForm,DonorHealthCheckForm, PatientRequestForm)
+from .forms import (RegistrationForm, BloodStockForm, LastDonationForm,HospitalRegistrationForm, HospitalProfileForm,DonorHealthCheckForm, PatientRequestForm,DonorProfileForm)
 
 
 
@@ -19,7 +19,7 @@ def help(request):
 
 def register(request):
     if request.method == 'POST':
-        form = RegistrationForm(request.POST, request.FILES)  # Note request.FILES for file uploads
+        form = RegistrationForm(request.POST, request.FILES)  
         if form.is_valid():
             username = form.cleaned_data['username']
             email = form.cleaned_data['email']
@@ -34,7 +34,7 @@ def register(request):
 
             if role == 'donor':
                 age = form.cleaned_data['age']
-                profile_photo = form.cleaned_data.get('profile_photo')  # get uploaded file
+                profile_photo = form.cleaned_data.get('profile_photo') 
                 Donor.objects.create(
                     user=user,
                     phone=phone,
@@ -237,6 +237,7 @@ def hospital_edit_profile(request):
         else: messages.error(request, "Please correct the errors below.") 
     else: form = HospitalProfileForm(instance=hospital) 
     return render(request, 'hospital/edit_profile.html', {'form': form})
+
 @login_required 
 def delete_stock(request, stock_id): 
     hospital = request.user.hospital 
@@ -245,7 +246,20 @@ def delete_stock(request, stock_id):
         stock_item.delete()
         messages.success(request, f"{stock_item.blood_group} stock deleted successfully.")
         return redirect('hospital-dashboard')
-    
+
+@login_required
+def donor_edit_profile(request):
+    donor = request.user.donor 
+    if request.method == 'POST':
+        form = DonorProfileForm(request.POST, request.FILES, instance=donor)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile updated successfully!")
+            return redirect('donor-dashboard')
+    else:
+        form = DonorProfileForm(instance=donor)
+    return render(request, 'donor/donor_edit_profile.html', {'form': form})
+
 @login_required
 def submit_blood_request(request):
     patient = get_object_or_404(Patient, user=request.user)
