@@ -276,7 +276,28 @@
             {% endfor %}
         </tbody>
     </table>
-    
+    <hr>
+    <h2>Available bloods in Hospital</h2>
+    {% if hospitals_with_stock %}
+    <table>
+        <tr>
+            <th>Hospital Name</th>
+            <th>Blood Group</th>
+            <th>Available Units</th>
+            <th>Address</th>
+        </tr>
+        {% for stock in hospitals_with_stock %}
+        <tr>
+            <td>{{ stock.hospital.name }}</td>
+            <td>{{ stock.blood_group }}</td>
+            <td>{{ stock.units }}</td>
+            <td>{{ stock.hospital.address }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>No hospital has available blood at the moment.</p>
+    {% endif %}
     <h2>Donor Records</h2>
     <table>
         <thead>
