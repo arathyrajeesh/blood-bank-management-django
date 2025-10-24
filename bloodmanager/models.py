@@ -77,6 +77,14 @@ class DonorHealthCheck(models.Model):
     weight = models.FloatField()
     hemoglobin_level = models.FloatField()
     has_disease = models.BooleanField(default=False)
+    
+    # New fields
+    recent_medications = models.TextField(blank=True, null=True)
+    recent_surgeries = models.TextField(blank=True, null=True)
+    tattoos_or_piercings = models.TextField(blank=True, null=True)
+    travel_history = models.TextField(blank=True, null=True)
+    symptoms = models.TextField(blank=True, null=True)
+    
     is_approved = models.BooleanField(default=False)
     submitted_at = models.DateTimeField(auto_now_add=True)
 

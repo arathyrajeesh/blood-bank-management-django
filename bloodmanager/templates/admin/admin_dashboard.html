@@ -380,13 +380,22 @@
                 <td>{{ form.weight }} kg</td>
                 <td>{{ form.hemoglobin_level }} g/dL</td>
                 <td>{% if form.has_disease %}Yes{% else %}No{% endif %}</td>
-                <td>{% if form.is_approved %}✅{% else %}❌{% endif %}</td>
                 <td>
-                    {% if not form.is_approved %}
-                    <form method="POST">
+                    {% if form.is_approved %}
+                        ✅
+                    {% elif form.is_approved == False and form.submitted_at %}
+                        ❌
+                    {% else %}
+                        Pending
+                    {% endif %}
+                </td>
+                <td>
+                    {% if form.is_approved is not True %}
+                    <form method="POST" style="display:inline;">
                         {% csrf_token %}
                         <input type="hidden" name="health_id" value="{{ form.id }}">
-                        <button type="submit" name="approve_health">Approve</button>
+                        <button type="submit" name="approve_health" style="padding:5px 10px; background:green; color:white; border:none; border-radius:5px;">Approve</button>
+                        <button type="submit" name="reject_health" style="padding:5px 10px; background:red; color:white; border:none; border-radius:5px;">Reject</button>
                     </form>
                     {% else %}
                         <button disabled>Approved</button>
@@ -398,6 +407,7 @@
             {% endfor %}
         </tbody>
     </table>
+
 
     <div class="logout">
         <form method="POST" action="{% url 'logout' %}">

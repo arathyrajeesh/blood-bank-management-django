@@ -81,17 +81,40 @@ class HospitalProfileForm(forms.ModelForm):
             'phone': forms.TextInput(attrs={'class': 'input-field'}),
         }     
 
+
 class DonorHealthCheckForm(forms.ModelForm):
     class Meta:
         model = DonorHealthCheck
-        fields = ['age', 'weight', 'hemoglobin_level', 'has_disease']
+        fields = [
+            'age', 
+            'weight', 
+            'hemoglobin_level', 
+            'has_disease', 
+            'recent_medications', 
+            'recent_surgeries', 
+            'tattoos_or_piercings', 
+            'travel_history', 
+            'symptoms'
+        ]
         widgets = {
-            'age': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Your age'}),
-            'weight': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Weight in kg'}),
-            'hemoglobin_level': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Hemoglobin (g/dL)'}),
-            'has_disease': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'age': forms.NumberInput(attrs={'min': 18, 'max': 65}),
+            'weight': forms.NumberInput(attrs={'min': 45, 'step': 1}),
+            'hemoglobin_level': forms.NumberInput(attrs={'step': 0.1}),
+            'has_disease': forms.CheckboxInput(),
+            'recent_medications': forms.Textarea(attrs={'rows': 2}),
+            'recent_surgeries': forms.Textarea(attrs={'rows': 2}),
+            'tattoos_or_piercings': forms.Textarea(attrs={'rows': 2}),
+            'travel_history': forms.Textarea(attrs={'rows': 2}),
+            'symptoms': forms.Textarea(attrs={'rows': 2}),
         }
-        
+        labels = {
+            'has_disease': 'Do you have any chronic or infectious diseases?',
+            'recent_medications': 'Recent Medications',
+            'recent_surgeries': 'Recent Surgeries',
+            'tattoos_or_piercings': 'Recent Tattoos or Piercings (last 12 months)',
+            'travel_history': 'Recent Travel History (last 6 months)',
+            'symptoms': 'Any recent symptoms like fever, cold, etc.'
+        }
 class PatientRequestForm(forms.ModelForm):
     class Meta:
         model = Patient

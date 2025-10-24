@@ -180,6 +180,7 @@ def donor_dashboard(request):
     donation_history = Donation.objects.filter(donor=donor).order_by('-date')
     health_record = DonorHealthCheck.objects.filter(donor=donor).order_by('-submitted_at').first()
     health_form = None
+    rejected_message = request.session.pop('health_form_rejected', None)
 
     if 'update_donation' in request.POST:
         form = LastDonationForm(request.POST, instance=donor)
@@ -233,7 +234,9 @@ def donor_dashboard(request):
         'health_form': health_form,
         'health_record': health_record,
         'donation_history': donation_history,
-        'next_eligible_date': next_eligible_date,  
+        'next_eligible_date': next_eligible_date,
+        'today': date.today(),
+        'rejected_message': rejected_message, 
     }
     return render(request, 'donor/donor_dashboard.html', context)
 
@@ -379,6 +382,9 @@ def admin_dashboard(request):
     total_patients = patients.count()
     total_stock_units = sum(item['total_units'] for item in stock)
 
+    # Always define stock_form first
+    stock_form = BloodStockForm()
+
     if request.method == 'POST':
         if 'approve_patient' in request.POST:
             patient_id = request.POST.get('patient_id')
@@ -386,6 +392,17 @@ def admin_dashboard(request):
             patient.approved = True
             patient.save()
             messages.success(request, f"Patient {patient.user.username} approved successfully.")
+            return redirect('admin-dashboard')
+        if 'reject_health' in request.POST:
+            health_id = request.POST.get('health_id')
+            record = get_object_or_404(DonorHealthCheck, id=health_id)
+            donor_user = record.donor.user
+            record.delete()  # remove the form
+
+            # Send session message to donor
+            request.session['health_form_rejected'] = "Your health form was rejected by admin. Please submit a new one."
+            
+            messages.success(request, f"Health form for {donor_user.username} rejected.")
             return redirect('admin-dashboard')
 
         if 'update_stock' in request.POST:
@@ -409,8 +426,6 @@ def admin_dashboard(request):
             record.save()
             messages.success(request, f"{record.donor.user.username}'s health form approved!")
             return redirect('admin-dashboard')
-    else:
-        stock_form = BloodStockForm()
 
     context = {
         'donors': donors,
@@ -421,7 +436,7 @@ def admin_dashboard(request):
         'available_donors': available_donors,
         'total_patients': total_patients,
         'total_stock_units': total_stock_units,
-        'stock_form': stock_form,
+        'stock_form': stock_form,  # always safe now
         'health_forms': health_forms,
     }
 
