@@ -1,141 +1,297 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Submit Blood Request</title>
+<title>Submit Blood Request | Patient</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+    :root {
+        --primary-red: #a4161a;
+        --secondary-red: #d32f2f;
+        --background: #f4f6f9;
+        --card-bg: #ffffff;
+        --text-dark: #1f2937;
+        --text-light: #4b5563;
+        --border: #e5e7eb;
+        --pending: #f59e0b;
+        --approved: #059669;
+        --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+        --error-red: #ef4444;
+    }
+
     body {
-        font-family: 'Segoe UI', sans-serif;
-        background: #fff5f5;
+        font-family: 'Inter', sans-serif;
+        background: var(--background);
+        color: var(--text-dark);
         margin: 0;
         padding: 0;
+        line-height: 1.6;
     }
 
     .container {
-        max-width: 650px;
-        margin: 50px auto;
-        background: white;
-        padding: 2.5rem;
+        max-width: 700px;
+        margin: 40px auto;
+        background: var(--card-bg);
+        padding: 3rem;
         border-radius: 12px;
-        box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        box-shadow: var(--shadow);
     }
 
     h2 {
-        color: rgb(172,5,5);
+        color: var(--primary-red);
         text-align: center;
-        margin-bottom: 1.5rem;
+        margin-bottom: 2rem;
+        font-size: 2rem;
+        font-weight: 700;
     }
 
-    form {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--text-light);
+        color: white;
+        text-decoration: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: background 0.3s ease;
+        margin-bottom: 2rem;
+    }
+    .back-btn:hover {
+        background: var(--text-dark);
+    }
+    
+    .request-form-area {
+        padding: 1.5rem;
+        border: 1px solid #fecaca;
+        background: #fef2f2;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
     }
 
     label {
         font-weight: 600;
-        margin-bottom: 0.3rem;
-        color: #333;
+        margin-bottom: 0.5rem;
+        color: var(--text-dark);
+        display: block;
+        font-size: 0.95rem;
     }
 
-    input, select, textarea {
-        padding: 0.7rem;
-        border-radius: 6px;
-        border: 1px solid #ccc;
+    .form-control {
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        border: 1px solid var(--border);
         width: 100%;
         font-size: 1rem;
+        box-sizing: border-box;
+        transition: border-color 0.2s;
+    }
+    
+    .form-control:focus {
+        border-color: var(--primary-red);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(164, 22, 26, 0.1);
     }
 
-    textarea {
+    textarea.form-control {
         resize: vertical;
-        min-height: 60px;
+        min-height: 80px;
     }
-
-    button {
-        padding: 0.9rem 1.5rem;
-        background: rgb(172,5,5);
+    
+    .form-group .errorlist, .form-group .help-text {
+        list-style: none;
+        padding: 0;
+        margin-top: 5px;
+        font-size: 0.85rem;
+    }
+    .form-group .errorlist li {
+        color: var(--error-red);
+        font-weight: 500;
+    }
+    
+    .submit-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 1rem 1.5rem;
+        background: var(--primary-red);
         color: white;
         border: none;
-        border-radius: 6px;
+        border-radius: 8px;
         cursor: pointer;
         font-size: 1.1em;
-        margin-top: 1rem;
+        font-weight: 600;
+        margin-top: 1.5rem;
         transition: background 0.3s, transform 0.1s;
     }
 
-    button:hover {
-        background: #a00000;
+    .submit-btn:hover {
+        background: var(--secondary-red);
         transform: translateY(-1px);
     }
 
     hr {
-        margin: 2rem 0;
+        margin: 3rem 0;
         border: none;
         height: 1px;
-        background: #eee;
+        background: var(--border);
     }
 
     h3 {
-        color: rgb(172,5,5);
-        margin-bottom: 1rem;
-        border-bottom: 2px solid #eee;
-        padding-bottom: 5px;
-        font-size: 1.2rem;
+        color: var(--text-dark);
+        margin-bottom: 1.5rem;
+        border-bottom: 2px solid var(--border);
+        padding-bottom: 8px;
+        font-size: 1.5rem;
+        font-weight: 600;
     }
 
     table {
         width: 100%;
-        border-collapse: collapse;
+        border-collapse: separate;
+        border-spacing: 0;
         margin-top: 1rem;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     }
 
     th, td {
-        padding: 10px 15px;
+        padding: 12px 18px;
         text-align: left;
-        border-bottom: 1px solid #ddd;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.9rem;
     }
 
     th {
-        background: rgb(172,5,5);
+        background: var(--primary-red);
         color: white;
         font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 
-    tr:nth-child(even) {
-        background: #f9f9f9;
+    tr:last-child td {
+        border-bottom: none;
+    }
+
+    tr:hover {
+        background: #fef7f7;
     }
 
     .status-pending {
-        color: #856404;
+        color: var(--pending);
+        background: #fffbe6;
+        padding: 4px 8px;
+        border-radius: 4px;
         font-weight: 600;
+        display: inline-block;
     }
 
     .status-approved {
-        color: #388e3c;
+        color: var(--approved);
+        background: #d1fae5;
+        padding: 4px 8px;
+        border-radius: 4px;
         font-weight: 600;
+        display: inline-block;
+    }
+    
+    @media (max-width: 600px) {
+        .container {
+            margin: 20px 15px;
+            padding: 1.5rem;
+        }
+        table, thead, tbody, th, td, tr {
+            display: block;
+        }
+        thead tr {
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+        }
+        tr { border: 1px solid var(--border); margin-bottom: 10px; border-radius: 8px; }
+        td {
+            border: none;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+            padding-left: 50%;
+            text-align: right;
+        }
+        td:before {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 45%;
+            padding-left: 10px;
+            white-space: nowrap;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-dark);
+            padding-top: 12px;
+        }
+        td:nth-of-type(1):before { content: "Date Submitted"; }
+        td:nth-of-type(2):before { content: "Blood Group"; }
+        td:nth-of-type(3):before { content: "Units Required"; }
+        td:nth-of-type(4):before { content: "Current Status"; border-bottom: none; }
     }
 </style>
 </head>
 <body>
 <div class="container">
+    
+    <a href="{% url 'patient-dashboard' %}" class="back-btn">
+        <span style="font-size: 1.1em;">&larr;</span> Back to Dashboard
+    </a>
+
     <h2>Submit / Update Blood Request</h2>
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Submit Request 🩸</button>
-    </form>
+    
+    <div class="request-form-area">
+        <form method="POST">
+            {% csrf_token %}
+            
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                        {% if field.field.required %} <span style="color: var(--primary-red);">*</span>{% endif %}
+                    </label>
+                    
+                    {{ field.errors }}
+                    
+                    {{ field }} 
+                    
+                    {% if field.help_text %}
+                        <small class="help-text" style="color: var(--text-light); display: block; margin-top: 5px;">{{ field.help_text }}</small>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="submit-btn">
+                <span style="font-size: 1.2em;">🩸</span> Submit Request
+            </button>
+        </form>
+    </div>
 
     <hr>
-    <h3>Previous Blood Requests</h3>
+    <h3><span style="color: var(--primary-red);">📜</span> Previous Blood Requests</h3>
+    
     {% if history %}
     <table>
         <thead>
             <tr>
-                <th>Date</th>
+                <th>Date Submitted</th>
                 <th>Blood Group</th>
-                <th>Units</th>
-                <th>Status</th>
+                <th>Units Required</th>
+                <th>Current Status</th>
             </tr>
         </thead>
         <tbody>
@@ -143,16 +299,20 @@
             <tr>
                 <td>{{ request.submitted_at|date:"d M Y H:i" }}</td>
                 <td>{{ request.blood_group }}</td>
-                <td>{{ request.units }}</td>
-                <td class="{% if request.approved %}status-approved{% else %}status-pending{% endif %}">
-                    {% if request.approved %}Approved{% else %}Pending{% endif %}
+                <td>{{ request.required_units }}</td>
+                <td>
+                    <span class="{% if request.approved %}status-approved{% else %}status-pending{% endif %}">
+                        {% if request.approved %}Approved{% else %}Pending Approval{% endif %}
+                    </span>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
     {% else %}
-    <p style="text-align:center; margin-top:1rem;">No previous requests found.</p>
+    <p style="text-align:center; margin-top:1rem; color: var(--text-light);">
+        You have not submitted any blood request yet. Please use the form above.
+    </p>
     {% endif %}
 </div>
 </body>
