@@ -1,96 +1,250 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Search Donors | Blood Bank</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+    :root {
+        --primary-red: #a4161a;
+        --secondary-red: #d32f2f;
+        --background: #f4f6f9; 
+        --card-bg: #ffffff;
+        --text-dark: #1f2937;
+        --text-light: #4b5563;
+        --border: #e5e7eb;
+        --success: #059669;
+        --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+        --exact-match: #d1fae5; 
+        --compatible-match: #fef3c7; 
+    }
+
     body { 
-        font-family: 'Segoe UI', sans-serif; 
-        background: #fff5f5; 
+        font-family: 'Inter', sans-serif; 
+        background: var(--background); 
+        color: var(--text-dark);
         margin:0; 
         padding:0; 
+        line-height: 1.6;
     }
+    
     .container { 
-        max-width: 900px; 
-        margin: 30px auto; 
-        padding: 20px; 
-        background: #fff; 
-        border-radius: 10px; 
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        max-width: 1100px; 
+        margin: 40px auto; 
+        padding: 3rem; 
+        background: var(--card-bg); 
+        border-radius: 12px; 
+        box-shadow: var(--shadow);
     }
-    h2, h3 { 
-        color: rgb(172,5,5); 
+    
+    h2 { 
+        color: var(--primary-red); 
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
     }
+    h3 { 
+        color: var(--text-dark); 
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 2rem;
+        padding-bottom: 8px;
+        border-bottom: 2px solid var(--border);
+    }
+
     table { 
         width: 100%; 
-        border-collapse: collapse; 
-        margin-top: 15px;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin-top: 1.5rem;
+        border-radius: 8px;
+        overflow: hidden; 
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     }
+    
     th, td { 
-        padding: 12px; 
-        border: 1px solid #ddd; 
-        text-align: center; 
+        padding: 14px 20px; 
+        border: none;
+        border-bottom: 1px solid var(--border);
+        text-align: left; 
+        font-size: 0.95rem;
     }
+    
+
     th { 
-        background: #f8d7da; 
-        color: #a81616; 
+        background: #f9fafb; 
+        color: var(--text-dark); 
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.8rem;
+    }
+    
+    .exact-match-header th { 
+        background: var(--exact-match); 
+        color: var(--success);
+    }
+    .compatible-match-header th {
+        background: #fef2f2;
+        color: var(--primary-red);
+    }
+    .hospital-stock-header th {
+        background: #eff6ff; 
+        color: #1d4ed8;
+    }
+
+    tbody tr:last-child td {
+        border-bottom: none; 
     }
     tr:hover { 
-        background: #ffe5e5; 
+        background: #fef7f7; 
+    }
+
+    
+    .back-btn-container {
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border);
+    }
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--text-light);
+        color: white;
+        text-decoration: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: background 0.3s ease;
+    }
+    .back-btn:hover {
+        background: var(--text-dark);
+    }
+    
+    .info-message {
+        padding: 1rem;
+        background: #f5f5f5;
+        border-radius: 6px;
+        color: var(--text-light);
+        font-style: italic;
+    }
+
+    @media (max-width: 900px) {
+        .container {
+            margin: 20px 15px;
+            padding: 1.5rem;
+        }
+        table, th, td {
+            display: block;
+            width: 100%;
+        }
+        th {
+            text-align: right;
+        }
+        td {
+            text-align: left;
+            padding-left: 50%;
+            position: relative;
+        }
+        td::before {
+            content: attr(data-label);
+            position: absolute;
+            left: 0;
+            width: 50%;
+            padding-left: 15px;
+            font-weight: 600;
+            color: var(--text-dark);
+            text-align: right;
+            padding-right: 15px;
+        }
+        thead {
+            display: none;
+        }
     }
 </style>
 </head>
 <body>
 <div class="container">
-    <h2>Compatible Donors for {{ patient.user.username }} ({{ required_blood_group }})</h2>
+    <div class="back-btn-container">
+        <a href="{% url 'patient-dashboard' %}" class="back-btn">
+            <span style="font-size: 1.2em;">&larr;</span> Back to Dashboard
+        </a>
+    </div>
+
+    <h2>Compatible Donors for **{{ patient.user.username }}**</h2>
+    <p style="color: var(--text-light);">
+        Required Blood Group: <strong>{{ required_blood_group }}</strong>
+    </p>
 
     {% if exact_match_donors %}
-    <h3>Exact Match Donors</h3>
+    <h3><span style="color: var(--success);">✅</span> Exact Match Donors ({{ required_blood_group }})</h3>
     <table>
-        <tr><th>Name</th><th>Blood Group</th><th>Phone</th><th>Address</th></tr>
-        {% for donor in exact_match_donors %}
-        <tr>
-            <td>{{ donor.user.username }}</td>
-            <td>{{ donor.blood_group }}</td>
-            <td>{{ donor.phone }}</td>
-            <td>{{ donor.address }}</td>
-        </tr>
-        {% endfor %}
+        <thead class="exact-match-header">
+            <tr><th>Donor Name</th><th>Blood Group</th><th>Phone</th><th>Address</th></tr>
+        </thead>
+        <tbody>
+            {% for donor in exact_match_donors %}
+            <tr>
+                <td data-label="Donor Name">{{ donor.user.username }}</td>
+                <td data-label="Blood Group">{{ donor.blood_group }}</td>
+                <td data-label="Phone">{{ donor.phone }}</td>
+                <td data-label="Address">{{ donor.address }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
+    {% else %}
+    <p class="info-message">No exact match donors available at this time.</p>
     {% endif %}
 
     {% if compatible_donors %}
-    <h3>Compatible Donors</h3>
+    <h3><span style="color: var(--primary-red);">🤝</span> Compatible Donors (Other Groups)</h3>
+    <p style="color: var(--text-light); font-size: 0.95rem;">
+        These donors have blood groups compatible with {{ required_blood_group }}: 
+        **{{ compatible_groups|join:", " }}**
+    </p>
     <table>
-        <tr><th>Name</th><th>Blood Group</th><th>Phone</th><th>Address</th></tr>
-        {% for donor in compatible_donors %}
-        <tr>
-            <td>{{ donor.user.username }}</td>
-            <td>{{ donor.blood_group }}</td>
-            <td>{{ donor.phone }}</td>
-            <td>{{ donor.address }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-    {% endif %}
-
-    {% if hospitals_with_stock %}
-    <h3>Hospitals with Available Blood</h3>
-    <table>
-        <tr><th>Hospital Name</th><th>Blood Group</th><th>Available Units</th><th>Phone</th><th>Address</th></tr>
-        {% for stock in hospitals_with_stock %}
-        <tr>
-            <td>{{ stock.hospital.name }}</td>
-            <td>{{ stock.blood_group }}</td>
-            <td>{{ stock.units }}</td>
-            <td>{{ stock.hospital.phone }}</td>
-            <td>{{ stock.hospital.address }}</td>
-        </tr>
-        {% endfor %}
+        <thead class="compatible-match-header">
+            <tr><th>Donor Name</th><th>Blood Group</th><th>Phone</th><th>Address</th></tr>
+        </thead>
+        <tbody>
+            {% for donor in compatible_donors %}
+            <tr>
+                <td data-label="Donor Name">{{ donor.user.username }}</td>
+                <td data-label="Blood Group">{{ donor.blood_group }}</td>
+                <td data-label="Phone">{{ donor.phone }}</td>
+                <td data-label="Address">{{ donor.address }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
     {% else %}
-    <p>No hospital stock available for compatible blood groups at the moment.</p>
+    <p class="info-message">No compatible donors found.</p>
+    {% endif %}
+
+    <h3><span style="color: #1d4ed8;">🏥</span> Hospitals with Available Stock</h3>
+    {% if hospitals_with_stock %}
+    <table>
+        <thead class="hospital-stock-header">
+            <tr><th>Hospital Name</th><th>Blood Group</th><th>Available Units</th><th>Phone</th><th>Address</th></tr>
+        </thead>
+        <tbody>
+            {% for stock in hospitals_with_stock %}
+            <tr>
+                <td data-label="Hospital Name">{{ stock.hospital.name }}</td>
+                <td data-label="Blood Group">{{ stock.blood_group }}</td>
+                <td data-label="Available Units">{{ stock.units }}</td>
+                <td data-label="Phone">{{ stock.hospital.phone }}</td>
+                <td data-label="Address">{{ stock.hospital.address }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="info-message">No hospital stock available for compatible blood groups at the moment.</p>
     {% endif %}
 </div>
 </body>

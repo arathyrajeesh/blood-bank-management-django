@@ -187,23 +187,23 @@
     <div class="action-group">
         {% if is_approved %}
             <a href="{% url 'search-donors' %}" style="text-decoration: none;">
-                <button class="btn-find-donor">🩸 Find Compatible Donors</button>
+                <button class="btn-find-donor"> Find Compatible Donors</button>
             </a>
             <a href="{% url 'submit-blood-request' %}" style="text-decoration: none;">
-                <button class="btn-request">✍️ Update Blood Request</button>
+                <button class="btn-request"> Update Blood Request</button>
             </a>
             <a href="{% url 'search-hospitals' %}" style="text-decoration: none;">
-                <button class="btn-search-hospitals">🏥 Search Blood Availability in Hospitals</button>
+                <button class="btn-search-hospitals"> Search Blood Availability in Hospitals</button>
             </a>
         {% else %}
             <div class="status-alert pending">
                 ⏳ <strong>Waiting for Admin Approval</strong>
             </div>
             <a href="{% url 'submit-blood-request' %}" style="text-decoration: none;">
-                <button class="btn-request">✍️ Submit / Edit Blood Request</button>
+                <button class="btn-request"> Submit / Edit Blood Request</button>
             </a>
             <a href="{% url 'search-hospitals' %}" style="text-decoration: none;">
-                <button class="btn-search-hospitals">🏥 Search Blood Availability in Hospitals</button>
+                <button class="btn-search-hospitals"> Search Blood Availability in Hospitals</button>
             </a>
         {% endif %}
     </div>
