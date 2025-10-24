@@ -1,52 +1,162 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Patient Dashboard | Blood Bank</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+    :root {
+        --primary-red: #a4161a;
+        --secondary-red: #d32f2f;
+        --accent-green: #059669;
+        --background: #f8f9fa; 
+        --card-bg: #ffffff;
+        --text-dark: #1f2937;
+        --text-light: #4b5563;
+        --border: #e5e7eb;
+        --shadow: 0 4px 12px rgba(0,0,0,0.06);
+        --pending: #f59e0b;
+        --edit-btn: #3b82f6;
+    }
+
     body {
-        font-family: 'Segoe UI', Tahoma, sans-serif;
-        background: #fff5f5;
+        font-family: 'Inter', sans-serif;
+        background: var(--background);
+        color: var(--text-dark);
         margin: 0;
-        padding: 0;
+        line-height: 1.6;
     }
+    
     header {
-        background: rgb(172, 5, 5);
-        color: white;
-        padding: 1rem;
+        background: var(--primary-red);
+        color: var(--card-bg);
+        padding: 1.5rem;
         text-align: center;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
+    header h1 {
+        margin: 0;
+        font-size: 1.75rem;
+        font-weight: 700;
+    }
+
     .container {
-        max-width: 800px;
-        background: white;
-        margin: 30px auto;
-        padding: 2rem;
-        border-radius: 10px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        max-width: 900px; 
+        background: var(--card-bg);
+        margin: 40px auto;
+        padding: 2.5rem;
+        border-radius: 12px;
+        box-shadow: var(--shadow);
     }
+    
     h2 { 
-        color: rgb(172, 5, 5); 
+        color: var(--text-dark); 
+        font-size: 1.75rem;
+        font-weight: 700;
+        border-bottom: 2px solid var(--border);
+        padding-bottom: 15px;
+        margin-bottom: 2rem;
     }
-    .info {
-        margin-top: 20px;
-        line-height: 1.8;
+
+    .info-card {
+        background: #fef2f2; 
+        border: 1px solid #fecaca;
+        border-radius: 8px;
+        padding: 1.5rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 15px 30px;
+        margin-bottom: 2rem;
     }
+
+    .info-card p { margin: 0; font-size: 1rem; }
+    .info-card strong { color: var(--primary-red); font-weight: 600; display: block; margin-bottom: 4px; }
+    .info-card span { color: var(--text-dark); font-weight: 500; }
+
+    .status-alert {
+        text-align: center;
+        padding: 18px;
+        border-radius: 8px;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+    }
+    .pending {
+        background: #fffbe6;
+        color: var(--pending);
+        border: 1px solid var(--pending);
+    }
+    .pending strong { margin-left: 10px; }
+
+    .action-group { display: flex; flex-direction: column; gap: 15px; margin-top: 2rem; }
+
     button {
-        padding: 0.8rem 1.5rem;
-        background: rgb(172, 5, 5);
-        color: white;
+        width: 100%;
+        padding: 1rem 1.5rem;
         border: none;
-        border-radius: 5px;
+        border-radius: 8px;
         cursor: pointer;
-        font-size: 1.1em;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: background 0.3s ease, transform 0.1s ease;
     }
-    button:hover { 
-        background: #a00000; 
+
+    .btn-edit-profile { background: var(--edit-btn); color: #fff; }
+    .btn-edit-profile:hover { background: #2563eb; }
+
+    .btn-find-donor { background: var(--primary-red); color: #fff; }
+    .btn-find-donor:hover { background: var(--secondary-red); }
+    .btn-search-hospitals { background: #10b981; color: #fff; }
+    .btn-search-hospitals:hover { background: var(--accent-green); }
+    .btn-request { background: #008080; color: #fff; }
+    .btn-request:hover { background: #006666; }
+
+    .edit-profile-section {
+        background: #f7f9fc;
+        padding: 2rem;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        margin-top: 2rem;
+        display: none;
     }
-    .logout {
-        text-align: right;
-        margin-top: 20px;
+    .edit-profile-section.active { display: block; }
+
+    .edit-profile-section form p { margin-bottom: 15px; }
+    .edit-profile-section form label { font-weight: 600; display: block; margin-bottom: 5px; color: var(--text-dark); }
+    .edit-profile-section form input,
+    .edit-profile-section form select,
+    .edit-profile-section form textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        font-size: 1rem;
+        box-sizing: border-box;
+    }
+    .edit-profile-section .save-btn {
+        width: auto;
+        padding: 0.8rem 1.5rem;
+        margin-top: 10px;
+        float: right;
+        background: var(--edit-btn);
+        color: #fff;
+    }
+
+    .logout { text-align: right; margin-top: 40px; }
+    .logout button { width: auto; background: var(--text-light); padding: 0.6rem 1.2rem; color: #fff; }
+    .logout button:hover { background: #374151; }
+
+    hr { border: none; height: 1px; background: var(--border); margin: 3rem 0; }
+
+    @media (max-width: 600px) {
+        .container { margin: 20px; padding: 1.5rem; }
+        .info-card { grid-template-columns: 1fr; }
+        .edit-profile-section .save-btn { float: none; width: 100%; }
     }
 </style>
 </head>
@@ -56,56 +166,55 @@
 </header>
 
 <div class="container">
-    <h2>Welcome, {{ patient.user.username }}!</h2>
-    <div class="info">
-        <p><strong>Blood Group:</strong> {{ patient.blood_group }}</p>
-        <p><strong>Phone:</strong> {{ patient.phone }}</p>
-        <p><strong>Gender:</strong> {{ patient.gender }}</p>
-        <p><strong>Address:</strong> {{ patient.address }}</p>
-        <p><strong>Required Units:</strong> {{ patient.required_units }}</p>
+    <h2>Welcome Back, {{ patient.user.username }}!</h2>
+    
+    <div class="info-card">
+        <p><strong>Blood Group:</strong> <span>{{ patient.blood_group }}</span></p>
+        <p><strong>Required Units:</strong> <span>{{ patient.required_units }}</span></p>
+        <p><strong>Phone:</strong> <span>{{ patient.phone }}</span></p>
+        <p><strong>Gender:</strong> <span>{{ patient.gender }}</span></p>
+        <p><strong>Address:</strong> <span>{{ patient.address }}</span></p>
     </div>
 
-    <hr style="margin: 30px 0;">
+    <div class="edit-profile-section" id="editProfileForm">
+        <h3 style="color: var(--edit-btn); margin-top: 0; font-size: 1.3rem; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+            Update Personal Information
+        </h3>
+    </div>
 
+    <hr>
+
+    <div class="action-group">
         {% if is_approved %}
-        <p style="text-align: center;">
             <a href="{% url 'search-donors' %}" style="text-decoration: none;">
-                <button style="width: 60%; max-width: 400px;">
-                    Find Compatible Donors 🩸
-                </button>
+                <button class="btn-find-donor">🩸 Find Compatible Donors</button>
             </a>
-        </p>
-    {% else %}
-        <div style="text-align: center; background: #fff3cd; color: #856404; padding: 15px; border-radius: 8px;">
-            <strong>⏳ Waiting for Admin Approval</strong><br>
-            You’ll be able to find donors once your blood request is approved.
-        </div>
-    {% endif %}
-
-    <p style="text-align: center; margin-top: 15px;">
-        <a href="{% url 'search-hospitals' %}" style="text-decoration: none;">
-            <button style="width: 60%; max-width: 400px; background: #006400;">
-                🔍 Search Blood Availability in Hospitals
-            </button>
-        </a>
-    </p>
-    
-    {% if  patient.approved %}
-    <p style="text-align:center; margin-top:15px;">
-        <a href="{% url 'submit-blood-request' %}">
-            <button style="width:60%; max-width:400px; background:#006400;">
-                🩸 Submit / Update Blood Request
-            </button>
-        </a>
-    </p>    
-    {% endif %}
+            <a href="{% url 'submit-blood-request' %}" style="text-decoration: none;">
+                <button class="btn-request">✍️ Update Blood Request</button>
+            </a>
+            <a href="{% url 'search-hospitals' %}" style="text-decoration: none;">
+                <button class="btn-search-hospitals">🏥 Search Blood Availability in Hospitals</button>
+            </a>
+        {% else %}
+            <div class="status-alert pending">
+                ⏳ <strong>Waiting for Admin Approval</strong>
+            </div>
+            <a href="{% url 'submit-blood-request' %}" style="text-decoration: none;">
+                <button class="btn-request">✍️ Submit / Edit Blood Request</button>
+            </a>
+            <a href="{% url 'search-hospitals' %}" style="text-decoration: none;">
+                <button class="btn-search-hospitals">🏥 Search Blood Availability in Hospitals</button>
+            </a>
+        {% endif %}
+    </div>
 
     <div class="logout">
         <form method="POST" action="{% url 'logout' %}">
             {% csrf_token %}
-            <button type="submit">Logout</button>
+            <button type="submit">Log Out</button>
         </form>
     </div>
 </div>
+
 </body>
 </html>
