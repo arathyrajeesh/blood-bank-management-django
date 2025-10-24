@@ -1,93 +1,240 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hospital Blood Availability</title>
+<title>Hospital Blood Availability | Blood Bank</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+    /* 🎨 Color & Variable Definitions */
+    :root {
+        --primary-red: #a4161a;
+        --secondary-red: #d32f2f;
+        --background: #f4f6f9; /* Light, clean background */
+        --card-bg: #ffffff;
+        --text-dark: #1f2937;
+        --text-light: #4b5563;
+        --border: #e5e7eb;
+        --accent-blue: #1d4ed8; /* Blue for hospital/info focus */
+        --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+    }
+
+    /* 📄 Base Styles */
     body { 
-        font-family: 'Segoe UI', sans-serif; 
-        background: #fff5f5; 
+        font-family: 'Inter', sans-serif; 
+        background: var(--background); 
+        color: var(--text-dark);
         margin: 0; 
         padding: 0; 
+        line-height: 1.6;
     }
+    
+    /* 🏷️ Header */
     header { 
-        background: rgb(172, 5, 5); 
+        background: var(--primary-red); 
         color: white; 
-        padding: 1rem; t
-        ext-align: center; 
+        padding: 1.5rem; 
+        text-align: center; 
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
+    header h1 {
+        margin: 0;
+        font-size: 1.75rem;
+        font-weight: 700;
+    }
+
+    /* 📦 Container */
     .container { 
-        max-width: 900px; 
-        background: white; 
-        margin: 30px auto; 
-        padding: 2rem; 
-        border-radius: 10px; 
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+        max-width: 1000px; 
+        margin: 40px auto; 
+        padding: 3rem; 
+        background: var(--card-bg); 
+        border-radius: 12px; 
+        box-shadow: var(--shadow);
     }
+    
+    /* 📋 Tables */
     table { 
         width: 100%; 
-        border-collapse: collapse; 
-        margin-top: 20px; 
+        border-collapse: separate; 
+        border-spacing: 0;
+        margin-top: 2rem;
+        border-radius: 8px;
+        overflow: hidden; 
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     }
+    
     th, td { 
-        padding: 10px; 
-        border: 1px solid #ddd; 
-        text-align: left; 
+        padding: 14px 20px; 
+        border: none;
+        border-bottom: 1px solid var(--border);
+        text-align: left;
+        font-size: 0.95rem;
     }
+    
     th { 
-        background: rgb(172, 5, 5); 
+        background: var(--accent-blue); /* Distinct color for hospital search */
         color: white; 
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.85rem;
     }
+    
+    tbody tr:last-child td {
+        border-bottom: none;
+    }
+    tr:hover { 
+        background: #eff6ff; /* Light blue hover */
+    }
+
+    /* Status/Units Display */
+    .units-count {
+        font-weight: 700;
+        color: var(--primary-red);
+        font-size: 1.1em;
+    }
+    
+    /* 🔘 Buttons */
     .request-btn { 
-        background: #c70039; 
+        background: var(--primary-red); 
         color: white; 
-        padding: 5px 10px; 
+        padding: 8px 15px; 
         border: none; 
         border-radius: 6px; 
         cursor: pointer; 
         text-decoration: none; 
+        font-weight: 600;
+        transition: background 0.3s;
+        font-size: 0.9rem;
     }
     .request-btn:hover { 
-        background: #a81616; 
+        background: var(--secondary-red); 
+    }
+
+    /* 🔙 Back Button Styling */
+    .back-btn-container {
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border);
+    }
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--text-light);
+        color: white;
+        text-decoration: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: background 0.3s ease;
+    }
+    .back-btn:hover {
+        background: var(--text-dark);
+    }
+
+    /* Info/Empty States */
+    .info-message {
+        padding: 1.5rem;
+        background: #f0f0f0;
+        border-radius: 6px;
+        color: var(--text-light);
+        font-style: italic;
+        text-align: center;
+        margin-top: 2rem;
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            margin: 20px 15px;
+            padding: 1.5rem;
+        }
+        /* Mobile Table Stack (similar to previous search page) */
+        table, thead, tbody, th, td, tr {
+            display: block;
+        }
+        thead tr {
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+        }
+        tr { border: 1px solid var(--border); margin-bottom: 15px; border-radius: 8px; }
+        td {
+            border: none;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+            padding-left: 50%;
+            text-align: right;
+        }
+        td:before {
+            content: attr(data-label);
+            position: absolute;
+            left: 0;
+            width: 45%;
+            padding-left: 15px;
+            font-weight: 600;
+            color: var(--text-dark);
+            text-align: left;
+            padding-top: 14px;
+        }
     }
 </style>
 </head>
 <body>
 <header>
-    <h1>Hospital Blood Availability</h1>
+    <h1><span style="font-size: 1.2em;">🏥</span> Hospital Blood Availability</h1>
 </header>
 <div class="container">
+    <div class="back-btn-container">
+        <a href="{% url 'patient-dashboard' %}" class="back-btn">
+            <span style="font-size: 1.2em;">&larr;</span> Back to Dashboard
+        </a>
+    </div>
+    
+    <h2 style="font-size: 1.5rem; color: var(--accent-blue); font-weight: 600; margin-bottom: 1.5rem;">
+        Currently Available Stock
+    </h2>
+
     {% if hospitals_with_stock %}
     <table>
-        <tr>
-            <th>Hospital Name</th>
-            <th>Blood Group</th>
-            <th>Available Units</th>
-            <th>Address</th>
-            <th>Action</th>
-        </tr>
-        {% for stock in hospitals_with_stock %}
-        <tr>
-            <td>{{ stock.hospital.name }}</td>
-            <td>{{ stock.blood_group }}</td>
-            <td>{{ stock.units }}</td>
-            <td>{{ stock.hospital.address }}</td>
-            <td>
-                {% if request.user.patient %}
-                <form method="POST" action="{% url 'submit_blood_request' %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="hospital_id" value="{{ stock.hospital.id }}">
-                    <input type="hidden" name="blood_group" value="{{ stock.blood_group }}">
-                    <button type="submit" class="request-btn">Request Blood</button>
-                </form>
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
+        <thead>
+            <tr>
+                <th>Hospital Name</th>
+                <th>Blood Group</th>
+                <th>Available Units</th>
+                <th>Address</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for stock in hospitals_with_stock %}
+            <tr>
+                <td data-label="Hospital Name">{{ stock.hospital.name }}</td>
+                <td data-label="Blood Group">{{ stock.blood_group }}</td>
+                <td data-label="Available Units" class="units-count">{{ stock.units }}</td>
+                <td data-label="Address">{{ stock.hospital.address }}</td>
+                <td data-label="Action">
+                    {% if request.user.patient %}
+                    <form method="POST" action="{% url 'submit-blood-request' %}" style="margin: 0;">
+                        {% csrf_token %}
+                        <input type="hidden" name="hospital_id" value="{{ stock.hospital.id }}">
+                        <input type="hidden" name="blood_group_request" value="{{ stock.blood_group }}">
+                        <input type="hidden" name="units_request" value="1"> <button type="submit" class="request-btn">Request Blood</button>
+                    </form>
+                    {% else %}
+                    <span style="color: var(--text-light); font-size: 0.9em;">Login as Patient to Request</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
     {% else %}
-    <p>No hospital has available blood at the moment.</p>
+    <p class="info-message">
+        <span style="font-size: 1.2em;">😔</span> No hospital has available blood stock at the moment.
+    </p>
     {% endif %}
 </div>
 </body>
