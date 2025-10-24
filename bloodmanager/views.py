@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
-from datetime import date
+from datetime import date,timedelta
 from django.db.models import Sum
 from .models import ( Donor, Patient, BloodStock, Hospital,DonorHealthCheck, Donation)
 from .forms import (RegistrationForm, BloodStockForm, LastDonationForm,HospitalRegistrationForm, HospitalProfileForm,DonorHealthCheckForm, PatientRequestForm,DonorProfileForm)
@@ -184,20 +184,27 @@ def donor_dashboard(request):
     if 'update_donation' in request.POST:
         form = LastDonationForm(request.POST, instance=donor)
         units = request.POST.get('units')
+
         if form.is_valid() and units:
-            donor = form.save(commit=False)
+            new_donation_date = form.cleaned_data['last_donation_date']
+
             if donor.last_donation_date:
-                donor.available = (date.today() - donor.last_donation_date).days >= 90
-            else:
-                donor.available = True
+                days_since_last = (new_donation_date - donor.last_donation_date).days
+                if days_since_last < 90:
+                    messages.error(request, f"You can donate only after 90 days! ({90 - days_since_last} days remaining)")
+                    return redirect('donor-dashboard')
+
+            donor.last_donation_date = new_donation_date
+            donor.available = False  
             donor.save()
 
             Donation.objects.create(
                 donor=donor,
-                date=donor.last_donation_date,
+                date=new_donation_date,
                 units=units
             )
-            messages.success(request, f'Donation record added — {units} unit(s) donated on {donor.last_donation_date}.')
+
+            messages.success(request, f"Donation recorded: {units} unit(s) on {new_donation_date}. Next donation allowed after 90 days.")
             return redirect('donor-dashboard')
         else:
             messages.error(request, "Please enter a valid date and units.")
@@ -216,12 +223,17 @@ def donor_dashboard(request):
         if donor.available and (not health_record or not health_record.is_approved):
             health_form = DonorHealthCheckForm()
 
+    next_eligible_date = None
+    if donor.last_donation_date:
+        next_eligible_date = donor.last_donation_date + timedelta(days=90)
+
     context = {
         'donor': donor,
         'form': form,
         'health_form': health_form,
         'health_record': health_record,
         'donation_history': donation_history,
+        'next_eligible_date': next_eligible_date,  
     }
     return render(request, 'donor/donor_dashboard.html', context)
 
