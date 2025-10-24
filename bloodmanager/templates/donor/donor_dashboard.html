@@ -9,8 +9,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
     :root {
-        --primary-color: #A81616; /* Dark Red */
-        --secondary-color: #C70039; /* Bright Red */
+        --primary-color: #A81616; 
+        --secondary-color: #C70039; 
         --background-light: #f4f6f8;
         --text-dark: #333;
         --border-light: #e0e0e0;
@@ -25,11 +25,11 @@
         margin: 0;
         padding: 0;
         color: var(--text-dark);
-        display: flex; /* Setup for flex layout (header + main content) */
+        display: flex; 
         min-height: 100vh;
         flex-direction: column;
     }
-    /* HEADER STYLES */
+
     header {
         display: flex;
         justify-content: space-between;
@@ -52,7 +52,6 @@
         gap: 10px;
     }
     
-    /* Profile Menu */
     .header-profile {
         position: relative;
     }
@@ -69,7 +68,7 @@
         display: none;
     }
     .profile-photo-icon, .profile-placeholder {
-        width: 45px; /* Slightly smaller for cleaner look */
+        width: 45px; 
         height: 45px;
         border-radius: 50%;    
         border: 2px solid white;
@@ -110,7 +109,6 @@
         color: var(--primary-color);
     }
 
-    /* MAIN LAYOUT (Content + Sidebar) */
     .dashboard-layout {
         display: flex;
         flex: 1;
@@ -120,7 +118,6 @@
     }
 
 
-    /* MAIN CONTENT AREA */
     .container {
         flex-grow: 1;
         background: white;
@@ -146,7 +143,6 @@
         font-size: 1.4rem;
     }
 
-    /* STATISTIC CARDS */
     .stat-cards {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -191,8 +187,7 @@
         color: var(--warning-orange);
     }
 
-    /* Remaining styles from original code (for forms, tables, etc.) */
-    .info { /* Profile Details */
+    .info { 
         margin-top: 20px;
         line-height: 1.8;
         display: grid;
@@ -316,7 +311,6 @@
         background: #fafafa;
     }
     
-    /* MOBILE MEDIA QUERY */
     @media(max-width: 768px){
 
         .dashboard-layout {
@@ -365,7 +359,6 @@
     <div class="main-content">
         <h2>Welcome Back, {{ donor.user.username|default:'Donor' }}!</h2>
         
-        {# --- MESSAGES SECTION --- #}
         {% if messages %}
             {% for message in messages %}
                 <div class="success">{{ message }}</div>
@@ -378,9 +371,7 @@
             </div>
         {% endif %}
 
-        {# --- TOP STATISTIC CARDS --- #}
         <div class="stat-cards">
-            {# Card 1: Total Donations #}
             <div class="stat-card">
                 <div class="stat-card-title">Total Donations</div>
                 <div class="stat-card-value">{{ donation_history|length }}</div>
@@ -388,7 +379,6 @@
                 </div>
             </div>
 
-            {# Card 2: Total Units Donated (Example: 450ml per donation) #}
             <div class="stat-card">
                 <div class="stat-card-title">Total Volume Donated</div>
                 <div class="stat-card-value">{{ total_units }} ml</div>
@@ -397,7 +387,6 @@
                 </div>
             </div>
 
-            {# Card 3: Next Eligible Date #}
             <div class="stat-card" style="border-top-color: {% if next_eligible_date > today %}var(--warning-orange){% else %}var(--success-green){% endif %};">
                 <div class="stat-card-title">Next Eligible Date</div>
                 <div class="stat-card-value" style="color: {% if next_eligible_date > today %}var(--warning-orange){% else %}var(--success-green){% endif %};">
@@ -424,7 +413,6 @@
             <p class="address"><strong>Address:</strong> {{ donor.address|default:"Not Provided" }}</p>
         </div>
 
-        {# --- AVAILABILITY STATUS AND HEALTH FORM SECTION --- #}
         {% if donor.available %}
             {% if health_record %}
                 {% if health_record.is_approved %}
@@ -507,7 +495,6 @@
             </div>
         {% endif %}
 
-        {# --- UPDATE DONATION SECTION --- #}
         <hr>
         <div id="log-donation-anchor"></div>
         <h3><i class="fas fa-upload" style="margin-right: 8px;"></i>Log a Recent Donation</h3>
@@ -530,7 +517,6 @@
             </button>
         </form>    
         
-        {# --- DONATION HISTORY SECTION --- #}
         <hr>
         <div id="donation-history-anchor"></div>
         <h3><i class="fas fa-history" style="margin-right: 8px;"></i>Donation History</h3>

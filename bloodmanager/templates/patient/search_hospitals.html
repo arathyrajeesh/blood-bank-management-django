@@ -7,20 +7,18 @@
 <title>Hospital Blood Availability | Blood Bank</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-    /* 🎨 Color & Variable Definitions */
     :root {
         --primary-red: #a4161a;
         --secondary-red: #d32f2f;
-        --background: #f4f6f9; /* Light, clean background */
+        --background: #f4f6f9; 
         --card-bg: #ffffff;
         --text-dark: #1f2937;
         --text-light: #4b5563;
         --border: #e5e7eb;
-        --accent-blue: #1d4ed8; /* Blue for hospital/info focus */
+        --accent-blue: #1d4ed8; 
         --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
     }
 
-    /* 📄 Base Styles */
     body { 
         font-family: 'Inter', sans-serif; 
         background: var(--background); 
@@ -30,7 +28,6 @@
         line-height: 1.6;
     }
     
-    /* 🏷️ Header */
     header { 
         background: var(--primary-red); 
         color: white; 
@@ -44,7 +41,6 @@
         font-weight: 700;
     }
 
-    /* 📦 Container */
     .container { 
         max-width: 1000px; 
         margin: 40px auto; 
@@ -54,7 +50,6 @@
         box-shadow: var(--shadow);
     }
     
-    /* 📋 Tables */
     table { 
         width: 100%; 
         border-collapse: separate; 
@@ -74,7 +69,7 @@
     }
     
     th { 
-        background: var(--accent-blue); /* Distinct color for hospital search */
+        background: var(--accent-blue); 
         color: white; 
         font-weight: 600;
         text-transform: uppercase;
@@ -86,17 +81,15 @@
         border-bottom: none;
     }
     tr:hover { 
-        background: #eff6ff; /* Light blue hover */
+        background: #eff6ff; 
     }
 
-    /* Status/Units Display */
     .units-count {
         font-weight: 700;
         color: var(--primary-red);
         font-size: 1.1em;
     }
     
-    /* 🔘 Buttons */
     .request-btn { 
         background: var(--primary-red); 
         color: white; 
@@ -113,7 +106,6 @@
         background: var(--secondary-red); 
     }
 
-    /* 🔙 Back Button Styling */
     .back-btn-container {
         margin-bottom: 2rem;
         padding-bottom: 1rem;
@@ -135,7 +127,6 @@
         background: var(--text-dark);
     }
 
-    /* Info/Empty States */
     .info-message {
         padding: 1.5rem;
         background: #f0f0f0;
@@ -151,7 +142,6 @@
             margin: 20px 15px;
             padding: 1.5rem;
         }
-        /* Mobile Table Stack (similar to previous search page) */
         table, thead, tbody, th, td, tr {
             display: block;
         }
@@ -233,7 +223,7 @@
     </table>
     {% else %}
     <p class="info-message">
-        <span style="font-size: 1.2em;">😔</span> No hospital has available blood stock at the moment.
+        <span style="font-size: 1.2em;"></span> No hospital has available blood stock at the moment.
     </p>
     {% endif %}
 </div>
