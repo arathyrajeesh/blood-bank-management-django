@@ -179,50 +179,70 @@ def donor_dashboard(request):
     form = LastDonationForm(instance=donor)
     donation_history = Donation.objects.filter(donor=donor).order_by('-date')
     health_record = DonorHealthCheck.objects.filter(donor=donor).order_by('-submitted_at').first()
+    
+    rejected_message = None
     health_form = None
-    rejected_message = request.session.pop('health_form_rejected', None)
 
-    if 'update_donation' in request.POST:
-        form = LastDonationForm(request.POST, instance=donor)
-        units = request.POST.get('units')
+    # Total units donated
+    total_units = donation_history.aggregate(total=Sum('units'))['total'] or 0
 
-        if form.is_valid() and units:
-            new_donation_date = form.cleaned_data['last_donation_date']
+    # Check if previous health form was rejected
+    if health_record and not health_record.is_approved and getattr(health_record, 'admin_rejected', False):
+        rejected_message = "Your health form was rejected. Please resubmit with correct details."
+        health_form = DonorHealthCheckForm(instance=health_record)
+    elif donor.available and (not health_record or not health_record.is_approved):
+        health_form = DonorHealthCheckForm()
 
-            if donor.last_donation_date:
-                days_since_last = (new_donation_date - donor.last_donation_date).days
-                if days_since_last < 90:
-                    messages.error(request, f"You can donate only after 90 days! ({90 - days_since_last} days remaining)")
-                    return redirect('donor-dashboard')
+    if request.method == 'POST':
+        if 'update_donation' in request.POST:
+            form = LastDonationForm(request.POST, instance=donor)
+            units = request.POST.get('units')
 
-            donor.last_donation_date = new_donation_date
-            donor.available = False  
-            donor.save()
+            if form.is_valid() and units:
+                new_donation_date = form.cleaned_data['last_donation_date']
 
-            Donation.objects.create(
-                donor=donor,
-                date=new_donation_date,
-                units=units
-            )
+                if donor.last_donation_date:
+                    days_since_last = (new_donation_date - donor.last_donation_date).days
+                    if days_since_last < 90:
+                        messages.error(
+                            request,
+                            f"You can donate only after 90 days! ({90 - days_since_last} days remaining)"
+                        )
+                        return redirect('donor-dashboard')
 
-            messages.success(request, f"Donation recorded: {units} unit(s) on {new_donation_date}. Next donation allowed after 90 days.")
-            return redirect('donor-dashboard')
-        else:
-            messages.error(request, "Please enter a valid date and units.")
+                donor.last_donation_date = new_donation_date
+                donor.available = False
+                donor.save()
 
-    elif 'submit_health' in request.POST:
-        health_form = DonorHealthCheckForm(request.POST)
-        if health_form.is_valid():
-            health = health_form.save(commit=False)
-            health.donor = donor
-            health.save()
-            messages.success(request, "Health form submitted! Awaiting admin approval.")
-            return redirect('donor-dashboard')
-        else:
-            messages.error(request, f"Health form error: {health_form.errors}")
-    else:
-        if donor.available and (not health_record or not health_record.is_approved):
-            health_form = DonorHealthCheckForm()
+                Donation.objects.create(
+                    donor=donor,
+                    date=new_donation_date,
+                    units=units
+                )
+
+                messages.success(
+                    request,
+                    f"Donation recorded: {units} unit(s) on {new_donation_date}. Next donation allowed after 90 days."
+                )
+                return redirect('donor-dashboard')
+            else:
+                messages.error(request, "Please enter a valid date and units.")
+
+        elif 'submit_health' in request.POST:
+            if health_record and getattr(health_record, 'admin_rejected', False):
+                health_form = DonorHealthCheckForm(request.POST, instance=health_record)
+            else:
+                health_form = DonorHealthCheckForm(request.POST)
+            
+            if health_form.is_valid():
+                health = health_form.save(commit=False)
+                health.donor = donor
+                health.admin_rejected = False  # Reset rejection if resubmitted
+                health.save()
+                messages.success(request, "Health form submitted! Awaiting admin approval.")
+                return redirect('donor-dashboard')
+            else:
+                messages.error(request, f"Health form error: {health_form.errors}")
 
     next_eligible_date = None
     if donor.last_donation_date:
@@ -236,7 +256,8 @@ def donor_dashboard(request):
         'donation_history': donation_history,
         'next_eligible_date': next_eligible_date,
         'today': date.today(),
-        'rejected_message': rejected_message, 
+        'rejected_message': rejected_message,
+        'total_units': total_units,  
     }
     return render(request, 'donor/donor_dashboard.html', context)
 

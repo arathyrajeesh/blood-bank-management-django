@@ -5,138 +5,139 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Donor Dashboard | Blood Bank</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
 <style>
     :root {
-        --primary-color: rgb(168, 22, 22);
-        --secondary-color: #C70039;
+        --primary-color: #A81616; /* Dark Red */
+        --secondary-color: #C70039; /* Bright Red */
         --background-light: #f4f6f8;
         --text-dark: #333;
         --border-light: #e0e0e0;
         --success-green: #388E3C;
         --warning-orange: #F57C00;
-        --card-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        --card-shadow: 0 4px 12px rgba(0,0,0,0.08);
         --menu-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); 
     }
-
     body {
-        font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-family: 'Inter', sans-serif;
         background: var(--background-light);
         margin: 0;
         padding: 0;
         color: var(--text-dark);
+        display: flex; /* Setup for flex layout (header + main content) */
+        min-height: 100vh;
+        flex-direction: column;
     }
-
+    /* HEADER STYLES */
     header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         background: var(--primary-color);
         color: white;
-        padding: 1.5rem 1rem;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        position: relative; 
+        padding: 1rem 1.5rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        width: 100%;
+        box-sizing: border-box;
     }
-
     header h1 {
         margin: 0;
-        font-size: 1.8rem;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
-
+    
+    /* Profile Menu */
     .header-profile {
         position: relative;
     }
-
+    .header-profile details {
+        line-height: 0;
+    }
     .profile-photo-trigger {
         display: block;
         cursor: pointer;
-        list-style: none; 
+        list-style: none;
     }
-
     .profile-photo-trigger::-webkit-details-marker,
     .profile-photo-trigger::marker {
         display: none;
     }
-
-    .profile-photo-icon {
-        width: 50px;           
-        height: 50px;
+    .profile-photo-icon, .profile-placeholder {
+        width: 45px; /* Slightly smaller for cleaner look */
+        height: 45px;
         border-radius: 50%;    
-        object-fit: cover;
         border: 2px solid white;
-        transition: transform 0.2s, box-shadow 0.2s;
     }
-
-    .profile-photo-icon:hover {
-        transform: scale(1.05); 
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    }
-
     .profile-placeholder {
-        font-size: 48px;
-        color: white;
-        width: 50px;
-        height: 50px;
-        line-height: 50px;
+        font-size: 28px;
+        line-height: 41px;
         text-align: center;
-        border-radius: 50%;
-        border: 2px solid white;
-        display: block;
+        background: rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
-    
     .user-menu {
         position: absolute;
-        top: 65px; 
+        top: 55px;
         right: 0;
         background: white;
         border-radius: 8px;
         box-shadow: var(--menu-shadow);
         z-index: 1000;
-        min-width: 200px;
+        min-width: 180px;
         overflow: hidden;
-        border: 1px solid var(--border-light);
-        padding: 0;
-        margin: 0;
     }
-
     .user-menu a, .user-menu button {
         display: block;
-        padding: 12px 15px;
+        padding: 10px 15px;
+        text-align: left;
+        font-size: 0.95em;
         text-decoration: none;
         color: var(--text-dark);
-        background: white;
         border: none;
-        width: 100%;
-        text-align: left;
-        font-size: 1em;
+        background: white;
         cursor: pointer;
-        transition: background-color 0.2s;
     }
-
     .user-menu a:hover, .user-menu button:hover {
         background-color: var(--background-light);
         color: var(--primary-color);
     }
-    
+
+    /* MAIN LAYOUT (Content + Sidebar) */
+    .dashboard-layout {
+        display: flex;
+        flex: 1;
+        max-width: 1200px;
+        margin: 0 auto;
+        width: 100%;
+    }
+
+
+    /* MAIN CONTENT AREA */
     .container {
-        max-width: 900px;
+        flex-grow: 1;
         background: white;
-        margin: 30px auto;
-        padding: 30px 40px;
-        border-radius: 12px;
-        box-shadow: var(--card-shadow);
+        padding: 30px;
+        border-radius: 0 0 12px 12px;
+    }
+    .main-content {
+        flex-grow: 1;
+        padding: 20px 30px;
     }
 
     h2 {
         color: var(--primary-color);
-        margin-bottom: 20px;
+        margin-top: 0;
         font-size: 2rem;
         text-align: center;
     }
-
     h3 {
         color: var(--secondary-color);
         border-bottom: 2px solid var(--border-light);
@@ -145,7 +146,53 @@
         font-size: 1.4rem;
     }
 
-    .info {
+    /* STATISTIC CARDS */
+    .stat-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    .stat-card {
+        background: #fff;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: var(--card-shadow);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 100px;
+        border-top: 5px solid var(--primary-color);
+    }
+    .stat-card-title {
+        font-size: 0.9em;
+        color: #777;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .stat-card-value {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: var(--primary-color);
+        margin-top: 5px;
+    }
+    .stat-card-icon {
+        font-size: 1.5rem;
+        color: var(--secondary-color);
+    }
+    .stat-card-footer {
+        font-size: 0.9em;
+        color: var(--success-green);
+        font-weight: 600;
+        margin-top: 10px;
+    }
+    .stat-card-footer.unavailable {
+        color: var(--warning-orange);
+    }
+
+    /* Remaining styles from original code (for forms, tables, etc.) */
+    .info { /* Profile Details */
         margin-top: 20px;
         line-height: 1.8;
         display: grid;
@@ -166,7 +213,6 @@
     .info p.address {
         grid-column: 1 / -1;
     }
-
     .availability-card {
         padding: 20px;
         border-radius: 12px;
@@ -187,13 +233,6 @@
         border: 1px solid var(--warning-orange);
         color: var(--warning-orange);
     }
-    .available-yes::before {
-        content: "✅ ";
-    }
-    .available-no::before {
-        content: "⏳ ";
-    }
-
     .donation-form {
         margin-top: 25px;
         padding: 25px;
@@ -214,20 +253,13 @@
         color: #555;
         min-width: 150px;
     }
-    input[type="date"], input[type="text"], input[type="number"] {
+    input[type="date"], input[type="text"], input[type="number"], textarea, select {
         padding: 0.7rem;
         border-radius: 6px;
         border: 1px solid #ddd;
         flex: 1;
         min-width: 150px;
-        transition: border-color 0.3s, box-shadow 0.2s;
     }
-    input[type="date"]:focus, input[type="text"]:focus, input[type="number"]:focus {
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 3px rgba(168, 22, 22, 0.1);
-        outline: none;
-    }
-
     button {
         padding: 0.8rem 1.6rem;
         background: var(--primary-color);
@@ -237,35 +269,32 @@
         cursor: pointer;
         font-size: 1em;
         font-weight: 500;
-        transition: background 0.3s, transform 0.1s, box-shadow 0.2s;
     }
     button:hover {
-        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-        transform: translateY(-2px);
-        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        background: var(--secondary-color);
     }
-
-    .success {
-        background: #e8f5e9;
-        color: var(--success-green);
+    .success, .alert {
         padding: 15px 20px;
         border-radius: 8px;
         margin-bottom: 20px;
-        border-left: 5px solid var(--success-green);
         font-weight: 600;
     }
-
-    .logout {
-        display: none; /* Hide the original logout button */
+    .success {
+        background: #e8f5e9;
+        color: var(--success-green);
+        border-left: 5px solid var(--success-green);
     }
-
+    .alert {
+        background: #ffebee;
+        color: #d32f2f;
+        border-left: 5px solid #d32f2f;
+    }
     hr {
         border: 0;
         height: 1px;
         background: var(--border-light);
         margin: 40px 0;
     }
-
     table {
         width: 100%;
         border-collapse: collapse;
@@ -286,40 +315,34 @@
     tbody tr:nth-child(even) {
         background: #fafafa;
     }
-    tbody tr:hover {
-        background-color: #f2f2f2;
-    }
     
-    @media(max-width:600px){
-        .form-group {
+    /* MOBILE MEDIA QUERY */
+    @media(max-width: 768px){
+
+        .dashboard-layout {
             flex-direction: column;
-            align-items: stretch;
         }
-        input[type="date"], input[type="text"], input[type="number"] {
-            width: 100%;
+        .main-content {
+            padding: 20px;
         }
-        .info {
+        .stat-cards {
             grid-template-columns: 1fr;
-        }
-        table {
-            display: block;
-            overflow-x: auto;
-            white-space: nowrap;
         }
     }
 </style>
 </head>
 <body>
-
 <header>
-    <h1>Donor Dashboard</h1>
+    <h1><i class="fas fa-hand-holding-heart"></i> Blood Bank Donor</h1>
     <div class="header-profile">
         <details>
             <summary class="profile-photo-trigger" title="Account Menu">
                 {% if donor.profile_photo %}
-                    <img src="{{ donor.profile_photo.url }}" class="profile-photo-icon">
+                    <img src="{{ donor.profile_photo.url }}" alt="Profile Photo" class="profile-photo-icon">
                 {% else %}
-                    <i class="fa fa-user-circle profile-placeholder"></i>
+                    <span class="profile-placeholder">
+                        <i class="fa fa-user-circle"></i>
+                    </span>
                 {% endif %}
             </summary>
             
@@ -338,144 +361,206 @@
     </div>
 </header>
 
-<div class="container">
-    <h2>Welcome Back, {{ donor.user.username }}!</h2>
-
-    {% if messages %}
-        {% for message in messages %}
-            <div class="success">{{ message }}</div>
-        {% endfor %}
-    {% endif %}
-
-    <h3>Your Profile Details</h3>
-    <div class="info">
-        <p><strong>Blood Group:</strong> {{ donor.blood_group }}</p>
-        <p><strong>Last Donation:</strong> {{ donor.last_donation_date|default:"Never" }}</p>
-        <p><strong>Phone:</strong> {{ donor.phone }}</p>
-        <p><strong>Age:</strong> {{ donor.age }}</p>
-        <p><strong>Gender:</strong> {{ donor.gender }}</p>
-        <p class="address"><strong>Address:</strong> {{ donor.address }}</p>
-    </div>
-    {% if rejected_message %}
-        <div class="alert alert-danger" style="padding:15px; border-left:5px solid #D32F2F; margin-bottom:20px;">
-            {{ rejected_message }}
-        </div>
-    {% endif %}
-
-    {% if donor.available %}
-        {% if health_record %}
-            {% if health_record.is_approved %}
-                <div class="availability-card available-yes">
-                    Your health form has been approved by admin. You’re cleared for donation!
-                </div>
-            {% else %}
-                <div class="availability-card available-no">
-                    Health form submitted. Waiting for admin approval.
-                </div>
-            {% endif %}
-        {% else %}
-            <hr>
-            <h3>Health Declaration Form</h3>
-            <form method="POST" action="" class="donation-form">
-                {% csrf_token %}
-                
-                <div class="form-group">
-                    <label for="id_age"><strong>Age:</strong></label>
-                    {{ health_form.age }}
-                    {% if health_form.age.errors %}
-                        <div style="color:red; font-size:0.9em;">{{ health_form.age.errors }}</div>
-                    {% endif %}
-                </div>
-                <div class="form-group">
-                    <label for="id_weight"><strong>Weight (kg):</strong></label>
-                    {{ health_form.weight }}
-                    {% if health_form.weight.errors %}
-                        <div style="color:red; font-size:0.9em;">{{ health_form.weight.errors }}</div>
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    <label for="id_hemoglobin_level"><strong>Hemoglobin Level (g/dL):</strong></label>
-                    {{ health_form.hemoglobin_level }}
-                    {% if health_form.hemoglobin_level.errors %}
-                        <div style="color:red; font-size:0.9em;">{{ health_form.hemoglobin_level.errors }}</div>
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    <label for="id_has_disease"><strong>Do you have any disease?</strong></label>
-                    {{ health_form.has_disease }}
-                    {% if health_form.has_disease.errors %}
-                        <div style="color:red; font-size:0.9em;">{{ health_form.has_disease.errors }}</div>
-                    {% endif %}
-                </div>
-
-                <button type="submit" name="submit_health">Submit Health Info</button>
-            </form>
-        {% endif %}
-    {% endif %}
-
-
-    <hr>
-    <h3>Update Donation Status</h3>
-    <form method="POST" action="">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="id_last_donation_date"><strong>Last Donation Date:</strong></label>
-            {{ form.last_donation_date }}
-        </div>
-        <div class="form-group">
-            <label for="units"><strong>Units Donated:</strong></label>
-            <input type="number" name="units" min="1" max="10" required>
-        </div>
-        <button type="submit" name="update_donation">Update Donation</button>
-    </form>    
-
-    <hr id="donation-history-anchor"> <h3>Donation History</h3>
-    {% if donation_history %}
-    <table>
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Donation Date</th>
-                <th scope="col">Units Donated</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for donation in donation_history %}
-            <tr>
-                <td>{{ forloop.counter }}</td>
-                <td>{{ donation.date }}</td>
-                <td>{{ donation.units }}</td>
-            </tr>
+<div class="dashboard-layout">
+    <div class="main-content">
+        <h2>Welcome Back, {{ donor.user.username|default:'Donor' }}!</h2>
+        
+        {# --- MESSAGES SECTION --- #}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="success">{{ message }}</div>
             {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-    <p style="text-align:center; padding:15px; color:#777;">No donation history available yet.</p>
-    {% endif %}
-    
-    <p><strong>Next Eligible Date:</strong> 
-        {% if next_eligible_date %}
-            {{ next_eligible_date }} 
-            {% if next_eligible_date > today %}
-                <span style="color:#F57C00; font-weight:600;">:: 🩸 Not yet eligible</span>
+        {% endif %}
+        {% if rejected_message %}
+            <div class="alert">
+                <i class="fas fa-exclamation-triangle" style="margin-right: 8px;"></i>
+                {{ rejected_message }}
+            </div>
+        {% endif %}
+
+        {# --- TOP STATISTIC CARDS --- #}
+        <div class="stat-cards">
+            {# Card 1: Total Donations #}
+            <div class="stat-card">
+                <div class="stat-card-title">Total Donations</div>
+                <div class="stat-card-value">{{ donation_history|length }}</div>
+                <div class="stat-card-footer">
+                </div>
+            </div>
+
+            {# Card 2: Total Units Donated (Example: 450ml per donation) #}
+            <div class="stat-card">
+                <div class="stat-card-title">Total Volume Donated</div>
+                <div class="stat-card-value">{{ total_units }} ml</div>
+                <div class="stat-card-footer">
+                    <i class="fas fa-box-open"></i> Your total contribution
+                </div>
+            </div>
+
+            {# Card 3: Next Eligible Date #}
+            <div class="stat-card" style="border-top-color: {% if next_eligible_date > today %}var(--warning-orange){% else %}var(--success-green){% endif %};">
+                <div class="stat-card-title">Next Eligible Date</div>
+                <div class="stat-card-value" style="color: {% if next_eligible_date > today %}var(--warning-orange){% else %}var(--success-green){% endif %};">
+                    {% if next_eligible_date %}{{ next_eligible_date|date:"M d, Y" }}{% else %}NOW{% endif %}
+                </div>
+                <div class="stat-card-footer {% if next_eligible_date > today %}unavailable{% endif %}">
+                    {% if next_eligible_date > today %}
+                        <i class="fas fa-hourglass-half"></i> {{ next_eligible_date|timeuntil:today|default:"0 days" }} Remaining
+                    {% else %}
+                        <i class="fas fa-check-circle"></i> Fully Eligible
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div id="profile-details-anchor"></div>
+        <h3><i class="fas fa-address-card" style="margin-right: 8px;"></i>Your Profile Details</h3>
+        <div class="info">
+            <p><strong>Blood Group:</strong> {{ donor.blood_group|default:"N/A" }}</p>
+            <p><strong>Last Donation:</strong> {{ donor.last_donation_date|default:"Never" }}</p>
+            <p><strong>Phone:</strong> {{ donor.phone|default:"N/A" }}</p>
+            <p><strong>Age:</strong> {{ donor.age|default:"N/A" }}</p>
+            <p><strong>Gender:</strong> {{ donor.gender|default:"N/A" }}</p>
+            <p class="address"><strong>Address:</strong> {{ donor.address|default:"Not Provided" }}</p>
+        </div>
+
+        {# --- AVAILABILITY STATUS AND HEALTH FORM SECTION --- #}
+        {% if donor.available %}
+            {% if health_record %}
+                {% if health_record.is_approved %}
+                    <div class="availability-card available-yes">
+                        <i class="fas fa-user-check" style="margin-right: 5px;"></i>
+                        Your health form has been **approved**. You’re cleared for donation!
+                    </div>
+                {% else %}
+                    <div class="availability-card available-no">
+                        <i class="fas fa-clock" style="margin-right: 5px;"></i>
+                        Health form submitted. **Waiting for admin approval** before you can donate.
+                    </div>
+                {% endif %}
             {% else %}
-                <span style="color:#388E3C; font-weight:600;">:: Eligible for donation</span>
+                <hr>
+                <div id="health-form-anchor"></div>
+                <h3><i class="fas fa-notes-medical" style="margin-right: 8px;"></i>Health Declaration Form</h3>
+                <form method="POST" action="" class="donation-form">
+                    {% csrf_token %}
+                    
+                    <div class="form-group">
+                        <label for="{{ health_form.age.id_for_label }}"><strong>Age:</strong></label>
+                        {{ health_form.age }}
+                        {% if health_form.age.errors %}
+                            <div style="color:red; font-size:0.9em; flex-basis:100%; margin-top: -10px;">{{ health_form.age.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ health_form.weight.id_for_label }}"><strong>Weight (kg):</strong></label>
+                        {{ health_form.weight }}
+                        {% if health_form.weight.errors %}
+                            <div style="color:red; font-size:0.9em; flex-basis:100%; margin-top: -10px;">{{ health_form.weight.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ health_form.hemoglobin_level.id_for_label }}"><strong>Hemoglobin Level (g/dL):</strong></label>
+                        {{ health_form.hemoglobin_level }}
+                        {% if health_form.hemoglobin_level.errors %}
+                            <div style="color:red; font-size:0.9em; flex-basis:100%; margin-top: -10px;">{{ health_form.hemoglobin_level.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ health_form.recent_medications.id_for_label }}"><strong>Recent Medications:</strong></label>
+                        {{ health_form.recent_medications }}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ health_form.recent_surgeries.id_for_label }}"><strong>Recent Surgeries:</strong></label>
+                        {{ health_form.recent_surgeries }}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ health_form.tattoos_or_piercings.id_for_label }}"><strong>Tattoos or Piercings:</strong></label>
+                        {{ health_form.tattoos_or_piercings }}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ health_form.travel_history.id_for_label }}"><strong>Travel History:</strong></label>
+                        {{ health_form.travel_history }}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ health_form.symptoms.id_for_label }}"><strong>Recent Symptoms:</strong></label>
+                        {{ health_form.symptoms }}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ health_form.has_disease.id_for_label }}"><strong>Do you have any disease?</strong></label>
+                        {{ health_form.has_disease }}
+                        {% if health_form.has_disease.errors %}
+                            <div style="color:red; font-size:0.9em; flex-basis:100%; margin-top: -10px;">{{ health_form.has_disease.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <button type="submit" name="submit_health">
+                        <i class="fas fa-file-medical" style="margin-right: 8px;"></i>
+                        Submit Health Info for Approval
+                    </button>
+                </form>
             {% endif %}
         {% else %}
-            Not yet donated
+            <div class="availability-card alert" style="margin-top:30px;">
+                <i class="fas fa-ban" style="margin-right: 5px;"></i>
+                You are currently **not eligible** to donate. Please check your **Next Eligible Date** above.
+            </div>
         {% endif %}
-    </p>
 
-
-    <div class="logout">
-        <form method="POST" action="{% url 'logout' %}">
+        {# --- UPDATE DONATION SECTION --- #}
+        <hr>
+        <div id="log-donation-anchor"></div>
+        <h3><i class="fas fa-upload" style="margin-right: 8px;"></i>Log a Recent Donation</h3>
+        <form method="POST" action="" class="donation-form">
             {% csrf_token %}
-            <button type="submit" class="logout-button">Logout</button>
-        </form>
+            <div class="form-group">
+                <label for="{{ form.last_donation_date.id_for_label }}"><strong>Donation Date:</strong></label>
+                {{ form.last_donation_date }}
+                {% if form.last_donation_date.errors %}
+                    <div style="color:red; font-size:0.9em; flex-basis:100%; margin-top: -10px;">{{ form.last_donation_date.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="id_units"><strong>Units Donated (mL):</strong></label>
+                <input type="number" name="units" id="id_units" min="100" max="500" step="100" placeholder="e.g., 450" required>
+            </div>
+            <button type="submit" name="update_donation">
+                <i class="fas fa-save" style="margin-right: 8px;"></i>
+                Log Donation Record
+            </button>
+        </form>    
+        
+        {# --- DONATION HISTORY SECTION --- #}
+        <hr>
+        <div id="donation-history-anchor"></div>
+        <h3><i class="fas fa-history" style="margin-right: 8px;"></i>Donation History</h3>
+        {% if donation_history %}
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Donation Date</th>
+                    <th scope="col">Units Donated</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for donation in donation_history %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ donation.date }}</td>
+                    <td>{{ donation.units }} mL</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p style="text-align:center; padding:15px; color:#777; background:#f0f0f0; border-radius:8px;">
+            <i class="fas fa-heart-broken" style="margin-right: 8px;"></i>
+            No donation history available yet. Log your first one!
+        </p>
+        {% endif %}
+
     </div>
 </div>
-
 </body>
 </html>
