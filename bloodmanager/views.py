@@ -184,10 +184,8 @@ def donor_dashboard(request):
     rejected_message = None
     health_form = None
 
-    # Total units donated
     total_units = donation_history.aggregate(total=Sum('units'))['total'] or 0
 
-    # Check if previous health form was rejected
     if health_record and not health_record.is_approved and getattr(health_record, 'admin_rejected', False):
         rejected_message = "Your health form was rejected. Please resubmit with correct details."
         health_form = DonorHealthCheckForm(instance=health_record)
@@ -238,7 +236,7 @@ def donor_dashboard(request):
             if health_form.is_valid():
                 health = health_form.save(commit=False)
                 health.donor = donor
-                health.admin_rejected = False  # Reset rejection if resubmitted
+                health.admin_rejected = False  
                 health.save()
                 messages.success(request, "Health form submitted! Awaiting admin approval.")
                 return redirect('donor-dashboard')
@@ -404,10 +402,8 @@ def admin_dashboard(request):
     total_patients = patients.count()
     total_stock_units = sum(item['total_units'] for item in stock)
 
-    # ✅ Blood stock update form
     stock_form = BloodStockForm()
 
-    # ✅ Handle admin actions
     if request.method == 'POST':
         if 'approve_patient' in request.POST:
             patient_id = request.POST.get('patient_id')
@@ -448,7 +444,6 @@ def admin_dashboard(request):
             messages.success(request, f"{record.donor.user.username}'s health form approved!")
             return redirect('admin-dashboard')
 
-    # ✅ Compute percentages for table
     total_units = sum(item['total_units'] for item in stock)
     stock_with_percentage = []
     for item in stock:
@@ -459,7 +454,6 @@ def admin_dashboard(request):
             'percentage': round(percent, 1),
         })
 
-    # ✅ Matplotlib Pie Chart (no % inside)
     labels = [item['blood_group'] for item in stock]
     quantities = [item['total_units'] for item in stock]
 
