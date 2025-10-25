@@ -7,12 +7,11 @@
 <title>Admin Dashboard | Blood Bank</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-    /* 🎨 Color & Variable Refinements */
     :root {
         --primary: #a4161a;
         --secondary: #d32f2f;
         --accent: #ef233c;
-        --background: #f4f6f9; /* Lighter, more professional background */
+        --background: #f4f6f9; 
         --card-bg: #ffffff;
         --text-dark: #1f2937; /* Darker, higher contrast text */
         --text-light: #4b5563;
@@ -268,7 +267,45 @@
         background: var(--border);
         margin: 3rem 0;
     }
+    /* 📊 Distribution Layout */
+.stock-distribution-container {
+    padding: 20px 0; /* Add padding to the card itself */
+}
 
+.stock-distribution-content {
+    display: flex;
+    gap: 40px; /* Space between the chart and the bars */
+    align-items: flex-start; /* Align contents to the top */
+    flex-wrap: wrap; /* Allow wrapping on small screens */
+    margin-top: 20px;
+}
+
+.chart-box {
+    flex: 0 0 45%; /* Fixed size for the chart */
+    max-width: 45%; 
+    display: flex; /* Helps center the image */
+    justify-content: center;
+}
+
+.bar-overview-box {
+    flex: 1; 
+    min-width: 300px; 
+}
+
+
+@media (max-width: 992px) {
+    .stock-distribution-content {
+        flex-direction: column; 
+        gap: 20px;
+    }
+
+    .chart-box,
+    .bar-overview-box {
+        flex: none;
+        max-width: 100%; 
+        width: 100%;
+    }
+}
     @media (max-width: 768px) {
         .stats {
             grid-template-columns: 1fr;
@@ -321,7 +358,40 @@
     </div>
 
     <hr>
+    <div class="card stock-distribution-container"> <h2>Blood Stock Distribution</h2>
+        <div class="stock-distribution-content"> 
+            <div class="chart-box">
+                <img src="data:image/png;base64,{{ chart }}" alt="Blood Stock Pie Chart" style="max-width: 100%; height: auto;"> 
+            </div>
+            <div class="bar-overview-box">
+                <h2 style="text-align:center; color:#a4161a; margin-top: 0;">Blood Stock Overview</h2>
+                {% for item in stock %}
+                <div style="margin-bottom: 12px;">
+                    <div style="display:flex; justify-content: space-between; margin-bottom: 4px;">
+                        <span>{{ item.blood_group }}</span>
+                        <span>{{ item.total_units }} units</span>
+                    </div>
+                    <div style="background:#f4f4f4; border-radius: 8px; overflow:hidden; height:24px;">
+                        <div style="
+                            width: {{ item.total_units|floatformat:0 }}%; 
+                            background:#ef233c;
+                            height:100%;
+                            text-align:right;
+                            color:white;
+                            padding-right:6px;
+                            border-radius: 8px 0 0 8px;
+                            transition: width 0.5s ease;
+                            ">
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 
+
+    <hr>
     <div class="section-card">
         <h2>Inventory Management</h2>
         <form method="POST" class="stock-form">

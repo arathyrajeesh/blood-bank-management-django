@@ -7,8 +7,9 @@ from datetime import date,timedelta
 from django.db.models import Sum
 from .models import ( Donor, Patient, BloodStock, Hospital,DonorHealthCheck, Donation)
 from .forms import (RegistrationForm, BloodStockForm, LastDonationForm,HospitalRegistrationForm, HospitalProfileForm,DonorHealthCheckForm, PatientRequestForm,DonorProfileForm)
-
-
+from .forms import BloodStockForm
+import matplotlib.pyplot as plt
+import io, base64
 
 def home(request):
     stock = BloodStock.objects.values('blood_group').annotate(units=Sum('units')).order_by('blood_group')
@@ -403,9 +404,10 @@ def admin_dashboard(request):
     total_patients = patients.count()
     total_stock_units = sum(item['total_units'] for item in stock)
 
-    # Always define stock_form first
+    # ✅ Blood stock update form
     stock_form = BloodStockForm()
 
+    # ✅ Handle admin actions
     if request.method == 'POST':
         if 'approve_patient' in request.POST:
             patient_id = request.POST.get('patient_id')
@@ -414,15 +416,13 @@ def admin_dashboard(request):
             patient.save()
             messages.success(request, f"Patient {patient.user.username} approved successfully.")
             return redirect('admin-dashboard')
+
         if 'reject_health' in request.POST:
             health_id = request.POST.get('health_id')
             record = get_object_or_404(DonorHealthCheck, id=health_id)
             donor_user = record.donor.user
-            record.delete()  # remove the form
-
-            # Send session message to donor
+            record.delete()
             request.session['health_form_rejected'] = "Your health form was rejected by admin. Please submit a new one."
-            
             messages.success(request, f"Health form for {donor_user.username} rejected.")
             return redirect('admin-dashboard')
 
@@ -448,17 +448,46 @@ def admin_dashboard(request):
             messages.success(request, f"{record.donor.user.username}'s health form approved!")
             return redirect('admin-dashboard')
 
+    # ✅ Compute percentages for table
+    total_units = sum(item['total_units'] for item in stock)
+    stock_with_percentage = []
+    for item in stock:
+        percent = (item['total_units'] / total_units * 100) if total_units > 0 else 0
+        stock_with_percentage.append({
+            'blood_group': item['blood_group'],
+            'total_units': item['total_units'],
+            'percentage': round(percent, 1),
+        })
+
+    # ✅ Matplotlib Pie Chart (no % inside)
+    labels = [item['blood_group'] for item in stock]
+    quantities = [item['total_units'] for item in stock]
+
+    plt.switch_backend('AGG')  
+    fig, ax = plt.subplots(figsize=(5, 5))
+    ax.pie(quantities, labels=labels, startangle=90)  
+    ax.set_title("Blood Stock Distribution")
+
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    image_png = buffer.getvalue()
+    buffer.close()
+    chart = base64.b64encode(image_png).decode('utf-8')
+    plt.close(fig)
+
     context = {
         'donors': donors,
         'requested_patients': requested_patients,
         'patients': patients,
-        'stock': stock,
+        'stock': stock_with_percentage,  
         'total_donors': total_donors,
         'available_donors': available_donors,
         'total_patients': total_patients,
         'total_stock_units': total_stock_units,
-        'stock_form': stock_form,  # always safe now
+        'stock_form': stock_form,
         'health_forms': health_forms,
+        'chart': chart,  
     }
 
     return render(request, 'admin/admin_dashboard.html', context)
