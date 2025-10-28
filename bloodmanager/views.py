@@ -10,6 +10,7 @@ from .forms import (RegistrationForm, BloodStockForm, LastDonationForm,HospitalR
 from .forms import BloodStockForm
 import matplotlib.pyplot as plt
 import io, base64
+from .models import BloodRequest
 
 def home(request):
     stock = BloodStock.objects.values('blood_group').annotate(units=Sum('units')).order_by('blood_group')
@@ -132,10 +133,14 @@ def logout_view(request):
 
 @login_required
 def hospital_dashboard(request):
-    hospital = request.user.hospital
+    hospital = request.user.hospital  # current logged-in hospital
     stock = BloodStock.objects.filter(hospital=hospital)
 
-    pending_requests = Patient.objects.filter(approved=False).order_by('-id')
+    pending_requests = BloodRequest.objects.filter(hospital=hospital, status='Pending').select_related('patient', 'patient__user').order_by('-created_at')
+
+    approved_requests = BloodRequest.objects.filter(hospital=hospital, status='Approved').select_related('patient', 'patient__user').order_by('-created_at')[:5]
+
+    recent_slots = DonationSlot.objects.filter(hospital=hospital).select_related('donor', 'donor__user').order_by('-date', '-time')[:5]
 
     if request.method == 'POST':
         if 'add_stock' in request.POST:
@@ -156,22 +161,50 @@ def hospital_dashboard(request):
             else:
                 messages.error(request, "Please select a blood group and enter valid units.")
 
-        elif 'approve_patient' in request.POST:
-            patient_id = request.POST.get('patient_id')
-            patient = get_object_or_404(Patient, id=patient_id)
-            patient.approved = True
-            patient.save()
-            messages.success(request, f"Patient {patient.user.username} approved successfully!")
+        elif 'approve_request' in request.POST:
+            req_id = request.POST.get('request_id')
+            req = get_object_or_404(BloodRequest, id=req_id, hospital=hospital)
+
+            stock_item = BloodStock.objects.filter(hospital=hospital, blood_group=req.blood_group).first()
+
+            if stock_item and stock_item.units >= req.units:
+                stock_item.units -= req.units
+                stock_item.save()
+
+                req.status = 'Approved'
+                req.save()
+
+                messages.success(
+                    request,
+                    f"Approved {req.units} unit(s) of {req.blood_group} for {req.patient.user.username}."
+                )
+            else:
+                messages.error(
+                    request,
+                    f"Not enough stock to approve request for {req.patient.user.username}!"
+                )
+
+            return redirect('hospital-dashboard')
+
+        elif 'reject_request' in request.POST:
+            req_id = request.POST.get('request_id')
+            req = get_object_or_404(BloodRequest, id=req_id, hospital=hospital)
+            req.status = 'Rejected'
+            req.save()
+            messages.warning(request, f"Rejected request from {req.patient.user.username}.")
             return redirect('hospital-dashboard')
 
     context = {
         'stock': stock,
-        'pending_requests': pending_requests,  
-        'BLOOD_GROUP_CHOICES': BloodStock.BLOOD_GROUP_CHOICES if hasattr(BloodStock, 'BLOOD_GROUP_CHOICES') else [
+        'pending_requests': pending_requests,
+        'approved_requests': approved_requests,
+        'recent_slots': recent_slots,
+        'BLOOD_GROUP_CHOICES': getattr(BloodStock, 'BLOOD_GROUP_CHOICES', [
             ('A+', 'A+'), ('A-', 'A-'), ('B+', 'B+'), ('B-', 'B-'),
             ('AB+', 'AB+'), ('AB-', 'AB-'), ('O+', 'O+'), ('O-', 'O-')
-        ],
+        ]),
     }
+
     return render(request, 'hospital/hospital_dashboard.html', context)
 
 @login_required
@@ -186,16 +219,13 @@ def donor_dashboard(request):
 
     total_units = donation_history.aggregate(total=Sum('units'))['total'] or 0
 
-    # Handle rejected or new health form logic
     if health_record and not health_record.is_approved and getattr(health_record, 'admin_rejected', False):
         rejected_message = "Your health form was rejected. Please resubmit with correct details."
         health_form = DonorHealthCheckForm(instance=health_record)
     elif donor.available and (not health_record or not health_record.is_approved):
         health_form = DonorHealthCheckForm()
 
-    # --- Slot and Donation Logic ---
     if request.method == 'POST':
-        # 1️⃣ Donor accepts assigned slot
         if 'accept_slot' in request.POST:
             slot_id = request.POST.get('accept_slot')
             slot = get_object_or_404(DonationSlot, id=slot_id, donor=donor)
@@ -204,7 +234,6 @@ def donor_dashboard(request):
             messages.success(request, "You have accepted your donation slot.")
             return redirect('donor-dashboard')
 
-        # 2️⃣ Donor rejects slot
         elif 'reject_slot' in request.POST:
             slot_id = request.POST.get('reject_slot')
             slot = get_object_or_404(DonationSlot, id=slot_id, donor=donor)
@@ -212,7 +241,6 @@ def donor_dashboard(request):
             messages.warning(request, "You have rejected your donation slot.")
             return redirect('donor-dashboard')
 
-        # 3️⃣ Donor logs a donation (after donating)
         elif 'update_donation' in request.POST:
             form = LastDonationForm(request.POST, instance=donor)
             units = request.POST.get('units')
@@ -220,7 +248,6 @@ def donor_dashboard(request):
             if form.is_valid() and units:
                 new_donation_date = form.cleaned_data['last_donation_date']
 
-                # Check 90-day eligibility
                 if donor.last_donation_date:
                     days_since_last = (new_donation_date - donor.last_donation_date).days
                     if days_since_last < 90:
@@ -234,14 +261,12 @@ def donor_dashboard(request):
                 donor.available = False
                 donor.save()
 
-                # Create donation record
                 donation = Donation.objects.create(
                     donor=donor,
                     date=new_donation_date,
                     units=units
                 )
 
-                # ✅ Automatically mark slot completed + update BloodStock
                 if slot and slot.accepted and not slot.completed:
                     slot.completed = True
                     slot.save()
@@ -281,7 +306,6 @@ def donor_dashboard(request):
             else:
                 messages.error(request, f"Health form error: {health_form.errors}")
 
-    # --- Compute next eligible date ---
     next_eligible_date = None
     if donor.last_donation_date:
         next_eligible_date = donor.last_donation_date + timedelta(days=90)
@@ -341,37 +365,46 @@ def submit_blood_request(request):
     patient = get_object_or_404(Patient, user=request.user)
 
     if request.method == 'POST':
-        form = PatientRequestForm(request.POST, instance=patient)
-        if form.is_valid():
-            patient = form.save(commit=False)
-            patient.approved = False
-            patient.save()
-            messages.success(request, "Blood request submitted! Awaiting admin approval.")
-            return redirect('patient-dashboard')
-        else:
-            messages.error(request, "Please correct the errors below.")
-    else:
-        form = PatientRequestForm(instance=patient)
+        hospital_id = request.POST.get('hospital_id')
+        blood_group = request.POST.get('blood_group_request')
+        units = request.POST.get('units_request')
 
-    history = Patient.objects.filter(user=request.user).order_by('-id')
+        hospital = get_object_or_404(Hospital, id=hospital_id)
 
-    return render(request, 'patient/submit_request.html', {'form': form, 'history': history})
+        BloodRequest.objects.create(
+            patient=patient,
+            hospital=hospital,
+            blood_group=blood_group,
+            units=units,
+            status='Pending'
+        )
+
+        messages.success(request, f"Your request for {units} unit(s) of {blood_group} was sent to {hospital.name}.")
+        return redirect('patient-dashboard')
+
+    hospitals_with_stock = BloodStock.objects.filter(units__gt=0).select_related('hospital')
+    return render(request, 'patient/search_hospitals.html', {'hospitals_with_stock': hospitals_with_stock})
 
 
 @login_required
 def patient_dashboard(request):
-    patient = Patient.objects.get(user=request.user)
+    patient = get_object_or_404(Patient, user=request.user)
 
-    history = Patient.objects.filter(user=request.user).order_by('-id')
+    history = BloodRequest.objects.filter(patient=patient).select_related('hospital').order_by('-created_at')
+
+    received_requests = history.filter(status='Approved')
+
     no_request_message = None
     if not history.exists():
-        no_request_message = "You have not submitted any blood request yet."
+        no_request_message = "You have not submitted any blood requests yet."
 
     context = {
         'patient': patient,
         'is_approved': patient.approved,
         'history': history,
+        'received_requests': received_requests,  
         'no_request_message': no_request_message,
+        
     }
     return render(request, 'patient/patient_dashboard.html', context)
 
@@ -437,6 +470,7 @@ def admin_dashboard(request):
     requested_patients = Patient.objects.filter(approved=False)
     stock = BloodStock.objects.values('blood_group').annotate(total_units=Sum('units')).order_by('blood_group')
     health_forms = DonorHealthCheck.objects.all().order_by('-submitted_at')
+    patient_requests = BloodRequest.objects.select_related('patient', 'hospital').order_by('-created_at')
 
     total_donors = donors.count()
     available_donors = donors.filter(available=True).count()
@@ -445,29 +479,24 @@ def admin_dashboard(request):
 
     stock_form = BloodStockForm()
 
-    # ✅ New: Get approved donors (for slot assignment)
     approved_donors = Donor.objects.filter(
     available=True,
-    donorhealthcheck__is_approved=True  # ✅ correct related name
+    donorhealthcheck__is_approved=True  
     ).exclude(
         donationslot__completed=False
     ).distinct()
 
     hospitals = Hospital.objects.all()
-    # ✅ Get the most recent 5 slots (latest assigned)
     recent_slots = DonationSlot.objects.select_related('donor', 'hospital').order_by('-date', '-time')[:5]
 
-    # ✅ (Optional) Get latest slot per donor (if you want per-donor info too)
     latest_slot_per_donor = {}
     for donor in donors:
         slot = donor.donationslot_set.order_by('-date', '-time').first()
         if slot:
             latest_slot_per_donor[donor.id] = slot
 
-    # ----------------- POST HANDLERS -----------------
     if request.method == 'POST':
 
-        # ✅ Assign Donation Slot
         if 'assign_slot' in request.POST:
             donor_id = request.POST.get('donor_id')
             hospital_id = request.POST.get('hospital_id')
@@ -491,7 +520,6 @@ def admin_dashboard(request):
             return redirect('admin-dashboard')
 
 
-        # Approve patient
         if 'approve_patient' in request.POST:
             patient_id = request.POST.get('patient_id')
             patient = get_object_or_404(Patient, id=patient_id)
@@ -500,7 +528,6 @@ def admin_dashboard(request):
             messages.success(request, f"Patient {patient.user.username} approved successfully.")
             return redirect('admin-dashboard')
 
-        # Reject donor health
         if 'reject_health' in request.POST:
             health_id = request.POST.get('health_id')
             record = get_object_or_404(DonorHealthCheck, id=health_id)
@@ -510,7 +537,6 @@ def admin_dashboard(request):
             messages.success(request, f"Health form for {donor_user.username} rejected.")
             return redirect('admin-dashboard')
 
-        # Update blood stock
         if 'update_stock' in request.POST:
             stock_form = BloodStockForm(request.POST)
             if stock_form.is_valid():
@@ -525,7 +551,6 @@ def admin_dashboard(request):
                 messages.success(request, f'Blood stock for {blood_group} updated successfully.')
                 return redirect('admin-dashboard')
 
-        # Approve donor health
         if 'approve_health' in request.POST:
             health_id = request.POST.get('health_id')
             record = get_object_or_404(DonorHealthCheck, id=health_id)
@@ -534,7 +559,6 @@ def admin_dashboard(request):
             messages.success(request, f"{record.donor.user.username}'s health form approved!")
             return redirect('admin-dashboard')
 
-    # ----------------- PIE CHART -----------------
     total_units = sum(item['total_units'] for item in stock)
     stock_with_percentage = []
     for item in stock:
@@ -561,7 +585,6 @@ def admin_dashboard(request):
     chart = base64.b64encode(image_png).decode('utf-8')
     plt.close(fig)
 
-    # ----------------- CONTEXT -----------------
     context = {
         'donors': donors,
         'requested_patients': requested_patients,
@@ -574,11 +597,12 @@ def admin_dashboard(request):
         'stock_form': stock_form,
         'health_forms': health_forms,
         'chart': chart,
-        # New context for slot assignment
         'approved_donors': approved_donors,
         'hospitals': Hospital.objects.all(),
-        'recent_slots': recent_slots,               # 🆕 for display box
+        'recent_slots': recent_slots,              
         'latest_slot_per_donor': latest_slot_per_donor,
+        'patient_requests': patient_requests,
+
     }
 
     return render(request, 'admin/admin_dashboard.html', context)

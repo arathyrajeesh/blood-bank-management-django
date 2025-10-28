@@ -8,29 +8,27 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <style>
-    /* 🎨 Color & Variable Definitions */
     :root {
         --primary-red: #c70039;
         --secondary-red: #a81616;
-        --background: #f0f4f8; /* Soft background */
+        --background: #f0f4f8;
         --card-bg: #ffffff;
         --text-dark: #2c3e50;
         --text-light: #7f8c8d;
         --border: #e9ecef;
-        --accent-blue: #2980b9; /* For profile/action */
-        --success-green: #27ae60; /* For approve */
-        --danger-red: #e74c3c; /* For delete */
+        --accent-blue: #2980b9;
+        --success-green: #27ae60;
+        --danger-red: #e74c3c;
         --shadow: 0 10px 30px rgba(0,0,0,0.06);
     }
 
-    /* 📄 Base Styles */
     body {
-        font-family: 'Poppins', sans-serif; 
-        background: var(--background); 
+        font-family: 'Poppins', sans-serif;
+        background: var(--background);
         margin: 0;
         padding: 0;
         line-height: 1.6;
-        color: var(--text-dark); 
+        color: var(--text-dark);
     }
 
     .container {
@@ -38,8 +36,8 @@
         margin: 40px auto;
         background: var(--card-bg);
         padding: 40px 50px;
-        border-radius: 15px; 
-        box-shadow: var(--shadow); 
+        border-radius: 15px;
+        box-shadow: var(--shadow);
     }
 
     h2 {
@@ -49,39 +47,34 @@
         font-size: 2.5rem;
         font-weight: 700;
     }
-    
-    /* 📰 Section/Card Style */
+
     .dashboard-section {
         background: #fdfdff;
         padding: 25px;
         border-radius: 10px;
         border: 1px solid var(--border);
         margin-bottom: 30px;
+        box-shadow: var(--shadow);
     }
 
     h3 {
-        color: var(--text-dark); 
+        color: var(--text-dark);
         margin-top: 0;
         margin-bottom: 20px;
         font-size: 1.5rem;
         font-weight: 600;
         padding-bottom: 10px;
-        border-bottom: 2px solid var(--border); 
+        border-bottom: 2px solid var(--border);
         display: flex;
         align-items: center;
         gap: 10px;
     }
-    
-    /* 📝 Form Styling */
+
     .add-stock-form {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 20px;
-        align-items: end; 
-    }
-
-    .form-group {
-        width: 100%;
+        align-items: end;
     }
 
     form label {
@@ -119,18 +112,17 @@
         cursor: pointer;
         font-weight: 600;
         transition: background-color 0.3s, transform 0.2s;
-        height: 44px; /* Ensure uniform height */
+        height: 44px;
     }
 
     form button[name="add_stock"]:hover {
         background: var(--secondary-red);
-        transform: translateY(-1px); 
+        transform: translateY(-1px);
     }
-    
-    /* 📊 Table Styling */
+
     table {
         width: 100%;
-        border-collapse: separate; 
+        border-collapse: separate;
         border-spacing: 0;
         margin-top: 15px;
         border-radius: 8px;
@@ -146,24 +138,23 @@
     }
 
     th {
-        background: #fef1f2; 
+        background: #fef1f2;
         color: var(--secondary-red);
         font-weight: 700;
         text-transform: uppercase;
         font-size: 0.85rem;
         letter-spacing: 0.5px;
     }
-    
+
     tbody tr:hover {
-        background: #fffafa; 
+        background: #fffafa;
     }
-    
+
     .units-available {
         font-weight: 700;
         color: var(--success-green);
     }
 
-    /* ➡️ Action Buttons */
     .approve-btn {
         background: var(--success-green);
         color: white;
@@ -173,7 +164,6 @@
         cursor: pointer;
         font-weight: 600;
         transition: background-color 0.3s;
-        margin: 0;
     }
     .approve-btn:hover {
         background: #1e8449;
@@ -188,44 +178,34 @@
         cursor: pointer;
         font-weight: 600;
         transition: background-color 0.3s;
-        margin: 0;
     }
     .delete-btn:hover {
         background: #c0392b;
     }
 
-    /* 🔗 Profile Link */
-    .profile-link {
-        display: inline-block;
-        text-decoration: none;
-    }
     .profile-link button {
-        background: var(--accent-blue); 
+        background: var(--accent-blue);
         color: #fff;
         border-radius: 8px;
         padding: 12px 25px;
         cursor: pointer;
         border: none;
-        margin-top: 15px;
         font-weight: 600;
         transition: background-color 0.3s;
         font-size: 1rem;
     }
-    
     .profile-link button:hover {
         background: #1c6aa1;
     }
 
-    /* 🚪 Logout */
     .logout-section {
         margin-top: 40px;
         text-align: right;
         padding-top: 20px;
         border-top: 1px solid var(--border);
     }
-
     .logout-section button {
-        background: var(--text-light); 
+        background: var(--text-light);
         padding: 10px 20px;
         border-radius: 8px;
         color: #fff;
@@ -233,180 +213,156 @@
         cursor: pointer;
         font-weight: 600;
         transition: background-color 0.3s;
-        font-size: 0.9rem;
     }
-
     .logout-section button:hover {
         background: var(--text-dark);
     }
 
-    /* 📱 Mobile Adjustments */
+    .message-container div {
+        animation: fadeIn 0.6s ease;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-5px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
     @media (max-width: 768px) {
         .container {
             margin: 20px 15px;
             padding: 25px;
         }
-        
-        h2 {
-            font-size: 2rem;
-        }
-
-        .add-stock-form {
-            grid-template-columns: 1fr; /* Stack columns */
-        }
-        
-        .dashboard-section {
-            padding: 15px;
-        }
-
-        th, td {
-            padding: 10px;
-        }
-        
-        /* Improve table display on small screens (basic stack) */
-        table {
-            display: block;
-            overflow-x: auto;
-            white-space: nowrap;
-        }
-        table thead {
-            display: none;
-        }
-        table tbody {
-            display: block;
-            width: 100%;
-        }
-        table tr {
-            display: block;
-            margin-bottom: 10px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-        }
-        table td {
-            display: block;
-            text-align: right;
-            border-bottom: none;
-            position: relative;
-            padding-left: 50%;
-        }
-        table td:before {
-            content: attr(data-label);
-            position: absolute;
-            left: 0;
-            width: 50%;
-            padding-left: 15px;
-            font-weight: 600;
-            text-align: left;
-            color: var(--text-dark);
-        }
+        h2 { font-size: 2rem; }
+        .add-stock-form { grid-template-columns: 1fr; }
+        th, td { padding: 10px; }
+        table { display: block; overflow-x: auto; white-space: nowrap; }
     }
 </style>
 </head>
 <body>
+
 {% if messages %}
-    <div class="message-container" style="max-width: 950px; margin: 20px auto 0; padding: 15px; border-radius: 8px;">
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}" 
-                 style="padding: 10px; margin-bottom: 10px; border-radius: 6px; 
-                        {% if 'success' in message.tags %} background: #d4edda; color: #155724; border: 1px solid #c3e6cb;
-                        {% elif 'error' in message.tags %} background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;
-                        {% else %} background: #fdfd96; color: #856404; border: 1px solid #ffeeba;
-                        {% endif %}">
-                {{ message }}
-            </div>
-        {% endfor %}
-    </div>
+<div class="message-container" style="max-width: 950px; margin: 20px auto 0; padding: 15px;">
+    {% for message in messages %}
+        <div style="padding: 10px; margin-bottom: 10px; border-radius: 6px;
+            {% if 'success' in message.tags %} background: #d4edda; color: #155724;
+            {% elif 'error' in message.tags %} background: #f8d7da; color: #721c24;
+            {% else %} background: #fdfd96; color: #856404;
+            {% endif %}">
+            {{ message }}
+        </div>
+    {% endfor %}
+</div>
 {% endif %}
 
 <div class="container">
     <h2><i class="fas fa-hospital-alt"></i> Hospital Dashboard</h2>
-    
-    <div class="dashboard-section" style="padding: 15px; text-align: right; border: none; background: #f9f9f9; margin-bottom: 30px;">
+
+    <div class="dashboard-section" style="text-align: right; background: #f9f9f9;">
         <a href="{% url 'hospital_edit_profile' %}" class="profile-link">
             <button type="button"><i class="fas fa-user-edit"></i> Update Profile</button>
         </a>
     </div>
 
+    <!-- Add Stock -->
     <div class="dashboard-section">
         <h3><i class="fas fa-plus-circle"></i> Add Blood Stock</h3>
         <form method="POST" class="add-stock-form">
             {% csrf_token %}
-            <div class="form-group">
-                <label for="blood_group">Blood Group</label>
-                <select name="blood_group" id="blood_group">
+            <div>
+                <label>Blood Group</label>
+                <select name="blood_group">
                     {% for bg_value, bg_label in BLOOD_GROUP_CHOICES %}
                         <option value="{{ bg_value }}">{{ bg_label }}</option>
                     {% endfor %}
                 </select>
             </div>
-
-            <div class="form-group">
-                <label for="units">Units</label>
-                <input type="number" name="units" id="units" min="1" placeholder="Enter units" required>
+            <div>
+                <label>Units</label>
+                <input type="number" name="units" min="1" placeholder="Enter units" required>
             </div>
-            
-            <button type="submit" name="add_stock" style="grid-column: 3 / 4; height: 44px;">
+            <button type="submit" name="add_stock">
                 <i class="fas fa-sync-alt"></i> Add / Update Stock
             </button>
         </form>
     </div>
 
+    <!-- Blood Stock -->
     <div class="dashboard-section">
         <h3><i class="fas fa-tint"></i> Current Blood Stock</h3>
         <table>
-            <thead>
-                <tr>
-                    <th>Blood Group</th>
-                    <th>Units Available</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
+            <thead><tr><th>Blood Group</th><th>Units Available</th><th>Action</th></tr></thead>
             <tbody>
                 {% for s in stock %}
                 <tr>
-                    <td data-label="Blood Group"><strong>{{ s.blood_group }}</strong></td>
-                    <td data-label="Units Available" class="units-available">{{ s.units }}</td>
-                    <td data-label="Action">
-                        <form method="POST" action="{% url 'delete_stock' s.id %}" onsubmit="return confirm('Are you sure you want to delete {{ s.blood_group }} stock?');" style="margin: 0;">
+                    <td>{{ s.blood_group }}</td>
+                    <td class="units-available">{{ s.units }}</td>
+                    <td>
+                        <form method="POST" action="{% url 'delete_stock' s.id %}" onsubmit="return confirm('Delete {{ s.blood_group }} stock?');">
                             {% csrf_token %}
                             <button type="submit" class="delete-btn"><i class="fas fa-trash-alt"></i> Delete</button>
                         </form>
                     </td>
                 </tr>
                 {% empty %}
-                <tr>
-                    <td colspan="3" style="text-align: center; color: var(--text-light);">No blood stock currently recorded.</td>
-                </tr>
+                <tr><td colspan="3">No blood stock currently recorded.</td></tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 
+    <!-- Recent Slots -->
     <div class="dashboard-section">
-        <h3><i class="fas fa-hourglass-half"></i> Pending Patient Requests</h3>
+        <h3><i class="fas fa-calendar-check"></i> Recent Donation Slots</h3>
+        {% if recent_slots %}
+        <table>
+            <thead><tr><th>Donor</th><th>Date</th><th>Time</th><th>Status</th></tr></thead>
+            <tbody>
+                {% for slot in recent_slots %}
+                <tr>
+                    <td>{{ slot.donor.user.username }}</td>
+                    <td>{{ slot.date }}</td>
+                    <td>{{ slot.time }}</td>
+                    <td>
+                        {% if slot.completed %}
+                            <span style="color: var(--success-green); font-weight: 600;">Completed</span>
+                        {% elif slot.accepted %}
+                            <span style="color: var(--accent-blue); font-weight: 600;">Accepted</span>
+                        {% else %}
+                            <span style="color: var(--danger-red); font-weight: 600;">Pending</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p style="color: var(--text-light);">No recent donation slots assigned.</p>
+        {% endif %}
+    </div>
+
+    <!-- Pending Requests -->
+    <div class="dashboard-section">
+        <h3><i class="fas fa-hand-holding-medical"></i> Pending Blood Requests</h3>
         {% if pending_requests %}
         <table>
-            <thead>
-                <tr>
-                    <th>Patient Name</th>
-                    <th>Blood Group</th>
-                    <th>Required Units</th>
-                    <th>Address</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
+            <thead><tr><th>Patient</th><th>Blood Group</th><th>Units</th><th>Requested On</th><th>Actions</th></tr></thead>
             <tbody>
-                {% for patient in pending_requests %}
+                {% for req in pending_requests %}
                 <tr>
-                    <td data-label="Patient Name">{{ patient.user.username }}</td>
-                    <td data-label="Blood Group">{{ patient.blood_group }}</td>
-                    <td data-label="Required Units">{{ patient.required_units }}</td>
-                    <td data-label="Address">{{ patient.address }}</td>
-                    <td data-label="Action">
-                        <form method="POST" style="margin: 0;">
+                    <td>{{ req.patient.user.username }}</td>
+                    <td>{{ req.blood_group }}</td>
+                    <td>{{ req.units }}</td>
+                    <td>{{ req.created_at|date:"M d, Y H:i" }}</td>
+                    <td>
+                        <form method="POST" style="display:inline;">
                             {% csrf_token %}
-                            <input type="hidden" name="patient_id" value="{{ patient.id }}">
-                            <button type="submit" name="approve_patient" class="approve-btn"><i class="fas fa-check"></i> Approve</button>
+                            <input type="hidden" name="request_id" value="{{ req.id }}">
+                            <button type="submit" name="approve_request" class="approve-btn"><i class="fas fa-check"></i> Approve</button>
+                        </form>
+                        <form method="POST" style="display:inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="request_id" value="{{ req.id }}">
+                            <button type="submit" name="reject_request" class="delete-btn"><i class="fas fa-times"></i> Reject</button>
                         </form>
                     </td>
                 </tr>
@@ -414,10 +370,23 @@
             </tbody>
         </table>
         {% else %}
-        <p style="color: var(--text-light);">No pending patient requests at the moment.</p>
+        <p>No pending requests at the moment.</p>
         {% endif %}
     </div>
 
+    <!-- Approved Requests -->
+    <div class="dashboard-section">
+        <h3><i class="fas fa-clipboard-check"></i> Recently Approved Requests</h3>
+        {% if approved_requests %}
+        <ul>
+            {% for req in approved_requests %}
+            <li>{{ req.patient.user.username }} - {{ req.units }} unit(s) of {{ req.blood_group }} ({{ req.created_at|date:"M d, Y" }})</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>No approved requests yet.</p>
+        {% endif %}
+    </div>
 
     <div class="logout-section">
         <form method="POST" action="{% url 'logout' %}">

@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Patient Dashboard | Blood Bank</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 <style>
     :root {
         --primary-red: #a4161a;
@@ -28,7 +29,7 @@
         margin: 0;
         line-height: 1.6;
     }
-    
+
     header {
         background: var(--primary-red);
         color: var(--card-bg);
@@ -36,21 +37,16 @@
         text-align: center;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-    header h1 {
-        margin: 0;
-        font-size: 1.75rem;
-        font-weight: 700;
-    }
 
     .container {
-        max-width: 900px; 
+        max-width: 900px;
         background: var(--card-bg);
         margin: 40px auto;
         padding: 2.5rem;
         border-radius: 12px;
         box-shadow: var(--shadow);
     }
-    
+
     h2 { 
         color: var(--text-dark); 
         font-size: 1.75rem;
@@ -60,161 +56,234 @@
         margin-bottom: 2rem;
     }
 
+    h3 {
+        font-weight: 700;
+        margin-top: 2rem;
+    }
+
     .info-card {
-        background: #fef2f2; 
-        border: 1px solid #fecaca;
+        background: #fff8f8;
+        border-left: 4px solid var(--primary-red);
+        padding: 1rem 1.5rem;
         border-radius: 8px;
-        padding: 1.5rem;
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 15px 30px;
         margin-bottom: 2rem;
     }
+    .info-card p {
+        margin: 0.5rem 0;
+        font-size: 1rem;
+    }
 
-    .info-card p { margin: 0; font-size: 1rem; }
-    .info-card strong { color: var(--primary-red); font-weight: 600; display: block; margin-bottom: 4px; }
-    .info-card span { color: var(--text-dark); font-weight: 500; }
-
-    .status-alert {
-        text-align: center;
-        padding: 18px;
-        border-radius: 8px;
-        font-weight: 600;
-        margin-bottom: 2rem;
+    .action-group {
         display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.1rem;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 1.5rem 0;
     }
-    .pending {
-        background: #fffbe6;
-        color: var(--pending);
-        border: 1px solid var(--pending);
-    }
-    .pending strong { margin-left: 10px; }
-
-    .action-group { display: flex; flex-direction: column; gap: 15px; margin-top: 2rem; }
 
     button {
-        width: 100%;
-        padding: 1rem 1.5rem;
-        border: none;
-        border-radius: 8px;
         cursor: pointer;
-        font-size: 1rem;
+        padding: 10px 18px;
+        font-size: 0.95rem;
         font-weight: 600;
-        transition: background 0.3s ease, transform 0.1s ease;
-    }
-
-    .btn-edit-profile { background: var(--edit-btn); color: #fff; }
-    .btn-edit-profile:hover { background: #2563eb; }
-
-    .btn-find-donor { background: var(--primary-red); color: #fff; }
-    .btn-find-donor:hover { background: var(--secondary-red); }
-    .btn-search-hospitals { background: #10b981; color: #fff; }
-    .btn-search-hospitals:hover { background: var(--accent-green); }
-    .btn-request { background: #008080; color: #fff; }
-    .btn-request:hover { background: #006666; }
-
-    .edit-profile-section {
-        background: #f7f9fc;
-        padding: 2rem;
         border-radius: 8px;
-        border: 1px solid var(--border);
-        margin-top: 2rem;
-        display: none;
+        border: none;
+        transition: all 0.2s ease;
     }
-    .edit-profile-section.active { display: block; }
 
-    .edit-profile-section form p { margin-bottom: 15px; }
-    .edit-profile-section form label { font-weight: 600; display: block; margin-bottom: 5px; color: var(--text-dark); }
-    .edit-profile-section form input,
-    .edit-profile-section form select,
-    .edit-profile-section form textarea {
-        width: 100%;
-        padding: 10px 12px;
-        border: 1px solid var(--border);
-        border-radius: 6px;
-        font-size: 1rem;
-        box-sizing: border-box;
-    }
-    .edit-profile-section .save-btn {
-        width: auto;
-        padding: 0.8rem 1.5rem;
-        margin-top: 10px;
-        float: right;
+    .btn-find-donor {
         background: var(--edit-btn);
-        color: #fff;
+        color: white;
     }
 
-    .logout { text-align: right; margin-top: 40px; }
-    .logout button { width: auto; background: var(--text-light); padding: 0.6rem 1.2rem; color: #fff; }
-    .logout button:hover { background: #374151; }
+    .btn-request {
+        background: var(--secondary-red);
+        color: white;
+    }
 
-    hr { border: none; height: 1px; background: var(--border); margin: 3rem 0; }
+    .btn-search-hospitals {
+        background: var(--accent-green);
+        color: white;
+    }
 
-    @media (max-width: 600px) {
-        .container { margin: 20px; padding: 1.5rem; }
-        .info-card { grid-template-columns: 1fr; }
-        .edit-profile-section .save-btn { float: none; width: 100%; }
+    button:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+    }
+
+    .status-alert {
+        padding: 0.8rem 1rem;
+        border-radius: 6px;
+        font-weight: 600;
+    }
+
+    .status-alert.pending {
+        background: #fff7e6;
+        color: var(--pending);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+    }
+
+    thead {
+        background: var(--primary-red);
+        color: white;
+    }
+
+    th, td {
+        padding: 10px;
+        border-bottom: 1px solid var(--border);
+        text-align: center;
+    }
+
+    tbody tr:hover {
+        background: #fafafa;
+    }
+
+    .logout {
+        text-align: center;
+        margin-top: 2rem;
+    }
+    .logout button {
+        background: var(--primary-red);
+        color: white;
+        padding: 10px 25px;
+    }
+
+    @media (max-width: 700px) {
+        .container {
+            padding: 1.5rem;
+            margin: 20px;
+        }
+        h2 {
+            font-size: 1.4rem;
+        }
+        button {
+            width: 100%;
+            font-size: 1rem;
+        }
+        table {
+            font-size: 0.9rem;
+        }
     }
 </style>
 </head>
 <body>
+
 <header>
     <h1>Patient Dashboard</h1>
 </header>
 
-<div class="container">
-    <h2>Welcome Back, {{ patient.user.username }}!</h2>
-    
-    <div class="info-card">
-        <p><strong>Blood Group:</strong> <span>{{ patient.blood_group }}</span></p>
-        <p><strong>Required Units:</strong> <span>{{ patient.required_units }}</span></p>
-        <p><strong>Phone:</strong> <span>{{ patient.phone }}</span></p>
-        <p><strong>Gender:</strong> <span>{{ patient.gender }}</span></p>
-        <p><strong>Address:</strong> <span>{{ patient.address }}</span></p>
-    </div>
+    <div class="container">
+        <h2>Welcome Back, {{ patient.user.username }}!</h2>
+            <div class="info-card">
+            <p><strong>Blood Group:</strong> <span>{{ patient.blood_group }}</span></p>
+            <p><strong>Required Units:</strong> <span>{{ patient.required_units }}</span></p>
+            <p><strong>Phone:</strong> <span>{{ patient.phone }}</span></p>
+            <p><strong>Gender:</strong> <span>{{ patient.gender }}</span></p>
+            <p><strong>Address:</strong> <span>{{ patient.address }}</span></p>
+        </div>
 
-    <div class="edit-profile-section" id="editProfileForm">
-        <h3 style="color: var(--edit-btn); margin-top: 0; font-size: 1.3rem; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
-            Update Personal Information
-        </h3>
-    </div>
+        <div class="action-group">
+            {% if is_approved %}
+                <a href="{% url 'search-donors' %}" style="text-decoration: none;">
+                    <button class="btn-find-donor">Find Compatible Donors</button>
+                </a>
+                <a href="{% url 'submit-blood-request' %}" style="text-decoration: none;">
+                    <button class="btn-request">Request Blood</button>
+                </a>
+                <a href="{% url 'search-hospitals' %}" style="text-decoration: none;">
+                    <button class="btn-search-hospitals">Search Hospitals</button>
+                </a>
+            {% else %}
+                <div class="status-alert pending">
+                    ⏳ <strong>Waiting for Hospital Approval</strong>
+                </div>
+                <a href="{% url 'submit-blood-request' %}" style="text-decoration: none;">
+                    <button class="btn-request">Submit / Edit Blood Request</button>
+                </a>
+            {% endif %}
+        </div>
 
-    <hr>
+        <hr>
 
-    <div class="action-group">
-        {% if is_approved %}
-            <a href="{% url 'search-donors' %}" style="text-decoration: none;">
-                <button class="btn-find-donor"> Find Compatible Donors</button>
-            </a>
-            <a href="{% url 'submit-blood-request' %}" style="text-decoration: none;">
-                <button class="btn-request"> Update Blood Request</button>
-            </a>
-            <a href="{% url 'search-hospitals' %}" style="text-decoration: none;">
-                <button class="btn-search-hospitals"> Search Blood Availability in Hospitals</button>
-            </a>
+        <h3 style="color: var(--primary-red);">Blood Request History</h3>
+        {% if history %}
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Hospital</th>
+                    <th>Blood Group</th>
+                    <th>Units</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for req in history %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ req.hospital.name }}</td>
+                    <td>{{ req.blood_group }}</td>
+                    <td>{{ req.units }}</td>
+                    <td>
+                        {% if req.status == 'Pending' %}
+                            <span style="color: var(--pending); font-weight:600;">Pending</span>
+                        {% elif req.status == 'Approved' %}
+                            <span style="color: var(--accent-green); font-weight:600;">Approved</span>
+                        {% else %}
+                            <span style="color: var(--secondary-red); font-weight:600;">Rejected</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ req.created_at|date:"M d, Y" }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
         {% else %}
-            <div class="status-alert pending">
-                ⏳ <strong>Waiting for Admin Approval</strong>
-            </div>
-            <a href="{% url 'submit-blood-request' %}" style="text-decoration: none;">
-                <button class="btn-request"> Submit / Edit Blood Request</button>
-            </a>
-            <a href="{% url 'search-hospitals' %}" style="text-decoration: none;">
-                <button class="btn-search-hospitals"> Search Blood Availability in Hospitals</button>
-            </a>
+            <p style="margin-top: 1rem; color: var(--text-light);">No blood requests found.</p>
         {% endif %}
-    </div>
 
-    <div class="logout">
-        <form method="POST" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button type="submit">Log Out</button>
-        </form>
+        <hr>
+
+        <h3 style="color: var(--accent-green);">Received Blood Details</h3>
+        {% if received_requests %}
+        <table>
+            <thead style="background: #10b981; color: white;">
+                <tr>
+                    <th>#</th>
+                    <th>Hospital</th>
+                    <th>Blood Group</th>
+                    <th>Units</th>
+                    <th>Received On</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for req in received_requests %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ req.hospital.name }}</td>
+                    <td>{{ req.blood_group }}</td>
+                    <td>{{ req.units }}</td>
+                    <td>{{ req.created_at|date:"M d, Y h:i A" }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p style="margin-top: 1rem; color: var(--text-light);">No approved (received) blood yet.</p>
+        {% endif %}
+
+        <div class="logout">
+            <form method="POST" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit">Log Out</button>
+            </form>
+        </div>
     </div>
-</div>
 
 </body>
 </html>

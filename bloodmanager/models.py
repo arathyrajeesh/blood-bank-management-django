@@ -43,13 +43,12 @@ class Patient(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone = models.CharField(max_length=15)
     gender = models.CharField(max_length=10)
-    blood_group = models.CharField(max_length=3, choices=BLOOD_GROUP_CHOICES)
+    blood_group = models.CharField(max_length=5)
     address = models.TextField()
     required_units = models.PositiveIntegerField(default=1)
-    approved = models.BooleanField(default=False)  
+    approved = models.BooleanField(default=False)
+    hospital = models.ForeignKey('Hospital', on_delete=models.SET_NULL, null=True, blank=True, related_name='requests')  # ✅ NEW
 
-    def __str__(self):
-        return self.user.username
 
 
 class Hospital(models.Model):
@@ -77,8 +76,6 @@ class DonorHealthCheck(models.Model):
     weight = models.FloatField()
     hemoglobin_level = models.FloatField()
     has_disease = models.BooleanField(default=False)
-    
-    # New fields
     recent_medications = models.TextField(blank=True, null=True)
     recent_surgeries = models.TextField(blank=True, null=True)
     tattoos_or_piercings = models.TextField(blank=True, null=True)
@@ -100,9 +97,6 @@ class Donation(models.Model):
     def __str__(self):
         return f"{self.donor.user.username} donated {self.units} unit(s) on {self.date}"
 
-
-# models.py
-
 class DonationSlot(models.Model):
     donor = models.ForeignKey(Donor, on_delete=models.CASCADE)
     hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE)
@@ -116,7 +110,6 @@ class DonationSlot(models.Model):
         return f"{self.donor.user.username} - {self.date} {self.time}"
 
     def mark_completed(self, units=1):
-        """Mark as completed and add units to blood stock"""
         self.completed = True
         self.save()
 
@@ -128,3 +121,21 @@ class DonationSlot(models.Model):
         if not created:
             stock.units += units
             stock.save()
+
+
+class BloodRequest(models.Model):
+    STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Approved', 'Approved'),
+        ('Rejected', 'Rejected'),
+    ]
+
+    patient = models.ForeignKey('Patient', on_delete=models.CASCADE)
+    hospital = models.ForeignKey('Hospital', on_delete=models.CASCADE)
+    blood_group = models.CharField(max_length=5)
+    units = models.PositiveIntegerField(default=1)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.patient.user.username} → {self.hospital.name} ({self.blood_group})"

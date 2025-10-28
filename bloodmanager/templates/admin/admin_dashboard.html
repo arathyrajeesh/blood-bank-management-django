@@ -472,6 +472,31 @@
             {% endfor %}
         </tbody>
     </table>
+    <h3>🩸 All Patient Blood Requests</h3>
+    <table>
+    <thead>
+        <tr>
+        <th>Patient</th>
+        <th>Hospital</th>
+        <th>Blood Group</th>
+        <th>Units</th>
+        <th>Status</th>
+        <th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for req in patient_requests %}
+        <tr>
+        <td>{{ req.patient.user.username }}</td>
+        <td>{{ req.hospital.name }}</td>
+        <td>{{ req.blood_group }}</td>
+        <td>{{ req.units }}</td>
+        <td>{{ req.status }}</td>
+        <td>{{ req.created_at|date:"M d, Y H:i" }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    </table>
 
     <hr>
     <h2>Patient Records</h2>
@@ -609,6 +634,7 @@
             {% endfor %}
         </tbody>
     </table>
+
     <div class="card mt-4 shadow p-3 rounded bg-light">
     <h4 class="text-danger fw-bold mb-3">🩸 Recent Slot Assignments</h4>
 
