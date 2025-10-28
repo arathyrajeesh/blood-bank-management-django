@@ -1,4 +1,5 @@
 {% load static %}
+{% load custom_tags %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -418,6 +419,59 @@
             </tbody>
         </table>
     </div>
+    <hr>
+    <h2>Assign Donation Slots</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Donor</th>
+                <th>Hospital</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for donor in approved_donors %}
+            <tr>
+                <td>{{ donor.user.username }}</td>
+                <td>
+                    <form method="POST" style="display:flex; gap:10px; align-items:center;">
+                        {% csrf_token %}
+                        <input type="hidden" name="donor_id" value="{{ donor.id }}">
+                        <select name="hospital_id" required style="padding:6px; border-radius:6px; border:1px solid var(--border);">
+                            {% for hospital in hospitals %}
+                                <option value="{{ hospital.id }}">{{ hospital.name }}</option>
+                            {% endfor %}
+                        </select>
+                </td>
+                <td>
+                    <input type="date" name="date" required style="padding:6px; border-radius:6px; border:1px solid var(--border);">
+                </td>
+                <td>
+                    <input type="time" name="time" required style="padding:6px; border-radius:6px; border:1px solid var(--border);">
+                </td>
+                <td>
+                    {% with slot=donor.donationslot_set.last %}
+                        {% if slot and slot.approved %}
+                            Scheduled ({{ slot.date }} {{ slot.time }})
+                        {% else %}
+                            Not Scheduled
+                        {% endif %}
+                    {% endwith %}
+                </td>
+                <td>
+                    <button type="submit" name="assign_slot" class="approve-btn" style="padding:0.6rem 1rem;">Assign Slot</button>
+                    </form>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" style="text-align:center; padding:20px;">No approved donors available.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
     <hr>
     <h2>Patient Records</h2>
@@ -555,6 +609,44 @@
             {% endfor %}
         </tbody>
     </table>
+    <div class="card mt-4 shadow p-3 rounded bg-light">
+    <h4 class="text-danger fw-bold mb-3">🩸 Recent Slot Assignments</h4>
+
+    {% if recent_slots %}
+        <table class="table table-bordered table-striped">
+        <thead class="table-danger">
+            <tr>
+            <th>Donor</th>
+            <th>Hospital</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for slot in recent_slots %}
+            <tr>
+                <td>{{ slot.donor.user.username }}</td>
+                <td>{{ slot.hospital.name }}</td>
+                <td>{{ slot.date }}</td>
+                <td>{{ slot.time }}</td>
+                <td>
+                {% if slot.completed %}
+                    ✅ Completed
+                {% elif slot.accepted %}
+                    ⏳ Pending Donation
+                {% else %}
+                    🔔 Upcoming
+                {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+    {% else %}
+        <p class="text-muted">No recent slots assigned.</p>
+    {% endif %}
+    </div>
 
     <div class="logout">
         <form method="POST" action="{% url 'logout' %}">

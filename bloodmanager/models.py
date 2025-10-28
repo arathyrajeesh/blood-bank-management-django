@@ -101,3 +101,30 @@ class Donation(models.Model):
         return f"{self.donor.user.username} donated {self.units} unit(s) on {self.date}"
 
 
+# models.py
+
+class DonationSlot(models.Model):
+    donor = models.ForeignKey(Donor, on_delete=models.CASCADE)
+    hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE)
+    date = models.DateField()
+    time = models.TimeField()
+    approved = models.BooleanField(default=False)
+    accepted = models.BooleanField(default=False)
+    completed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.donor.user.username} - {self.date} {self.time}"
+
+    def mark_completed(self, units=1):
+        """Mark as completed and add units to blood stock"""
+        self.completed = True
+        self.save()
+
+        stock, created = BloodStock.objects.get_or_create(
+            blood_group=self.donor.blood_group,
+            hospital=None,
+            defaults={'units': units}
+        )
+        if not created:
+            stock.units += units
+            stock.save()
