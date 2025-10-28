@@ -173,59 +173,59 @@
 </style>
 </head>
 <body>
-<header>
-    <h1><span style="font-size: 1.2em;"></span> Hospital Blood Availability</h1>
-</header>
-<div class="container">
-    <div class="back-btn-container">
-        <a href="{% url 'patient-dashboard' %}" class="back-btn">
-            <span style="font-size: 1.2em;">&larr;</span> Back to Dashboard
-        </a>
-    </div>
-    
-    <h2 style="font-size: 1.5rem; color: var(--accent-blue); font-weight: 600; margin-bottom: 1.5rem;">
-        Currently Available Stock
-    </h2>
+    <header>
+        <h1><span style="font-size: 1.2em;"></span> Hospital Blood Availability</h1>
+    </header>
+    <div class="container">
+        <div class="back-btn-container">
+            <a href="{% url 'patient-dashboard' %}" class="back-btn">
+                <span style="font-size: 1.2em;">&larr;</span> Back to Dashboard
+            </a>
+        </div>
+        
+        <h2 style="font-size: 1.5rem; color: var(--accent-blue); font-weight: 600; margin-bottom: 1.5rem;">
+            Currently Available Stock
+        </h2>
 
-    {% if hospitals_with_stock %}
-    <table>
-        <thead>
-            <tr>
-                <th>Hospital Name</th>
-                <th>Blood Group</th>
-                <th>Available Units</th>
-                <th>Address</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for stock in hospitals_with_stock %}
-            <tr>
-                <td data-label="Hospital Name">{{ stock.hospital.name }}</td>
-                <td data-label="Blood Group">{{ stock.blood_group }}</td>
-                <td data-label="Available Units" class="units-count">{{ stock.units }}</td>
-                <td data-label="Address">{{ stock.hospital.address }}</td>
-                <td data-label="Action">
-                    {% if request.user.patient %}
-                    <form method="POST" action="{% url 'submit-blood-request' %}" style="margin: 0;">
-                        {% csrf_token %}
-                        <input type="hidden" name="hospital_id" value="{{ stock.hospital.id }}">
-                        <input type="hidden" name="blood_group_request" value="{{ stock.blood_group }}">
-                        <input type="hidden" name="units_request" value="1"> <button type="submit" class="request-btn">Request Blood</button>
-                    </form>
-                    {% else %}
-                    <span style="color: var(--text-light); font-size: 0.9em;">Login as Patient to Request</span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-    <p class="info-message">
-        <span style="font-size: 1.2em;"></span> No hospital has available blood stock at the moment.
-    </p>
-    {% endif %}
-</div>
+        {% if hospitals_with_stock %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Hospital Name</th>
+                    <th>Blood Group</th>
+                    <th>Available Units</th>
+                    <th>Address</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for stock in hospitals_with_stock %}
+                <tr>
+                    <td data-label="Hospital Name">{{ stock.hospital.name }}</td>
+                    <td data-label="Blood Group">{{ stock.blood_group }}</td>
+                    <td data-label="Available Units" class="units-count">{{ stock.units }}</td>
+                    <td data-label="Address">{{ stock.hospital.address }}</td>
+                    <td data-label="Action">
+                        {% if request.user.patient %}
+                        <form method="POST" action="{% url 'submit-blood-request' %}" style="margin: 0;">
+                            {% csrf_token %}
+                            <input type="hidden" name="hospital_id" value="{{ stock.hospital.id }}">
+                            <input type="hidden" name="blood_group_request" value="{{ stock.blood_group }}">
+                            <input type="hidden" name="units_request" value="1"> <button type="submit" class="request-btn">Request Blood</button>
+                        </form>
+                        {% else %}
+                        <span style="color: var(--text-light); font-size: 0.9em;">Login as Patient to Request</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="info-message">
+            <span style="font-size: 1.2em;"></span> No hospital has available blood stock at the moment.
+        </p>
+        {% endif %}
+    </div>
 </body>
 </html>

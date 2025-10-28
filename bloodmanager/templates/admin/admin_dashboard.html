@@ -260,44 +260,44 @@
         background: var(--border);
         margin: 3rem 0;
     }
-.stock-distribution-container {
-    padding: 20px 0; 
-}
+    .stock-distribution-container {
+        padding: 20px 0; 
+    }
 
-.stock-distribution-content {
-    display: flex;
-    gap: 40px; 
-    align-items: flex-start; 
-    flex-wrap: wrap; 
-    margin-top: 20px;
-}
-
-.chart-box {
-    flex: 0 0 45%; 
-    max-width: 45%; 
-    display: flex; 
-    justify-content: center;
-}
-
-.bar-overview-box {
-    flex: 1; 
-    min-width: 300px; 
-}
-
-
-@media (max-width: 992px) {
     .stock-distribution-content {
-        flex-direction: column; 
-        gap: 20px;
+        display: flex;
+        gap: 40px; 
+        align-items: flex-start; 
+        flex-wrap: wrap; 
+        margin-top: 20px;
     }
 
-    .chart-box,
-    .bar-overview-box {
-        flex: none;
-        max-width: 100%; 
-        width: 100%;
+    .chart-box {
+        flex: 0 0 45%; 
+        max-width: 45%; 
+        display: flex; 
+        justify-content: center;
     }
-}
+
+    .bar-overview-box {
+        flex: 1; 
+        min-width: 300px; 
+    }
+
+
+    @media (max-width: 992px) {
+        .stock-distribution-content {
+            flex-direction: column; 
+            gap: 20px;
+        }
+
+        .chart-box,
+        .bar-overview-box {
+            flex: none;
+            max-width: 100%; 
+            width: 100%;
+        }
+    }
     @media (max-width: 768px) {
         .stats {
             grid-template-columns: 1fr;
@@ -518,7 +518,7 @@
                 <td>{{ patient.blood_group }}</td>
                 <td>{{ patient.phone }}</td>
                 <td>{{ patient.required_units }}</td>
-                <td>{% if patient.approved %}✅ Approved{% else %}⏳ Pending{% endif %}</td>
+                <td>{% if patient.approved %} Approved{% else %} Pending{% endif %}</td>
                 <td>
                     {% if not patient.approved %}
                     <form method="POST" style="display:inline-flex; gap: 8px;">
@@ -609,11 +609,11 @@
                 <td>{% if form.has_disease %}Yes{% else %}No{% endif %}</td>
                 <td>
                     {% if form.is_approved %}
-                        ✅ Approved
+                        Approved
                     {% elif form.is_approved == False and form.submitted_at %}
-                        ❌ Rejected
+                        Rejected
                     {% else %}
-                        ⏳ Pending
+                        Pending
                     {% endif %}
                 </td>
                 <td>
@@ -658,11 +658,11 @@
                 <td>{{ slot.time }}</td>
                 <td>
                 {% if slot.completed %}
-                    ✅ Completed
+                    Completed
                 {% elif slot.accepted %}
-                    ⏳ Pending Donation
+                    Pending Donation
                 {% else %}
-                    🔔 Upcoming
+                    Upcoming
                 {% endif %}
                 </td>
             </tr>

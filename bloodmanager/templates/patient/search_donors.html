@@ -180,7 +180,7 @@
     </p>
 
     {% if exact_match_donors %}
-    <h3><span style="color: var(--success);">✅</span> Exact Match Donors ({{ required_blood_group }})</h3>
+    <h3><span style="color: var(--success);"></span> Exact Match Donors ({{ required_blood_group }})</h3>
     <table>
         <thead class="exact-match-header">
             <tr><th>Donor Name</th><th>Blood Group</th><th>Phone</th><th>Address</th></tr>
@@ -201,7 +201,7 @@
     {% endif %}
 
     {% if compatible_donors %}
-    <h3><span style="color: var(--primary-red);">🤝</span> Compatible Donors (Other Groups)</h3>
+    <h3><span style="color: var(--primary-red);"></span> Compatible Donors (Other Groups)</h3>
     <p style="color: var(--text-light); font-size: 0.95rem;">
         These donors have blood groups compatible with {{ required_blood_group }}: 
         **{{ compatible_groups|join:", " }}**
@@ -225,7 +225,7 @@
     <p class="info-message">No compatible donors found.</p>
     {% endif %}
 
-    <h3><span style="color: #1d4ed8;">🏥</span> Hospitals with Available Stock</h3>
+    <h3><span style="color: #1d4ed8;"></span> Hospitals with Available Stock</h3>
     {% if hospitals_with_stock %}
     <table>
         <thead class="hospital-stock-header">
