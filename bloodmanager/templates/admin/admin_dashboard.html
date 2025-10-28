@@ -8,6 +8,11 @@
 <title>Admin Dashboard | Blood Bank</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+    /* --- CSS Best Practices Applied ---
+    1. Minimal inline styles.
+    2. Use of CSS variables for a maintainable color palette.
+    3. Clear, scannable structure. 
+    */
     :root {
         --primary: #a4161a;
         --secondary: #d32f2f;
@@ -38,7 +43,7 @@
     header {
         background: var(--primary);
         color: var(--card-bg);
-        text-align: left; /
+        text-align: left;
         padding: 1.5rem 3rem; 
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
@@ -146,6 +151,8 @@
     }
 
     .stock-form select,
+    .stock-form input[type="date"], /* Added date/time fields here for consistency */
+    .stock-form input[type="time"],
     .stock-form input[type="number"] {
         width: 100%;
         padding: 0.75rem 1rem; 
@@ -159,6 +166,51 @@
         align-self: flex-end; 
     }
 
+    /* --- New/Corrected Styles for Modularity --- */
+
+    .slot-form-inline {
+        display:flex; 
+        gap:10px; 
+        align-items:center;
+    }
+
+    .select-input-inline {
+        padding:6px; 
+        border-radius:6px; 
+        border:1px solid var(--border);
+    }
+
+    .blood-bar-item {
+        margin-bottom: 12px;
+    }
+
+    .blood-bar-header {
+        display:flex; 
+        justify-content: space-between; 
+        margin-bottom: 4px;
+    }
+
+    .blood-bar-container {
+        background:#f4f4f4; 
+        border-radius: 8px; 
+        overflow:hidden; 
+        height:24px;
+    }
+
+    .blood-bar-fill {
+        background:var(--accent); /* Used --accent for consistency */
+        height:100%;
+        text-align:right;
+        color:white;
+        padding-right:6px;
+        border-radius: 8px 0 0 8px;
+        transition: width 0.5s ease;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+    }
+
+    /* --- Button Styles --- */
     button {
         background: var(--primary);
         color: var(--card-bg);
@@ -186,6 +238,10 @@
         cursor: not-allowed;
     }
 
+    .action-btn { /* Unified padding for smaller action buttons */
+        padding: 0.6rem 1rem !important;
+    }
+
     .approve-btn {
         background: var(--success);
     }
@@ -199,7 +255,15 @@
     .reject-btn:hover {
         background: #b91c1c;
     }
+    
+    .logout-btn {
+        background: var(--text-light);
+    }
+    .logout-btn:hover {
+        background: var(--text-dark);
+    }
 
+    /* --- Table Styles --- */
     table {
         width: 100%;
         border-collapse: collapse;
@@ -260,6 +324,8 @@
         background: var(--border);
         margin: 3rem 0;
     }
+
+    /* --- Distribution Section Styles --- */
     .stock-distribution-container {
         padding: 20px 0; 
     }
@@ -277,14 +343,31 @@
         max-width: 45%; 
         display: flex; 
         justify-content: center;
+        align-items: center; /* Center the image vertically too */
+    }
+    
+    .chart-image {
+        max-width: 100%; 
+        height: auto;
     }
 
     .bar-overview-box {
         flex: 1; 
         min-width: 300px; 
+        padding: 1.5rem; /* Added padding to the bar box */
+        background: var(--card-bg);
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    }
+    .bar-overview-box h2 {
+        text-align:center; 
+        color:var(--primary); 
+        margin-top: 0;
+        font-size: 1.5rem; /* Adjusted for better hierarchy */
     }
 
 
+    /* --- Responsive Adjustments --- */
     @media (max-width: 992px) {
         .stock-distribution-content {
             flex-direction: column; 
@@ -311,6 +394,18 @@
         .stock-form {
             flex-direction: column;
             align-items: stretch;
+        }
+        .stock-form button {
+             align-self: auto;
+        }
+        .slot-form-inline {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .slot-form-inline select,
+        .slot-form-inline input[type="date"],
+        .slot-form-inline input[type="time"] {
+            width: 100%;
         }
     }
 </style>
@@ -351,38 +446,30 @@
 
     <hr>
     
-    <div class="card stock-distribution-container"> <h2>Blood Stock Distribution</h2>
+    <div class="stock-distribution-container"> 
+        <h2>Blood Stock Distribution</h2>
         <div class="stock-distribution-content"> 
             <div class="chart-box">
-                <img src="data:image/png;base64,{{ chart }}" alt="Blood Stock Pie Chart" style="max-width: 100%; height: auto;"> 
+                <img src="data:image/png;base64,{{ chart }}" alt="Blood Stock Pie Chart" class="chart-image"> 
+                
             </div>
             <div class="bar-overview-box">
-                <h2 style="text-align:center; color:#a4161a; margin-top: 0;">Blood Stock Overview</h2>
+                <h2>Blood Stock Overview</h2>
                 {% for item in stock %}
-                <div style="margin-bottom: 12px;">
-                    <div style="display:flex; justify-content: space-between; margin-bottom: 4px;">
+                <div class="blood-bar-item">
+                    <div class="blood-bar-header">
                         <span>{{ item.blood_group }}</span>
                         <span>{{ item.total_units }} units</span>
                     </div>
-                    <div style="background:#f4f4f4; border-radius: 8px; overflow:hidden; height:24px;">
-                        <div style="
-                            width: {{ item.total_units|floatformat:0 }}%; 
-                            background:#ef233c;
-                            height:100%;
-                            text-align:right;
-                            color:white;
-                            padding-right:6px;
-                            border-radius: 8px 0 0 8px;
-                            transition: width 0.5s ease;
-                            ">
-                        </div>
+                    <div class="blood-bar-container">
+                        <div class="blood-bar-fill" style="width: {{ item.total_units|floatformat:0 }}%;">
+                            </div>
                     </div>
                 </div>
                 {% endfor %}
             </div>
         </div>
     </div>
-
 
     <hr>
     <div class="section-card">
@@ -438,20 +525,20 @@
             <tr>
                 <td>{{ donor.user.username }}</td>
                 <td>
-                    <form method="POST" style="display:flex; gap:10px; align-items:center;">
+                    <form method="POST" class="slot-form-inline"> 
                         {% csrf_token %}
                         <input type="hidden" name="donor_id" value="{{ donor.id }}">
-                        <select name="hospital_id" required style="padding:6px; border-radius:6px; border:1px solid var(--border);">
+                        <select name="hospital_id" required class="select-input-inline">
                             {% for hospital in hospitals %}
                                 <option value="{{ hospital.id }}">{{ hospital.name }}</option>
                             {% endfor %}
                         </select>
                 </td>
                 <td>
-                    <input type="date" name="date" required style="padding:6px; border-radius:6px; border:1px solid var(--border);">
+                    <input type="date" name="date" required class="select-input-inline">
                 </td>
                 <td>
-                    <input type="time" name="time" required style="padding:6px; border-radius:6px; border:1px solid var(--border);">
+                    <input type="time" name="time" required class="select-input-inline">
                 </td>
                 <td>
                     {% with slot=donor.donationslot_set.last %}
@@ -463,7 +550,7 @@
                     {% endwith %}
                 </td>
                 <td>
-                    <button type="submit" name="assign_slot" class="approve-btn" style="padding:0.6rem 1rem;">Assign Slot</button>
+                    <button type="submit" name="assign_slot" class="approve-btn action-btn">Assign Slot</button>
                     </form>
                 </td>
             </tr>
@@ -472,6 +559,8 @@
             {% endfor %}
         </tbody>
     </table>
+    
+    <hr>
     <h3>🩸 All Patient Blood Requests</h3>
     <table>
     <thead>
@@ -521,13 +610,13 @@
                 <td>{% if patient.approved %} Approved{% else %} Pending{% endif %}</td>
                 <td>
                     {% if not patient.approved %}
-                    <form method="POST" style="display:inline-flex; gap: 8px;">
+                    <form method="POST" class="slot-form-inline">
                         {% csrf_token %}
                         <input type="hidden" name="patient_id" value="{{ patient.id }}">
-                        <button type="submit" name="approve_patient" class="approve-btn" style="padding: 0.6rem 1rem;">Approve</button>
+                        <button type="submit" name="approve_patient" class="approve-btn action-btn">Approve</button>
                     </form>
                     {% else %}
-                    <button disabled style="padding: 0.6rem 1rem;">Approved</button>
+                    <button disabled class="action-btn">Approved</button>
                     {% endif %}
                 </td>
             </tr>
@@ -618,14 +707,14 @@
                 </td>
                 <td>
                     {% if form.is_approved is not True %}
-                    <form method="POST" style="display:inline-flex; gap: 8px;">
+                    <form method="POST" class="slot-form-inline">
                         {% csrf_token %}
                         <input type="hidden" name="health_id" value="{{ form.id }}">
-                        <button type="submit" name="approve_health" class="approve-btn" style="padding: 0.6rem 1rem;">Approve</button>
-                        <button type="submit" name="reject_health" class="reject-btn" style="padding: 0.6rem 1rem;">Reject</button>
+                        <button type="submit" name="approve_health" class="approve-btn action-btn">Approve</button>
+                        <button type="submit" name="reject_health" class="reject-btn action-btn">Reject</button>
                     </form>
                     {% else %}
-                    <button disabled style="padding: 0.6rem 1rem;">Approved</button>
+                    <button disabled class="action-btn">Approved</button>
                     {% endif %}
                 </td>
             </tr>
@@ -635,12 +724,11 @@
         </tbody>
     </table>
 
-    <div class="card mt-4 shadow p-3 rounded bg-light">
-    <h4 class="text-danger fw-bold mb-3">🩸 Recent Slot Assignments</h4>
+    <div class="bar-overview-box mt-4"> <h4 style="color: var(--danger); font-weight: 700; margin-top: 0;">🩸 Recent Slot Assignments</h4>
 
     {% if recent_slots %}
-        <table class="table table-bordered table-striped">
-        <thead class="table-danger">
+        <table>
+        <thead>
             <tr>
             <th>Donor</th>
             <th>Hospital</th>
@@ -670,14 +758,14 @@
         </tbody>
         </table>
     {% else %}
-        <p class="text-muted">No recent slots assigned.</p>
+        <p style="color: var(--text-light);">No recent slots assigned.</p>
     {% endif %}
     </div>
 
     <div class="logout">
         <form method="POST" action="{% url 'logout' %}">
             {% csrf_token %}
-            <button type="submit" style="background: var(--text-light); hover: background: var(--text-dark);">Log Out</button>
+            <button type="submit" class="logout-btn">Log Out</button>
         </form>
     </div>
 </div>
