@@ -1,5 +1,17 @@
 asgiref==3.10.0
+contourpy==1.3.2
+cycler==0.12.1
 Django==5.2.7
+django-widget-tweaks==1.5.0
+fonttools==4.60.1
+kiwisolver==1.4.9
+matplotlib==3.10.7
+mysqlclient==2.2.7
+numpy==2.2.6
+packaging==25.0
 pillow==11.3.0
+pyparsing==3.2.5
+python-dateutil==2.9.0.post0
+six==1.17.0
 sqlparse==0.5.3
 typing_extensions==4.15.0
