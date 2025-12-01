@@ -10,6 +10,7 @@ from .forms import (RegistrationForm, BloodStockForm, LastDonationForm,HospitalR
 from .forms import BloodStockForm
 import io, base64
 from .models import BloodRequest
+import matplotlib.pyplot as plt
 
 def home(request):
     stock = BloodStock.objects.values('blood_group').annotate(units=Sum('units')).order_by('blood_group')
@@ -474,13 +475,13 @@ def admin_dashboard(request):
     total_donors = donors.count()
     available_donors = donors.filter(available=True).count()
     total_patients = patients.count()
-    total_stock_units = sum(item['total_units'] for item in stock) if stock else 0
+    total_stock_units = sum(item['total_units'] for item in stock)
 
     stock_form = BloodStockForm()
 
     approved_donors = Donor.objects.filter(
-        available=True,
-        donorhealthcheck__is_approved=True
+    available=True,
+    donorhealthcheck__is_approved=True  
     ).exclude(
         donationslot__completed=False
     ).distinct()
@@ -494,13 +495,13 @@ def admin_dashboard(request):
         if slot:
             latest_slot_per_donor[donor.id] = slot
 
-    # Handle POST actions
     if request.method == 'POST':
+
         if 'assign_slot' in request.POST:
             donor_id = request.POST.get('donor_id')
             hospital_id = request.POST.get('hospital_id')
-            date_val = request.POST.get('date')
-            time_val = request.POST.get('time')
+            date = request.POST.get('date')
+            time = request.POST.get('time')
 
             donor = get_object_or_404(Donor, id=donor_id)
             hospital = get_object_or_404(Hospital, id=hospital_id)
@@ -508,8 +509,8 @@ def admin_dashboard(request):
             DonationSlot.objects.create(
                 donor=donor,
                 hospital=hospital,
-                date=date_val,
-                time=time_val,
+                date=date,
+                time=time,
                 approved=True,
                 accepted=False,
                 completed=False
@@ -517,6 +518,7 @@ def admin_dashboard(request):
 
             messages.success(request, f"Slot assigned to {donor.user.username} successfully!")
             return redirect('admin-dashboard')
+
 
         if 'approve_patient' in request.POST:
             patient_id = request.POST.get('patient_id')
@@ -557,8 +559,7 @@ def admin_dashboard(request):
             messages.success(request, f"{record.donor.user.username}'s health form approved!")
             return redirect('admin-dashboard')
 
-    # Build stock percentages and chart-friendly lists
-    total_units = total_stock_units
+    total_units = sum(item['total_units'] for item in stock)
     stock_with_percentage = []
     for item in stock:
         percent = (item['total_units'] / total_units * 100) if total_units > 0 else 0
@@ -568,8 +569,21 @@ def admin_dashboard(request):
             'percentage': round(percent, 1),
         })
 
-    chart_labels = [item['blood_group'] for item in stock]
-    chart_data = [item['total_units'] for item in stock]
+    labels = [item['blood_group'] for item in stock]
+    quantities = [item['total_units'] for item in stock]
+
+    plt.switch_backend('AGG')
+    fig, ax = plt.subplots(figsize=(5, 5))
+    ax.pie(quantities, labels=labels, startangle=90)
+    ax.set_title("Blood Stock Distribution")
+
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    image_png = buffer.getvalue()
+    buffer.close()
+    chart = base64.b64encode(image_png).decode('utf-8')
+    plt.close(fig)
 
     context = {
         'donors': donors,
@@ -582,13 +596,13 @@ def admin_dashboard(request):
         'total_stock_units': total_stock_units,
         'stock_form': stock_form,
         'health_forms': health_forms,
-        'chart_labels': chart_labels,
-        'chart_data': chart_data,
+        'chart': chart,
         'approved_donors': approved_donors,
-        'hospitals': hospitals,
-        'recent_slots': recent_slots,
+        'hospitals': Hospital.objects.all(),
+        'recent_slots': recent_slots,              
         'latest_slot_per_donor': latest_slot_per_donor,
         'patient_requests': patient_requests,
+
     }
 
     return render(request, 'admin/admin_dashboard.html', context)

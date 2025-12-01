@@ -396,7 +396,7 @@
             align-items: stretch;
         }
         .stock-form button {
-            align-self: auto;
+             align-self: auto;
         }
         .slot-form-inline {
             flex-direction: column;
@@ -511,63 +511,54 @@
 
     <table>
         <thead>
-        <tr>
-            <th>Donor</th>
-            <th>Hospital</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Status</th>
-            <th>Action</th>
-        </tr>
+            <tr>
+                <th>Donor</th>
+                <th>Hospital</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
         </thead>
-
         <tbody>
-        {% for donor in approved_donors %}
-            <form method="POST">
-                {% csrf_token %}
-
-                <tr>
-                    <input type="hidden" name="donor_id" value="{{ donor.id }}">
-
-                    <td>{{ donor.user.username }}</td>
-
-                    <td>
+            {% for donor in approved_donors %}
+            <tr>
+                <td>{{ donor.user.username }}</td>
+                <td>
+                    <form method="POST" class="slot-form-inline"> 
+                        {% csrf_token %}
+                        <input type="hidden" name="donor_id" value="{{ donor.id }}">
                         <select name="hospital_id" required class="select-input-inline">
-                        {% for hospital in hospitals %}
-                            <option value="{{ hospital.id }}">{{ hospital.name }}</option>
-                        {% endfor %}
+                            {% for hospital in hospitals %}
+                                <option value="{{ hospital.id }}">{{ hospital.name }}</option>
+                            {% endfor %}
                         </select>
-                    </td>
-
-                    <td><input type="date" name="date" required class="select-input-inline"></td>
-
-                    <td><input type="time" name="time" required class="select-input-inline"></td>
-
-                    <td>
-                        {% with slot=donor.donationslot_set.last %}
-                            {% if slot and slot.approved %}
-                                Scheduled ({{ slot.date }} {{ slot.time }})
-                            {% else %}
-                                Not Scheduled
-                            {% endif %}
-                        {% endwith %}
-                    </td>
-
-                    <td>
-                        <button type="submit" name="assign_slot" class="approve-btn action-btn">
-                            Assign Slot
-                        </button>
-                    </td>
-
-                </tr>
-
-            </form>
+                </td>
+                <td>
+                    <input type="date" name="date" required class="select-input-inline">
+                </td>
+                <td>
+                    <input type="time" name="time" required class="select-input-inline">
+                </td>
+                <td>
+                    {% with slot=donor.donationslot_set.last %}
+                        {% if slot and slot.approved %}
+                            Scheduled ({{ slot.date }} {{ slot.time }})
+                        {% else %}
+                            Not Scheduled
+                        {% endif %}
+                    {% endwith %}
+                </td>
+                <td>
+                    <button type="submit" name="assign_slot" class="approve-btn action-btn">Assign Slot</button>
+                    </form>
+                </td>
+            </tr>
             {% empty %}
             <tr><td colspan="6" style="text-align:center; padding:20px;">No approved donors available.</td></tr>
             {% endfor %}
         </tbody>
     </table>
-
     
     <hr>
     <h3>🩸 All Patient Blood Requests</h3>
@@ -715,15 +706,15 @@
                     {% endif %}
                 </td>
                 <td>
-                    {% if not form.is_approved %}
-                        <form method="POST" class="slot-form-inline">
-                            {% csrf_token %}
-                            <input type="hidden" name="health_id" value="{{ form.id }}">
-                            <button type="submit" name="approve_health" class="approve-btn action-btn">Approve</button>
-                            <button type="submit" name="reject_health" class="reject-btn action-btn">Reject</button>
-                        </form>
+                    {% if form.is_approved is not True %}
+                    <form method="POST" class="slot-form-inline">
+                        {% csrf_token %}
+                        <input type="hidden" name="health_id" value="{{ form.id }}">
+                        <button type="submit" name="approve_health" class="approve-btn action-btn">Approve</button>
+                        <button type="submit" name="reject_health" class="reject-btn action-btn">Reject</button>
+                    </form>
                     {% else %}
-                        Approved
+                    <button disabled class="action-btn">Approved</button>
                     {% endif %}
                 </td>
             </tr>
