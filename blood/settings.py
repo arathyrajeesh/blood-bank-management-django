@@ -76,7 +76,7 @@ WSGI_APPLICATION = 'blood.wsgi.application'
 DATABASES = {
     'default': {
     'ENGINE': 'django.db.backends.mysql',
-    'NAME': 'bloodbanks',
+    'NAME': 'bloodbank',
     'USER': 'root',
     'PASSWORD': 'password',
     'HOST': 'localhost',
